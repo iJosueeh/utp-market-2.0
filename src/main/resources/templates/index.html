@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{layout/_layout :: head}">
+<head th:replace="~{layout/_layout :: head('UTP Market | Home')}"></head>
 </head>
 
 <body>
@@ -28,7 +28,7 @@
                         <a th:href="@{/products}" class="btn btn-danger px-4 py-2">
                             Explorar productos
                         </a>
-                        <a th:href="@{/registro}" class="btn btn-outline-danger px-4 py-2">
+                        <a th:href="@{/register}" class="btn btn-outline-danger px-4 py-2">
                             Únete a la comunidad
                         </a>
                     </div>

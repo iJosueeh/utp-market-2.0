@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/_layout :: head('UTP Market | Ayuda')}"></head>
+
+<body>
+    <header th:replace="~{layout/_layout :: header}"></header>
+    <main class="w-100 pt-5">
+
+        <section class="text-white py-5 w-100" style="background-color: #a3002a;">
+            <div class="container py-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <h2 class="fw-bold text-uppercase mb-4">Centro de Ayuda</h2>
+                        <p class="me-5" style="text-align: justify;">
+                            Bienvenido a nuestro <strong>Centro de Ayuda</strong>. Aquí encontrarás todo lo que
+                            necesitas para resolver tus dudas de manera rápida y sencilla.
+                            En la primera sección podrás consultar las <strong>Preguntas Frecuentes</strong>,
+                            con respuestas a las consultas más comunes.
+                            Si no encuentras lo que buscas o necesitas atención personalizada,
+                            en la segunda sección tendrás a tu disposición nuestro canal de
+                            <strong>Contacto con Soporte</strong>.
+                        </p>
+                    </div>
+
+                    <div class="col-md-6 text-center">
+                        <img th:src="@{/img/ayuda-img.png}" alt="Centro de Ayuda" class="img-fluid shadow-lg rounded-4"
+                            style="max-height: 400px; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 w-100" style="background-color: #ffffff;">
+            <div class="container">
+                <h2 class="text-center fw-bold mb-5" style="color: #a3002a;">
+                    Preguntas Frecuentes sobre el Centro de Ayuda
+                </h2>
+
+                <div class="accordion" id="faqAccordion">
+
+                    <div class="accordion-item mb-3 border-0 shadow-sm rounded-3">
+                        <h2 class="accordion-header" id="faq1">
+                            <button class="accordion-button collapsed fw-semibold text-danger" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false"
+                                aria-controls="collapse1">
+                                ¿Cómo puedo contactar al soporte?
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="faq1"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-dark">
+                                Puedes escribirnos directamente desde el chat de WhatsApp disponible en la plataforma.
+                                Solo haz clic en el botón de ayuda y uno de nuestros asesores te responderá.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item mb-3 border-0 shadow-sm rounded-3">
+                        <h2 class="accordion-header" id="faq2">
+                            <button class="accordion-button collapsed fw-semibold text-danger" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false"
+                                aria-controls="collapse2">
+                                ¿En qué horario atiende el centro de ayuda?
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="faq2"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-dark">
+                                Nuestro equipo responde tus dudas de lunes a sábado de 9:00 a.m. a 9:00 p.m.
+                                Fuera de ese horario puedes dejar tu mensaje y lo atenderemos en cuanto estemos
+                                disponibles.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item mb-3 border-0 shadow-sm rounded-3">
+                        <h2 class="accordion-header" id="faq3">
+                            <button class="accordion-button collapsed fw-semibold text-danger" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false"
+                                aria-controls="collapse3">
+                                ¿Qué tipo de dudas puedo resolver en el chat?
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="faq3"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-dark">
+                                Puedes consultar sobre compras, ventas, uso de la plataforma, problemas con tu perfil
+                                o cualquier duda general sobre UTP Market.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item mb-3 border-0 shadow-sm rounded-3">
+                        <h2 class="accordion-header" id="faq4">
+                            <button class="accordion-button collapsed fw-semibold text-danger" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false"
+                                aria-controls="collapse4">
+                                ¿Hay algún costo por usar el centro de ayuda?
+                            </button>
+                        </h2>
+                        <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="faq4"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-dark">
+                                No. El servicio de soporte y el chat de WhatsApp son totalmente gratuitos para toda la
+                                comunidad UTP.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item mb-3 border-0 shadow-sm rounded-3">
+                        <h2 class="accordion-header" id="faq5">
+                            <button class="accordion-button collapsed fw-semibold text-danger" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false"
+                                aria-controls="collapse5">
+                                ¿Qué hago si no responden mi consulta?
+                            </button>
+                        </h2>
+                        <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="faq5"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-dark">
+                                En caso de que no recibas respuesta en el chat, puedes enviar un reporte desde tu perfil
+                                en la sección “Soporte” y un asesor se pondrá en contacto contigo.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 w-100" style="background-color: #a3002a;">
+            <div class="container">
+                <div class="row align-items-center">
+
+                    <div class="col-md-6 text-white">
+                        <p class="fw-bold text-uppercase mb-2">
+                            ¿No encontraste tu duda arriba?
+                        </p>
+                        <h2 class="fw-bold text-dark mb-3">
+                            Contacta con uno de nuestros asesores
+                        </h2>
+                        <p class="mb-4">
+                            Puedes ponerte en contacto con uno de nuestros asesores de soporte,
+                            quienes estarán disponibles para ayudarte de manera rápida y
+                            personalizada a resolver cualquier duda o inconveniente que tengas.
+                        </p>
+                        <button class="btn btn-light text-danger fw-bold">
+                            Chat de Soporte
+                        </button>
+                    </div>
+
+                    <div class="col-md-6 text-center py-4">
+                        <img th:src="@{/img/ayuda-2-img.png}" alt="Centro de Ayuda" class="img-fluid rounded shadow"
+                            style="max-height: 400px; object-fit: cover;">
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer th:replace="~{layout/_layout :: footer}"></footer>
+</body>
+
+</html>

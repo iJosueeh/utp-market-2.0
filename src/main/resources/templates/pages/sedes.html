@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/_layout :: head('UTP Market | Sedes')}"></head>
+
+<body>
+    <header th:replace="~{layout/_layout :: header}"></header>
+
+    <main class="container my-5 pt-5 flex-grow-1">
+        <section>
+            <h2 class="mb-5 text-center fw-bold" style="color: #B50D30;">
+                Nuestras Sedes
+            </h2>
+
+            <div class="row g-4">
+                <div class="col-12 col-md-6 col-lg-4" th:each="sede : ${sedes}">
+                    <div class="card shadow-sm h-100 border-0 rounded-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold mb-3" style="color: #222;" th:text="${sede.nombre}"></h5>
+                            <p class="card-text mb-2">
+                                <strong>Dirección:</strong>
+                                <span th:text="${sede.direccion}"></span>
+                            </p>
+                            <p class="card-text mb-3">
+                                <strong>Teléfono:</strong>
+                                <span th:text="${sede.telefono}"></span>
+                            </p>
+
+                            <a th:href="${sede.mapa}" target="_blank" rel="noopener noreferrer">
+                                <img th:src="${sede.imagen}" th:alt="'Imagen ' + ${sede.nombre}"
+                                    class="img-fluid rounded shadow-sm"
+                                    style="max-height: 200px; object-fit: cover; width: 100%;">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer th:replace="~{layout/_layout :: footer}"></footer>
+</body>
+
+</html>
