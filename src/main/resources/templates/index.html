@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/_layout :: head}">
+</head>
+
+<body>
+    <header th:replace="~{layout/_layout :: header}"></header>
+
+    <main style="padding-top: 20px;">
+        <section class="container py-5" style="margin-top: 200px; margin-bottom: 200px;">
+            <div class="row align-items-center">
+                <div class="col-md-5 text-center mb-4 mb-md-0">
+                    <img src="https://res.cloudinary.com/dy8qrtq40/image/upload/v1756951052/hero-img_q7z7cu.webp"
+                        alt="UTP Market" class="img-fluid rounded">
+                </div>
+                <div class="col-md-6 ps-md-5">
+                    <h6 class="text-danger fw-bold">UTP - MARKET</h6>
+                    <h1 class="fw-bold text-dark">
+                        Tu marketplace confiable hecho por y para estudiantes UTP
+                    </h1>
+                    <p class="text-muted fs-5 mt-3">
+                        Cada vez más estudiantes usan nuestra página para comprar y vender
+                        servicios, materiales, guías y otros recursos académicos.
+                    </p>
+
+                    <div class="d-flex gap-3 mt-4">
+                        <a th:href="@{/products}" class="btn btn-danger px-4 py-2">
+                            Explorar productos
+                        </a>
+                        <a th:href="@{/registro}" class="btn btn-outline-danger px-4 py-2">
+                            Únete a la comunidad
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container my-2">
+            <h5 class="text-black text-center">MATERIALES</h5>
+            <h2 class="text-center fw-bold mb-4">Emprendimientos estudiantiles</h2>
+
+            <div class="row">
+                <!-- Card 1: Tutorías -->
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img th:src="@{/img/tutoria.jpg}" alt="Tutorías" class="card-img-top img-fluid"
+                            style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">Tutorías</h5>
+                            <p class="card-text">Apoyo académico entre estudiantes para reforzar materias clave.</p>
+                            <button class="btn btn-dark w-100" data-bs-toggle="modal" data-bs-target="#modalTutorias">
+                                Más Información →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Guías de estudio -->
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img th:src="@{/img/guias.jpg}" alt="Guías de estudio" class="card-img-top img-fluid"
+                            style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">Guías de estudio</h5>
+                            <p class="card-text">Resúmenes y materiales hechos por estudiantes para facilitar el
+                                aprendizaje.</p>
+                            <button class="btn btn-dark w-100" data-bs-toggle="modal" data-bs-target="#modalGuias">
+                                Más Información →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Ventas de snack -->
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img th:src="@{/img/ventas.jpg}" alt="Ventas de snack" class="card-img-top img-fluid"
+                            style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">Ventas de snack</h5>
+                            <p class="card-text">Snacks accesibles y prácticos dentro del campus.</p>
+                            <button class="btn btn-dark w-100" data-bs-toggle="modal" data-bs-target="#modalVentas">
+                                Más Información →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Materiales -->
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img th:src="@{/img/mt.jpg}" alt="Materiales" class="card-img-top img-fluid"
+                            style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">Materiales</h5>
+                            <p class="card-text">Intercambio y venta de útiles y herramientas académicas.</p>
+                            <button class="btn btn-dark w-100" data-bs-toggle="modal" data-bs-target="#modalMateriales">
+                                Más Información →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal para Tutorías -->
+        <div class="modal fade" id="modalTutorias" tabindex="-1" aria-labelledby="modalTutoriasLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form th:action="@{/contacto}" method="post" class="needs-validation" novalidate>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTutoriasLabel">Tutorías</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Apoyo académico entre estudiantes para reforzar materias clave.</p>
+
+                            <input type="hidden" name="categoria" value="Tutorías">
+
+                            <div class="mb-3">
+                                <label for="nombreTutorias" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombreTutorias" name="nombre" required>
+                                <div class="invalid-feedback">Por favor, ingresa tu nombre.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="correoTutorias" class="form-label">Correo</label>
+                                <input type="email" class="form-control" id="correoTutorias" name="correo" required>
+                                <div class="invalid-feedback">Por favor, ingresa un correo válido.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="mensajeTutorias" class="form-label">Mensaje</label>
+                                <textarea class="form-control" id="mensajeTutorias" name="mensaje" rows="3"
+                                    required></textarea>
+                                <div class="invalid-feedback">Por favor, escribe un mensaje.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Guías de estudio -->
+        <div class="modal fade" id="modalGuias" tabindex="-1" aria-labelledby="modalGuiasLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form th:action="@{/contacto}" method="post" class="needs-validation" novalidate>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalGuiasLabel">Guías de estudio</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Resúmenes y materiales hechos por estudiantes para facilitar el aprendizaje.</p>
+
+                            <input type="hidden" name="categoria" value="Guías de estudio">
+
+                            <div class="mb-3">
+                                <label for="nombreGuias" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombreGuias" name="nombre" required>
+                                <div class="invalid-feedback">Por favor, ingresa tu nombre.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="correoGuias" class="form-label">Correo</label>
+                                <input type="email" class="form-control" id="correoGuias" name="correo" required>
+                                <div class="invalid-feedback">Por favor, ingresa un correo válido.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="mensajeGuias" class="form-label">Mensaje</label>
+                                <textarea class="form-control" id="mensajeGuias" name="mensaje" rows="3"
+                                    required></textarea>
+                                <div class="invalid-feedback">Por favor, escribe un mensaje.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Ventas de snack -->
+        <div class="modal fade" id="modalVentas" tabindex="-1" aria-labelledby="modalVentasLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form th:action="@{/contacto}" method="post" class="needs-validation" novalidate>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalVentasLabel">Ventas de snack</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Snacks accesibles y prácticos dentro del campus.</p>
+
+                            <input type="hidden" name="categoria" value="Ventas de snack">
+
+                            <div class="mb-3">
+                                <label for="nombreVentas" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombreVentas" name="nombre" required>
+                                <div class="invalid-feedback">Por favor, ingresa tu nombre.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="correoVentas" class="form-label">Correo</label>
+                                <input type="email" class="form-control" id="correoVentas" name="correo" required>
+                                <div class="invalid-feedback">Por favor, ingresa un correo válido.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="mensajeVentas" class="form-label">Mensaje</label>
+                                <textarea class="form-control" id="mensajeVentas" name="mensaje" rows="3"
+                                    required></textarea>
+                                <div class="invalid-feedback">Por favor, escribe un mensaje.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Materiales -->
+        <div class="modal fade" id="modalMateriales" tabindex="-1" aria-labelledby="modalMaterialesLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form th:action="@{/contacto}" method="post" class="needs-validation" novalidate>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalMaterialesLabel">Materiales</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Intercambio y venta de útiles y herramientas académicas.</p>
+
+                            <input type="hidden" name="categoria" value="Materiales">
+
+                            <div class="mb-3">
+                                <label for="nombreMateriales" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombreMateriales" name="nombre" required>
+                                <div class="invalid-feedback">Por favor, ingresa tu nombre.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="correoMateriales" class="form-label">Correo</label>
+                                <input type="email" class="form-control" id="correoMateriales" name="correo" required>
+                                <div class="invalid-feedback">Por favor, ingresa un correo válido.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="mensajeMateriales" class="form-label">Mensaje</label>
+                                <textarea class="form-control" id="mensajeMateriales" name="mensaje" rows="3"
+                                    required></textarea>
+                                <div class="invalid-feedback">Por favor, escribe un mensaje.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script para validación de formularios -->
+        <script>
+            // Validación de Bootstrap para todos los formularios
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms).forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+            })()
+        </script>
+
+        <!-- Sección de Reseñas -->
+        <section class="py-5" style="background-color: #1c1f23;">
+            <div class="container text-center text-white">
+                <h2 class="fw-bold mb-4">Reseñas de estudiantes</h2>
+
+                <div id="carouselResenas" class="carousel slide mx-auto" data-bs-ride="carousel" data-bs-interval="5000"
+                    style="max-width: 700px;">
+                    <div class="carousel-inner">
+
+                        <!-- Reseña 1 -->
+                        <div class="carousel-item active">
+                            <div class="d-flex flex-column align-items-center">
+                                <img th:src="@{/img/Persona1.jpg}" alt="Valeria R."
+                                    class="rounded-circle mb-3 shadow-sm border border-light"
+                                    style="width: 100px; height: 100px; object-fit: cover;">
+                                <p class="mb-3 fs-5 fst-italic px-3">
+                                    "Vendí mis guías en una tarde. La plataforma es rápida y me pagaron sin problemas."
+                                </p>
+                                <h5 class="fw-bold mb-0">Valeria R.</h5>
+                                <p class="text-white-50">Estudiante de Ingeniería Industrial – 6.º ciclo</p>
+                            </div>
+                        </div>
+
+                        <!-- Reseña 2 -->
+                        <div class="carousel-item">
+                            <div class="d-flex flex-column align-items-center">
+                                <img th:src="@{/img/Persona2.jpg}" alt="Carlos M."
+                                    class="rounded-circle mb-3 shadow-sm border border-light"
+                                    style="width: 100px; height: 100px; object-fit: cover;">
+                                <p class="mb-3 fs-5 fst-italic px-3">
+                                    "Conseguí tutorías fácilmente. Los estudiantes son muy atentos."
+                                </p>
+                                <h5 class="fw-bold mb-0">Carlos M.</h5>
+                                <p class="text-white-50">Estudiante de Sistemas – 4.º ciclo</p>
+                            </div>
+                        </div>
+
+                        <!-- Reseña 3 -->
+                        <div class="carousel-item">
+                            <div class="d-flex flex-column align-items-center">
+                                <img th:src="@{/img/Persona3.jpg}" alt="Ana G."
+                                    class="rounded-circle mb-3 shadow-sm border border-light"
+                                    style="width: 100px; height: 100px; object-fit: cover;">
+                                <p class="mb-3 fs-5 fst-italic px-3">
+                                    "Compré snacks en el campus y fue súper práctico."
+                                </p>
+                                <h5 class="fw-bold mb-0">Ana G.</h5>
+                                <p class="text-white-50">Estudiante de Administración – 3.º ciclo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controles -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselResenas"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselResenas"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq-section py-5" style="background-color: #B50D30;">
+            <div class="container">
+                <h2 class="text-center fw-bold mb-5 text-white">Preguntas Frecuentes</h2>
+
+                <div class="accordion w-75 mx-auto" id="faqAccordion">
+                    <div class="accordion-item border-0 mb-3 rounded-3">
+                        <h2 class="accordion-header" id="heading0">
+                            <button class="accordion-button text-danger fw-bold" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse0" aria-expanded="true" aria-controls="collapse0">
+                                ¿Qué es UTP Market?
+                            </button>
+                        </h2>
+                        <div id="collapse0" class="accordion-collapse collapse show" aria-labelledby="heading0"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                                UTP Market es una plataforma creada por y para estudiantes UTP, donde puedes comprar y
+                                vender servicios,
+                                materiales, guías y más de manera segura.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 mb-3 rounded-3">
+                        <h2 class="accordion-header" id="heading1">
+                            <button class="accordion-button collapsed text-danger fw-bold" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false"
+                                aria-controls="collapse1">
+                                ¿Quiénes pueden usar la plataforma?
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading1"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                                La comunidad está pensada principalmente para estudiantes UTP, aunque en un futuro
+                                podría abrirse a otros
+                                usuarios verificados.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 mb-3 rounded-3">
+                        <h2 class="accordion-header" id="heading2">
+                            <button class="accordion-button collapsed text-danger fw-bold" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false"
+                                aria-controls="collapse2">
+                                ¿Es seguro comprar y vender aquí?
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                                Sí. Solo interactúas con estudiantes UTP, lo que genera un entorno de confianza dentro
+                                de la comunidad.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 mb-3 rounded-3">
+                        <h2 class="accordion-header" id="heading3">
+                            <button class="accordion-button collapsed text-danger fw-bold" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false"
+                                aria-controls="collapse3">
+                                ¿Qué puedo vender en UTP Market?
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                                Puedes vender materiales de estudio, servicios académicos, guías, apuntes, accesorios y
+                                artículos
+                                relacionados con la vida universitaria.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 mb-3 rounded-3">
+                        <h2 class="accordion-header" id="heading4">
+                            <button class="accordion-button collapsed text-danger fw-bold" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false"
+                                aria-controls="collapse4">
+                                ¿Qué hago si tengo un problema con mi compra o venta?
+                            </button>
+                        </h2>
+                        <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                                Puedes reportar el caso al soporte de la plataforma desde tu perfil, y nuestro equipo te
+                                ayudará a
+                                solucionarlo.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="team-section py-5" style="background-color: #F9FAFB;">
+            <div class="container text-center">
+
+                <!-- Título -->
+                <div class="mb-5">
+                    <p class="text-uppercase fw-bold small mb-0 text-secondary">
+                        EQUIPO DE DESARROLLO
+                    </p>
+                    <h2 class="fw-bold text-dark">Nuestro Equipo</h2>
+                </div>
+
+                <!-- Perfiles -->
+                <div class="row justify-content-center g-4">
+
+                    <!-- Kenny -->
+                    <div class="col-10 col-md-4 col-lg-2">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 p-3 text-center bg-white hover-shadow">
+                            <img src="https://avatars.githubusercontent.com/u/60082132?v=4" alt="Kenny Salazar"
+                                class="rounded-circle mx-auto mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                            <h5 class="fw-bold text-dark">Kenny Salazar</h5>
+                            <p class="text-muted small mb-2">Developer</p>
+                            <div class="d-flex justify-content-center gap-3 mb-3">
+                                <i class="bi bi-linkedin text-secondary fs-5 opacity-50"></i>
+                                <i class="bi bi-twitter text-secondary fs-5 opacity-50"></i>
+                                <i class="bi bi-instagram text-secondary fs-5 opacity-50"></i>
+                                <i class="bi bi-facebook text-secondary fs-5 opacity-50"></i>
+                            </div>
+                            <a href="mailto:ceo@empresa.com" class="btn btn-outline-dark btn-sm px-4 border-2">
+                                Contacta a Kenny
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Josue -->
+                    <div class="col-10 col-md-4 col-lg-2">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 p-3 text-center bg-white hover-shadow">
+                            <img src="https://avatars.githubusercontent.com/u/107824312?v=4" alt="Josue Tanta"
+                                class="rounded-circle mx-auto mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                            <h5 class="fw-bold text-dark">Josue Tanta</h5>
+                            <p class="text-muted small mb-2">Developer</p>
+                            <div class="d-flex justify-content-center gap-3 mb-3">
+                                <a href="https://linkedin.com/in/josue-tanta" target="_blank"><i
+                                        class="bi bi-linkedin text-dark fs-5"></i></a>
+                                <i class="bi bi-twitter text-secondary fs-5 opacity-50"></i>
+                                <a href="https://www.instagram.com/ijosueeh27/" target="_blank"><i
+                                        class="bi bi-instagram text-dark fs-5"></i></a>
+                                <i class="bi bi-facebook text-secondary fs-5 opacity-50"></i>
+                            </div>
+                            <a href="mailto:josue.tantacieza@outlook.com"
+                                class="btn btn-outline-dark btn-sm px-4 border-2">
+                                Contacta a Josue
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Alexander -->
+                    <div class="col-10 col-md-4 col-lg-2">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 p-3 text-center bg-white hover-shadow">
+                            <img src="https://avatars.githubusercontent.com/u/209205426?v=4" alt="Alexander Sinte"
+                                class="rounded-circle mx-auto mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                            <h5 class="fw-bold text-dark">Alexander Sinte</h5>
+                            <p class="text-muted small mb-2">Developer</p>
+                            <div class="d-flex justify-content-center gap-3 mb-3">
+                                <a href="https://www.linkedin.com/in/alexander-sinte-042261346/" target="_blank"><i
+                                        class="bi bi-linkedin text-dark fs-5"></i></a>
+                                <i class="bi bi-twitter text-secondary fs-5 opacity-50"></i>
+                                <a href="https://www.instagram.com/_x4nnax/" target="_blank"><i
+                                        class="bi bi-instagram text-dark fs-5"></i></a>
+                                <i class="bi bi-facebook text-secondary fs-5 opacity-50"></i>
+                            </div>
+                            <a href="mailto:cto@empresa.com" class="btn btn-outline-dark btn-sm px-4 border-2">
+                                Contacta a Alexander
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Katherine -->
+                    <div class="col-10 col-md-4 col-lg-2">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 p-3 text-center bg-white hover-shadow">
+                            <img src="https://avatars.githubusercontent.com/u/189315796?v=4" alt="Katherine Salas"
+                                class="rounded-circle mx-auto mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                            <h5 class="fw-bold text-dark">Katherine Salas</h5>
+                            <p class="text-muted small mb-2">Developer</p>
+                            <div class="d-flex justify-content-center gap-3 mb-3">
+                                <a href="https://www.linkedin.com/in/katherine-salas-quiroz-472506337/"
+                                    target="_blank"><i class="bi bi-linkedin text-dark fs-5"></i></a>
+                                <i class="bi bi-twitter text-secondary fs-5 opacity-50"></i>
+                                <a href="https://www.instagram.com/1_kath_6/" target="_blank"><i
+                                        class="bi bi-instagram text-dark fs-5"></i></a>
+                                <i class="bi bi-facebook text-secondary fs-5 opacity-50"></i>
+                            </div>
+                            <a href="mailto:cmo@empresa.com" class="btn btn-outline-dark btn-sm px-4 border-2">
+                                Contacta a Katherine
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Ian -->
+                    <div class="col-10 col-md-4 col-lg-2">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 p-3 text-center bg-white hover-shadow">
+                            <img src="https://avatars.githubusercontent.com/u/226939243?v=4" alt="Ian Callirgos"
+                                class="rounded-circle mx-auto mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                            <h5 class="fw-bold text-dark">Ian Callirgos</h5>
+                            <p class="text-muted small mb-2">Developer</p>
+                            <div class="d-flex justify-content-center gap-3 mb-3">
+                                <i class="bi bi-linkedin text-secondary fs-5 opacity-50"></i>
+                                <i class="bi bi-twitter text-secondary fs-5 opacity-50"></i>
+                                <a href="https://www.instagram.com/engel_1017" target="_blank"><i
+                                        class="bi bi-instagram text-dark fs-5"></i></a>
+                                <a href="https://www.facebook.com/ArturoCallirgos10" target="_blank"><i
+                                        class="bi bi-facebook text-dark fs-5"></i></a>
+                            </div>
+                            <a href="mailto:cfo@empresa.com" class="btn btn-outline-dark btn-sm px-4 border-2">
+                                Contacta a Ian
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Contacto -->
+        <section id="contacto" class="py-5" style="background-color: #B50D30;">
+            <div class="container my-5">
+                <div class="text-center mb-5 text-white">
+                    <p class="fw-bold fs-2">CONTÁCTANOS</p>
+                    <h2 class="fw-bold fs-1">Escríbenos un mensaje</h2>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6">
+                        <form th:action="@{/cita/enviar}" method="post"
+                            class="p-4 shadow rounded bg-white needs-validation" novalidate>
+
+                            <!-- Nombre -->
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="nombre" name="nombre"
+                                    placeholder="Nombre Completo" required>
+                                <label for="nombre">Nombre Completo</label>
+                                <div class="invalid-feedback">Por favor, ingrese su nombre completo.</div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="Correo Electrónico" required>
+                                <label for="email">Correo Electrónico</label>
+                                <div class="invalid-feedback">Ingrese un correo electrónico válido.</div>
+                            </div>
+
+                            <!-- Asunto -->
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="asunto" name="asunto" required>
+                                    <option value="">Selecciona un asunto</option>
+                                    <option value="Consulta General">Consulta General</option>
+                                    <option value="Soporte Técnico">Soporte Técnico</option>
+                                    <option value="Información de Productos">Información de Productos</option>
+                                    <option value="Sugerencias">Sugerencias</option>
+                                    <option value="Reclamos">Reclamos</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                                <label for="asunto">Asunto</label>
+                                <div class="invalid-feedback">Por favor, seleccione un asunto.</div>
+                            </div>
+
+                            <!-- Mensaje -->
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="mensaje" name="mensaje" placeholder="Tu Mensaje"
+                                    style="height: 120px;" required></textarea>
+                                <label for="mensaje">Tu Mensaje</label>
+                                <div class="invalid-feedback">Por favor, escriba su mensaje.</div>
+                            </div>
+
+                            <!-- Alertas -->
+                            <div th:if="${successMessage}" class="alert alert-success mt-3" role="alert">
+                                <span th:text="${successMessage}">¡Mensaje enviado con éxito! Gracias por
+                                    contactarnos.</span>
+                            </div>
+
+                            <div th:if="${errorMessage}" class="alert alert-danger mt-3" role="alert">
+                                <span th:text="${errorMessage}">Hubo un error al enviar el mensaje.</span>
+                            </div>
+
+                            <!-- Botón -->
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-danger btn-lg fw-bold"
+                                    style="background-color: #B50D30; border-color: #B50D30;">
+                                    Enviar Mensaje
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+                // Bootstrap validation frontend
+                (function () {
+                    'use strict'
+                    const forms = document.querySelectorAll('.needs-validation');
+                    Array.prototype.slice.call(forms)
+                        .forEach(function (form) {
+                            form.addEventListener('submit', function (event) {
+                                if (!form.checkValidity()) {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                }
+                                form.classList.add('was-validated');
+                            }, false);
+                        });
+                })();
+        </script>
+
+    </main>
+
+    <footer th:replace="~{layout/_layout :: footer}"></footer>
+
+</body>
+
+</html>

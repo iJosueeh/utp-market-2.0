@@ -1,0 +1,50 @@
+.faq-section .accordion-button {
+  font-weight: 600;
+  background-color: white;
+  transition: background-color 0.2s ease;
+}
+
+.faq-section .accordion-button:not(.collapsed) {
+  background-color: #fff5f5; /* tono suave rojo */
+  color: #dc3545;
+}
+
+.faq-section .accordion-body {
+  background-color: white;
+}
+
+@media (max-width: 768px) {
+  .faq-section .accordion {
+    width: 90% !important;
+  }
+}
+
+.team-section img {
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.team-section img:hover {
+  transform: scale(1.05);
+}
+
+.team-section .btn:hover {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .team-section img {
+    height: 160px;
+    width: 150px;
+  }
+}
+
+.hover-shadow {
+  transition: all 0.3s ease;
+}
+.hover-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
