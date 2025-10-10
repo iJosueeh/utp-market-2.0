@@ -601,16 +601,14 @@
 
                             <!-- Nombre -->
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="nombre" name="nombre"
-                                    placeholder="Nombre Completo" required>
+                                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre Completo" th:value="${nombreCompleto}" th:readonly="${nombreCompleto != null}" required>
                                 <label for="nombre">Nombre Completo</label>
                                 <div class="invalid-feedback">Por favor, ingrese su nombre completo.</div>
                             </div>
 
                             <!-- Email -->
                             <div class="form-floating mb-3">
-                                <input type="email" class="form-control" id="email" name="email"
-                                    placeholder="Correo Electrónico" required>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Correo Electrónico" th:value="${correo}" th:readonly="${correo != null}" required>
                                 <label for="email">Correo Electrónico</label>
                                 <div class="invalid-feedback">Ingrese un correo electrónico válido.</div>
                             </div>
@@ -683,7 +681,7 @@
     </main>
 
     <footer th:replace="~{layout/_layout :: footer}"></footer>
-
+    <div th:replace="~{/chatbot :: chatbot}"></div>
 </body>
 
 </html>

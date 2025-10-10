@@ -17,6 +17,9 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public String registrarUsuario(Usuario usuario){
+        if (!usuario.getEmail().toLowerCase().endsWith("@utp.edu.pe")) {
+            return "El correo debe ser institucional (@utp.edu.pe).";
+        }
         if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
             return "El correo ya está registrado.";
         }

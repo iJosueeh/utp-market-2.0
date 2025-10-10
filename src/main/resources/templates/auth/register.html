@@ -44,8 +44,8 @@
                         <div class="mb-3">
                             <label for="email" class="form-label">Correo electrónico</label>
                             <input type="email" class="form-control" id="email" th:field="*{email}"
-                                placeholder="example@utp.edu.pe" required />
-                            <div class="invalid-feedback">Por favor ingresa un correo válido.</div>
+                                placeholder="example@utp.edu.pe" required pattern="[a-zA-Z0-9._%+-]+@utp\.edu\.pe" />
+                            <div class="invalid-feedback">Por favor, ingresa un correo institucional válido (@utp.edu.pe).</div>
                             <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></p>
                         </div>
 
