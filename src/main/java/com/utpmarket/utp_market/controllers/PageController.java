@@ -66,4 +66,9 @@ public class PageController {
         return "pages/sedes";
     }
 
+    @GetMapping("/ventas")
+    public String ventas(){
+        return "pages/shop";
+    }
+
 }

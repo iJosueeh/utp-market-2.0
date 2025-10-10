@@ -24,7 +24,7 @@
                     </div>
 
                     <!-- Formulario de Registro -->
-                    <form th:action="@{/register}" th:object="${usuarios}" method="post" class="needs-validation"
+                    <form th:action="@{/auth/register}" th:object="${usuario}" method="post" class="needs-validation"
                         novalidate>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -34,8 +34,8 @@
                                 <div class="invalid-feedback">Por favor ingresa tus nombres.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="apellidos" class="form-label">Apellidos</label>
-                                <input type="text" class="form-control" id="apellidos" th:field="*{apellidos}"
+                                <label for="apellido" class="form-label">Apellidos</label>
+                                <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
                                     placeholder="Doe" required />
                                 <div class="invalid-feedback">Por favor ingresa tus apellidos.</div>
                             </div>
@@ -86,7 +86,7 @@
 
                     <p class="text-center mt-3">
                         ¿Ya tienes una cuenta?
-                        <a th:href="@{/login}" class="fw-bold" style="color: #B50D30;">Iniciar Sesión</a>
+                        <a th:href="@{/auth/login}" class="fw-bold" style="color: #B50D30;">Iniciar Sesión</a>
                     </p>
                 </div>
             </div>

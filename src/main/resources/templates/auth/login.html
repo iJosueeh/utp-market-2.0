@@ -32,11 +32,11 @@
                     </div>
 
                     <!-- Formulario -->
-                    <form th:action="@{/login}" method="post" novalidate>
+                    <form th:action="@{/auth/login}" method="post" novalidate>
                         <!-- Correo -->
                         <div class="mb-3">
-                            <label for="username" class="form-label">Correo institucional</label>
-                            <input type="email" class="form-control" id="username" name="username"
+                            <label for="email" class="form-label">Correo institucional</label>
+                            <input type="email" class="form-control" id="email" name="email"
                                 placeholder="example@utp.edu.pe" required autofocus />
                         </div>
 
@@ -58,7 +58,7 @@
 
                         <!-- Recordar y link -->
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <a th:href="@{/forgot-password}" class="text-decoration-none text-danger fw-semibold">
+                            <a th:href="@{/auth/forgot-password}" class="text-decoration-none text-danger fw-semibold">
                                 ¿Olvidaste tu contraseña?
                             </a>
                             <div class="form-check m-0">
@@ -78,7 +78,7 @@
 
                     <p class="text-center small">
                         ¿Aún no tienes una cuenta?
-                        <a th:href="@{/register}" class="fw-bold" style="color: #B50D30;">Regístrate aquí</a>
+                        <a th:href="@{/auth/register}" class="fw-bold" style="color: #B50D30;">Regístrate aquí</a>
                     </p>
                 </main>
             </div>
