@@ -1,5 +1,7 @@
 package com.utpmarket.utp_market.controllers;
 
+import com.utpmarket.utp_market.models.entity.Usuario;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,6 +71,18 @@ public class PageController {
     @GetMapping("/ventas")
     public String ventas(){
         return "pages/shop";
+    }
+
+    @GetMapping("/perfil")
+    public String perfil(HttpSession session, Model model) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (usuario == null) {
+            return "redirect:/auth/login";
+        }
+
+        model.addAttribute("user", usuario);
+        return "pages/perfil";
     }
 
 }

@@ -3,6 +3,7 @@ package com.utpmarket.utp_market.models.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "usuarios")
@@ -13,7 +14,6 @@ public class Usuario {
     private Long id;
 
     private String nombre;
-
     private String apellido;
 
     @Column(nullable = false, unique = true)
@@ -22,18 +22,37 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
+    private String telefono;
+
+    @Temporal(TemporalType.DATE)
+    private Date fechaNacimiento;
+
+    private String codigoEstudiante;
+    private String carrera;
+    private String ciclo;
+
     private String rol;
+
+    @Column(nullable = false)
+    private Boolean activo = true;
 
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     public Usuario() {}
 
-    public Usuario(String nombre, String apellido, String email, String password) {
+    public Usuario(String nombre, String apellido, String email, String password, String telefono, Date fechaNacimiento, String codigoEstudiante, String carrera, String ciclo, String rol, Boolean activo, LocalDateTime fechaCreacion) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
         this.password = password;
+        this.telefono = telefono;
+        this.fechaNacimiento = fechaNacimiento;
+        this.codigoEstudiante = codigoEstudiante;
+        this.carrera = carrera;
+        this.ciclo = ciclo;
         this.rol = rol;
+        this.activo = activo;
+        this.fechaCreacion = fechaCreacion;
     }
 
     public Long getId() {
@@ -56,8 +75,8 @@ public class Usuario {
         return apellido;
     }
 
-    public void setApellido(String apellidos) {
-        this.apellido = apellidos;
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
     }
 
     public String getEmail() {
@@ -76,11 +95,67 @@ public class Usuario {
         this.password = password;
     }
 
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getCodigoEstudiante() {
+        return codigoEstudiante;
+    }
+
+    public void setCodigoEstudiante(String codigoEstudiante) {
+        this.codigoEstudiante = codigoEstudiante;
+    }
+
+    public String getCarrera() {
+        return carrera;
+    }
+
+    public void setCarrera(String carrera) {
+        this.carrera = carrera;
+    }
+
+    public String getCiclo() {
+        return ciclo;
+    }
+
+    public void setCiclo(String ciclo) {
+        this.ciclo = ciclo;
+    }
+
     public String getRol() {
         return rol;
     }
 
     public void setRol(String rol) {
         this.rol = rol;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 }
