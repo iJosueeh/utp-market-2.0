@@ -23,6 +23,7 @@ public class Usuario {
     private String password;
 
     private String telefono;
+    private String photoUrl;
 
     @Temporal(TemporalType.DATE)
     private Date fechaNacimiento;
@@ -33,25 +34,22 @@ public class Usuario {
 
     private String rol;
 
-    @Column(nullable = false)
-    private Boolean activo = true;
-
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     public Usuario() {}
 
-    public Usuario(String nombre, String apellido, String email, String password, String telefono, Date fechaNacimiento, String codigoEstudiante, String carrera, String ciclo, String rol, Boolean activo, LocalDateTime fechaCreacion) {
+    public Usuario(String nombre, String apellido, String email, String password, String telefono, String photoUrl, Date fechaNacimiento, String codigoEstudiante, String carrera, String ciclo, String rol, LocalDateTime fechaCreacion) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
         this.password = password;
         this.telefono = telefono;
+        this.photoUrl = photoUrl;
         this.fechaNacimiento = fechaNacimiento;
         this.codigoEstudiante = codigoEstudiante;
         this.carrera = carrera;
         this.ciclo = ciclo;
         this.rol = rol;
-        this.activo = activo;
         this.fechaCreacion = fechaCreacion;
     }
 
@@ -103,6 +101,14 @@ public class Usuario {
         this.telefono = telefono;
     }
 
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
     public Date getFechaNacimiento() {
         return fechaNacimiento;
     }
@@ -141,14 +147,6 @@ public class Usuario {
 
     public void setRol(String rol) {
         this.rol = rol;
-    }
-
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
     }
 
     public LocalDateTime getFechaCreacion() {
