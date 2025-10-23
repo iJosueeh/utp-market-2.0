@@ -58,7 +58,7 @@ public class GeminiService {
                     - Si no tienes la información solicitada, indícalo claramente y ofrece ayuda con otros aspectos de la plataforma.
                     - Nunca inventes información sobre la plataforma, sus usuarios o sus políticas.
                     - Tu propósito es optimizar la experiencia del usuario dentro de UTP Market.
-                                    """;
+                    """;
 
             String full = systemPrompt + "\n\nUsuario: " + userPrompt + "\nAsistente:";
 
