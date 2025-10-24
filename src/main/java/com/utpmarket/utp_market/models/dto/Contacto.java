@@ -1,4 +1,4 @@
-package com.utpmarket.utp_market.models.entity;
+package com.utpmarket.utp_market.models.dto;
 
 public class Contacto {
     private String nombre;

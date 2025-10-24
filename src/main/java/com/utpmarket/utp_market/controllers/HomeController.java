@@ -1,6 +1,6 @@
 package com.utpmarket.utp_market.controllers;
 
-import com.utpmarket.utp_market.models.entity.Usuario;
+import com.utpmarket.utp_market.models.entity.user.Usuario;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
