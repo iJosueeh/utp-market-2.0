@@ -1,0 +1,213 @@
+<!-- Inserta este bloque donde quieras el chat (Thymeleaf template) -->
+<div th:fragment="chatbot" id="chatbot-root">
+    <div id="chatbot-widget-container" class="chatbot-widget-container closed">
+        <div class="card shadow-sm rounded-4 border-0 h-100 d-flex flex-column">
+            <!-- Header -->
+            <div class="card-header bg-dark p-0 border-0"
+                style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="d-flex justify-content-between align-items-center p-2 text-white">
+                    <div><i class="bi bi-three-dots"></i></div>
+                    <h6 class="mb-0 fw-bold">Chatea con nosotros!</h6>
+                    <div>
+                        <i id="chat-min" class="bi bi-dash-lg me-2" style="cursor:pointer;"></i>
+                        <i id="chat-close" class="bi bi-x-lg" style="cursor:pointer;"></i>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center p-3 bg-white border-top border-bottom">
+                    <div class="position-relative">
+                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center"
+                            style="width:50px;height:50px;">
+                            <i class="bi bi-robot fs-3 text-danger"></i>
+                        </div>
+                        <span
+                            class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
+                            style="width:15px;height:15px;"></span>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="mb-0 fw-bold">UTP - BOT</h5>
+                        <p class="mb-0 text-muted small">Agente de soporte</p>
+                    </div>
+                    <div class="ms-auto">
+                        <button class="btn btn-light btn-sm border me-1"><i class="bi bi-hand-thumbs-up"></i></button>
+                        <button class="btn btn-light btn-sm border"><i class="bi bi-hand-thumbs-down"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div id="chat-body" class="card-body d-flex flex-column" style="overflow-y:auto;padding:1rem;flex-grow:1;">
+                <div id="messages"></div>
+                <div id="messages-end"></div>
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer d-flex p-3 border-0">
+                <input id="user-input" type="text" class="form-control flex-grow-1 me-2 rounded-pill"
+                    placeholder="Escribe tu mensaje...">
+                <button id="send-btn" class="btn btn-primary rounded-circle" style="width:40px;height:40px;">
+                    <i class="bi bi-send"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating button -->
+    <div id="chatbot-fab" class="chatbot-fab" role="button" style="position:fixed;right:20px;bottom:20px;z-index:9999;">
+        <i id="fab-icon" class="bi bi-chat-dots"
+            style="font-size:1.6rem;color:#fff;background:#B50D30;padding:12px;border-radius:50%;"></i>
+    </div>
+
+    <!-- Script: lógica del chat (usa fetch a /api/chatbot/ask) -->
+    <script>
+        (() => {
+            const root = document.getElementById('chatbot-root');
+            const container = document.getElementById('chatbot-widget-container');
+            const fab = document.getElementById('chatbot-fab');
+            const fabIcon = document.getElementById('fab-icon');
+            const messagesBox = document.getElementById('messages');
+            const messagesEnd = document.getElementById('messages-end');
+            const input = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+            const closeBtn = document.getElementById('chat-close');
+            const minBtn = document.getElementById('chat-min');
+
+            let isOpen = false;
+            let cargando = false;
+            let mensajes = [];
+
+            function scrollToBottom() {
+                messagesEnd.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+
+            function renderMessages() {
+                messagesBox.innerHTML = '';
+                mensajes.forEach(msg => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'mb-3 ' + (msg.sender === 'user' ? 'align-self-end' : 'align-self-start');
+                    wrapper.style.maxWidth = '85%';
+
+                    const header = document.createElement('div');
+                    header.className = 'd-flex align-items-end mb-1';
+                    if (msg.sender === 'bot') {
+                        header.innerHTML = `<i class="bi bi-robot fs-5 text-danger me-2"></i><span class="fw-bold small">${msg.name}</span><span class="text-muted small ms-2">${msg.timestamp}</span>`;
+                    } else {
+                        header.innerHTML = `<span class="fw-bold small">${msg.name}</span><span class="text-muted small ms-2">${msg.timestamp}</span>`;
+                    }
+
+                    const bubble = document.createElement('div');
+                    bubble.className = 'p-2 px-3 rounded-3 ' + (msg.sender === 'user' ? 'msgbg-primary text-white rounded-bottom-left-0' : 'bg-light text-dark rounded-bottom-start-0');
+                    bubble.style.whiteSpace = 'pre-wrap';
+                    bubble.innerText = msg.text;
+
+                    wrapper.appendChild(header);
+                    wrapper.appendChild(bubble);
+
+                    if (msg.sender === 'user') {
+                        const read = document.createElement('div');
+                        read.className = 'text-muted small text-end mt-1';
+                        read.innerText = 'Leído';
+                        wrapper.appendChild(read);
+                    }
+
+                    messagesBox.appendChild(wrapper);
+                });
+                scrollToBottom();
+            }
+
+            function nowTime() {
+                const d = new Date();
+                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            function initializeChat() {
+                mensajes = [
+                    { sender: 'bot', name: 'UTP - BOT', text: 'Hola', timestamp: nowTime() },
+                    { sender: 'bot', name: 'UTP - BOT', text: '👋 Bienvenido a UTP Market! Soy tu asistente virtual. Escríbeme tu consulta.', timestamp: nowTime() }
+                ];
+                renderMessages();
+            }
+
+            function openChat() {
+                if (mensajes.length === 0) initializeChat();
+                container.classList.remove('closed');
+                container.classList.add('open');
+                isOpen = true;
+                fabIcon.className = 'bi bi-x-lg';
+                scrollToBottom();
+            }
+
+            function closeChat() {
+                container.classList.remove('open');
+                container.classList.add('closed');
+                isOpen = false;
+                fabIcon.className = 'bi bi-chat-dots';
+            }
+
+            fab.addEventListener('click', () => {
+                if (isOpen) closeChat(); else openChat();
+            });
+
+            closeBtn.addEventListener('click', closeChat);
+            minBtn.addEventListener('click', () => {
+                // minimizar = cerrar
+                closeChat();
+            });
+
+            sendBtn.addEventListener('click', enviarMensaje);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') enviarMensaje();
+            });
+
+            async function enviarMensaje() {
+                const texto = input.value.trim();
+                if (!texto || cargando) return;
+                const mensajeUsuario = { sender: 'user', name: 'Tú', text: texto, timestamp: nowTime() };
+                mensajes.push(mensajeUsuario);
+                renderMessages();
+                input.value = '';
+                cargando = true;
+
+                // spinner visual opcional (puedes mejorar)
+                const spinner = document.createElement('div');
+                spinner.className = 'd-flex justify-content-start mb-3';
+                spinner.innerHTML = `<div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Cargando...</span></div>`;
+                messagesBox.appendChild(spinner);
+                scrollToBottom();
+
+                try {
+                    const resp = await fetch('/api/chatbot/ask', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: texto })
+                    });
+
+                    let data;
+                    const ct = resp.headers.get('content-type') || '';
+                    if (ct.includes('application/json')) {
+                        data = await resp.json();
+                        data = data.reply || JSON.stringify(data);
+                    } else {
+                        data = await resp.text();
+                    }
+
+                    // quitar spinner
+                    spinner.remove();
+
+                    mensajes.push({ sender: 'bot', name: 'UTP - BOT', text: data, timestamp: nowTime() });
+                    renderMessages();
+                } catch (err) {
+                    // quitar spinner
+                    spinner.remove();
+                    mensajes.push({ sender: 'bot', name: 'UTP - BOT', text: 'Error de conexión. Intenta de nuevo más tarde.', timestamp: nowTime() });
+                    renderMessages();
+                    console.error(err);
+                } finally {
+                    cargando = false;
+                }
+            }
+
+            // inicializa cerrado
+            container.classList.add('closed');
+        })();
+    </script>
+</div>

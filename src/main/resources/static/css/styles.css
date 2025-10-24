@@ -48,3 +48,49 @@
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
+
+/* Chatbot styles */
+.chatbot-widget-container {
+    position: fixed;
+    bottom: 90px; /* Above the FAB */
+    right: 20px;
+    width: 400px;
+    height: 600px;
+    max-height: 80vh;
+    z-index: 9998; /* Below the FAB's z-index but above everything else */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transform-origin: bottom right;
+}
+
+.chatbot-widget-container.closed {
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.chatbot-widget-container.open {
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.msgbg-primary {
+    background-color: #B50D30;
+}
+
+.rounded-bottom-left-0 {
+    border-bottom-left-radius: 0 !important;
+}
+
+.rounded-bottom-start-0 {
+    border-bottom-left-radius: 0 !important;
+}
+
+@media (max-width: 768px) {
+    .chatbot-widget-container {
+        width: 90vw;
+        height: 70vh;
+        right: 5vw;
+        bottom: 90px;
+   }
+}

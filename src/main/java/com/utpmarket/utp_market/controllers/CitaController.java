@@ -1,30 +1,29 @@
 package com.utpmarket.utp_market.controllers;
 
+import com.utpmarket.utp_market.models.entity.user.Cita;
+import com.utpmarket.utp_market.services.CitaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/cita")
 public class CitaController {
 
+    @Autowired
+    private CitaService citaService;
+
     @PostMapping("/enviar")
-    public String enviarFormulario(
-            @RequestParam String nombre,
-            @RequestParam String email,
-            @RequestParam String asunto,
-            @RequestParam String mensaje,
-            Model model) {
-
+    public String enviarFormulario(@ModelAttribute Cita cita, RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute("successMessage", "¡Mensaje enviado con éxito! Gracias por contactarnos.");
+            citaService.guardarCita(cita);
+            redirectAttributes.addFlashAttribute("successMessage", "¡Mensaje enviado y guardado con éxito! Gracias por contactarnos.");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Hubo un problema al enviar el mensaje. Inténtalo nuevamente.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Hubo un problema al enviar el mensaje. Inténtalo nuevamente.");
         }
-
-        return "index";
+        return "redirect:/#contacto";
     }
-
 }

@@ -1,5 +1,7 @@
 package com.utpmarket.utp_market.controllers;
 
+import com.utpmarket.utp_market.models.entity.user.Usuario;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
     @GetMapping("/")
-    public String inicio(Model model) {
+    public String inicio(Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        if (usuario != null) {
+            model.addAttribute("nombreCompleto", usuario.getNombre() + " " + usuario.getApellido());
+            model.addAttribute("correo", usuario.getEmail());
+        }
         return "index";
     }
 
