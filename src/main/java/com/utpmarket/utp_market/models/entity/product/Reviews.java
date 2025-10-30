@@ -15,17 +15,17 @@ public class Reviews {
 
     private String comentario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id")
     private Producto producto;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     private Integer puntaje;
 
-    @OneToMany(mappedBy = "reviews")
+    @OneToMany(mappedBy = "reviews", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RespuestaReview> respuestas;
 
     public Reviews() {}

@@ -17,13 +17,13 @@ public class EstadoPedido {
 
     private String descripcion;
 
-    @OneToMany(mappedBy = "estado")
+    @OneToMany(mappedBy = "estado", fetch = FetchType.LAZY)
     private Set<Pedido> pedidos;
 
-    @OneToMany(mappedBy = "estadoAnterior")
+    @OneToMany(mappedBy = "estadoAnterior", fetch = FetchType.LAZY)
     private Set<HistorialEstadoPedido> historialEstadoPedidosAnterior;
 
-    @OneToMany(mappedBy = "estadoNuevo")
+    @OneToMany(mappedBy = "estadoNuevo", fetch = FetchType.LAZY)
     private Set<HistorialEstadoPedido> historialEstadoPedidosNuevo;
 
     public EstadoPedido() {}

@@ -15,7 +15,7 @@ public class Etiqueta {
     private String nombre;
     private String color;
 
-    @OneToMany(mappedBy = "etiqueta")
+    @OneToMany(mappedBy = "etiqueta", fetch = FetchType.LAZY)
     private Set<EtiquetaProducto> etiquetaProductos;
 
     public Etiqueta() {}

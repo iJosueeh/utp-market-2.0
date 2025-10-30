@@ -1,33 +1,21 @@
-package com.utpmarket.utp_market.models.entity.product;
+package com.utpmarket.utp_market.models.dto;
 
-import jakarta.persistence.*;
-
-import java.util.Set;
-
-@Entity
-@Table(name = "categorias")
-public class Categoria {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CategoriaDTO {
     private Long id;
-
     private String nombre;
     private String descripcion;
     private String icono;
+    private Long cantidadProductos; // Para mostrar en el filtro, por ejemplo
 
-    @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
-    private Set<Producto> productos;
-
-    public Categoria() {}
-
-    public Categoria(Long id, String nombre, String descripcion, String icono) {
+    public CategoriaDTO(Long id, String nombre, String descripcion, String icono, Long cantidadProductos) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.icono = icono;
+        this.cantidadProductos = cantidadProductos;
     }
 
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -44,7 +32,9 @@ public class Categoria {
         this.nombre = nombre;
     }
 
-    public String getDescripcion() { return descripcion; }
+    public String getDescripcion() {
+        return descripcion;
+    }
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
@@ -58,11 +48,11 @@ public class Categoria {
         this.icono = icono;
     }
 
-    public Set<Producto> getProductos() {
-        return productos;
+    public Long getCantidadProductos() {
+        return cantidadProductos;
     }
 
-    public void setProductos(Set<Producto> productos) {
-        this.productos = productos;
+    public void setCantidadProductos(Long cantidadProductos) {
+        this.cantidadProductos = cantidadProductos;
     }
 }

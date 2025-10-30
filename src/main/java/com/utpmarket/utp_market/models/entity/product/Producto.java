@@ -21,30 +21,30 @@ public class Producto {
     private String descripcion;
     private Double precio;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id")
     private EstadoProducto estado;
 
     private Integer stock;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendedor_id")
     private Usuario vendedor;
 
     private Boolean isDestacado;
     private Timestamp fecha_creacion;
 
-    @OneToMany(mappedBy = "producto")
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ImageneProducto> imagenes;
 
-    @OneToMany(mappedBy = "producto")
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Reviews> reviews;
 
-    @OneToMany(mappedBy = "producto")
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Favorito> favoritos;
 
     @OneToMany(mappedBy = "producto")
@@ -53,7 +53,7 @@ public class Producto {
     @OneToMany(mappedBy = "producto")
     private Set<ItemsCarrito> itemsCarrito;
 
-    @OneToMany(mappedBy = "producto")
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EtiquetaProducto> etiquetaProductos;
 
     public Producto() {}

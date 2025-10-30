@@ -15,7 +15,7 @@ public class MetodoPago {
     private String nombre;
     private String descripcion;
 
-    @OneToMany(mappedBy = "metodoPago")
+    @OneToMany(mappedBy = "metodoPago", fetch = FetchType.LAZY)
     private Set<Pedido> pedidos;
 
     public MetodoPago() {}
