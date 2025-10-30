@@ -14,13 +14,13 @@ public class Carrito {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     private Timestamp fecha_creacion;
 
-    @OneToMany(mappedBy = "carrito")
+    @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ItemsCarrito> itemsCarrito;
 
     public Carrito() {}

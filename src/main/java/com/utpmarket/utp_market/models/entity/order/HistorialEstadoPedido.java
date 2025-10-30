@@ -13,21 +13,21 @@ public class HistorialEstadoPedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id")
     private Pedido pedido;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_responsable_id")
     private Usuario usuarioResponsable;
 
     private Timestamp fecha_cambio;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_anterior_id")
     private EstadoPedido estadoAnterior;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_nuevo_id")
     private EstadoPedido estadoNuevo;
 

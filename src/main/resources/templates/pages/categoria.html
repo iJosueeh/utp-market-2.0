@@ -3,462 +3,692 @@
 
 <head th:replace="~{layout/_layout :: head('Catálogo de Productos - UTP Market')}"></head>
 
-<body>
-    <header th:replace="~{layout/_layout :: header}"></header>
+<body th:attr="data-is-logged-in=${isLoggedIn}">
+<header th:replace="~{layout/_layout :: header}"></header>
 
-    <main style="margin-top: 80px; background-color: #f8f9fa;">
-        <div class="container-fluid py-4">
-            <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
-                    <li class="breadcrumb-item active">Productos</li>
-                </ol>
-            </nav>
+<main style="margin-top: 80px; background-color: #f8f9fa;">
+    <div class="container-fluid py-4">
+        <!-- Bootstrap Alert Placeholder -->
+        <div id="loginAlert" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+            Debes iniciar sesión para añadir productos a favoritos.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-            <!-- Título y descripción -->
-            <div class="mb-4">
-                <h2 class="fw-bold mb-2">Catálogo de Productos</h2>
-                <p class="text-muted">Encuentra todo lo que necesitas para tu vida universitaria en UTP</p>
-            </div>
+        <!-- Favorite Notification Alert Placeholder -->
+        <div id="favoriteNotificationAlert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+            <span id="favoriteNotificationMessage"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-            <div class="row">
-                <!-- Sidebar de Filtros -->
-                <div class="col-lg-3 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 fw-bold">Filtros</h5>
-                            <button class="btn btn-link text-danger text-decoration-none p-0"
-                                onclick="limpiarFiltros()">
-                                <i class="bi bi-x-circle"></i> Limpiar
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <!-- Filtro de Precio -->
-                            <div class="mb-4">
-                                <h6 class="fw-bold mb-3">Rango de Precio</h6>
-                                <div class="mb-3">
-                                    <label for="precioMin" class="form-label small">Mínimo</label>
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text">S/</span>
-                                        <input type="number" class="form-control" id="precioMin" name="precioMin"
-                                            value="0" min="0">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+                <li class="breadcrumb-item active">Productos</li>
+            </ol>
+        </nav>
+
+        <!-- Título y descripción -->
+        <div class="mb-4">
+            <h2 class="fw-bold mb-2">Catálogo de Productos</h2>
+            <p class="text-muted">Encuentra todo lo que necesitas para tu vida universitaria en UTP</p>
+        </div>
+
+        <div class="row">
+                            <!-- Sidebar de Filtros -->
+                            <div class="col-lg-3 mb-4">
+                                <form id="filterForm" th:action="@{/categoria}" method="get">
+                                    <div class="card shadow-sm">
+                                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-0 fw-bold">Filtros</h5>
+                                            <button type="button" class="btn btn-link text-danger text-decoration-none p-0"
+                                                onclick="limpiarFiltros()">
+                                                <i class="bi bi-x-circle"></i> Limpiar
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Filtro de Precio -->
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold mb-3">Rango de Precio</h6>
+                                                <div class="mb-3">
+                                                    <label for="precioMin" class="form-label small">Mínimo</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text">S/</span>
+                                                        <input type="number" class="form-control" id="precioMin" name="minPrice"
+                                                            th:value="${currentMinPrice != null ? currentMinPrice : 0}" min="0">
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="precioMax" class="form-label small">Máximo</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text">S/</span>
+                                                        <input type="number" class="form-control" id="precioMax" name="maxPrice"
+                                                            th:value="${currentMaxPrice != null ? currentMaxPrice : 5000}" max="5000">
+                                                    </div>
+                                                </div>
+                                                <input type="range" class="form-range" min="0" max="5000" step="50" id="rangePrice"
+                                                    th:value="${currentMaxPrice != null ? currentMaxPrice : 5000}">
+                                            </div>
+            
+                                            <hr>
+                                            <!-- Ordenamiento -->
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold mb-3">Ordenar por</h6>
+                                                <select class="form-select" name="sortBy" id="sortBySelect" th:attr="data-current-sort-by=${currentSortBy}">
+                                                    <option value="relevancia" th:selected="${currentSortBy == 'relevancia'}">Más Relevantes</option>
+                                                    <option value="precio-asc" th:selected="${currentSortBy == 'precio-asc'}">Precio: Menor a Mayor</option>
+                                                    <option value="precio-desc" th:selected="${currentSortBy == 'precio-desc'}">Precio: Mayor a Menor</option>
+                                                    <option value="nombre-asc" th:selected="${currentSortBy == 'nombre-asc'}">Nombre A-Z</option>
+                                                    <option value="rating-desc" th:selected="${currentSortBy == 'rating-desc'}">Mejor Calificados</option>
+                                                </select>
+                                            </div>
+            
+                                            <hr>
+            
+                                            <!-- Categorías -->
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold mb-3">Categorías</h6>
+                                                                                <div class="form-check mb-2" th:each="categoria : ${categorias}">
+                                                                                    <input class="form-check-input" type="checkbox" name="categoryId"
+                                                                                        th:value="${categoria.id}" th:id="'cat' + ${categoria.id}"
+                                                                                        th:checked="${currentCategoryIds != null and currentCategoryIds.contains(categoria.id)}">
+                                                                                    <label class="form-check-label d-flex justify-content-between" th:for="'cat' + ${categoria.id}">
+                                                                                        <span th:text="${categoria.nombre}"></span>
+                                                                                        <span class="text-muted" th:text="'(' + ${categoria.cantidadProductos} + ')'">(0)</span>
+                                                                                    </label>
+                                                                                </div>                                            </div>
+            
+                                            <hr>
+            
+                                            <!-- Vendedores -->
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold mb-3">Vendedores</h6>
+                                                <div class="form-check mb-2" th:each="vendedor : ${vendedores}">
+                                                    <input class="form-check-input" type="checkbox" name="sellerId"
+                                                        th:value="${vendedor.id}" th:id="'vend' + ${vendedor.id}"
+                                                        th:checked="${currentSellerId != null and currentSellerId == vendedor.id}">
+                                                    <label class="form-check-label d-flex justify-content-between" th:for="'vend' + ${vendedor.id}">
+                                                        <span th:text="${vendedor.nombre}"></span>
+                                                        <span class="text-muted" th:text="'(' + ${vendedor.cantidadProductos} + ')'">(0)</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+            
+                                            <hr>
+            
+                                                                            <!-- Calificación -->
+                                                                            <div class="mb-4">
+                                                                                <h6 class="fw-bold mb-3">Calificación</h6>
+                                                                                <div class="form-check mb-2">
+                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating5" value="5"
+                                                                                        th:checked="${currentMinRating != null and currentMinRating == 5}">
+                                                                                    <label class="form-check-label" for="rating5">
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <span class="ms-1">y más</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                                <div class="form-check mb-2">
+                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating4" value="4"
+                                                                                        th:checked="${currentMinRating != null and currentMinRating == 4}">
+                                                                                    <label class="form-check-label" for="rating4">
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <span class="ms-1">y más</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                                <div class="form-check mb-2">
+                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating3" value="3"
+                                                                                        th:checked="${currentMinRating != null and currentMinRating == 3}">
+                                                                                    <label class="form-check-label" for="rating3">
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <span class="ms-1">y más</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                                <div class="form-check mb-2">
+                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating2" value="2"
+                                                                                        th:checked="${currentMinRating != null and currentMinRating == 2}">
+                                                                                    <label class="form-check-label" for="rating2">
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <span class="ms-1">y más</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating1" value="1"
+                                                                                        th:checked="${currentMinRating != null and currentMinRating == 1}">
+                                                                                    <label class="form-check-label" for="rating1">
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <i class="bi bi-star text-warning"></i>
+                                                                                        <span class="ms-1">y más</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>            
+                                            <hr>
+            
+                                            <!-- Stock -->
+                                            <div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="soloStock" name="inStockOnly"
+                                                        th:checked="${currentInStockOnly != null and currentInStockOnly}">
+                                                    <label class="form-check-label" for="soloStock">
+                                                        Solo productos en stock
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="precioMax" class="form-label small">Máximo</label>
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text">S/</span>
-                                        <input type="number" class="form-control" id="precioMax" name="precioMax"
-                                            value="5000" max="5000">
-                                    </div>
-                                </div>
-                                <input type="range" class="form-range" min="0" max="5000" step="50" id="rangePrice">
+                                </form>
                             </div>
 
-                            <hr>
-
-                            <!-- Categorías -->
-                            <div class="mb-4">
-                                <h6 class="fw-bold mb-3">Categorías</h6>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" value="electronica" id="cat1">
-                                    <label class="form-check-label d-flex justify-content-between" for="cat1">
-                                        <span>Electrónica</span>
-                                        <span class="text-muted">(156)</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" value="libros" id="cat2">
-                                    <label class="form-check-label d-flex justify-content-between" for="cat2">
-                                        <span>Libros</span>
-                                        <span class="text-muted">(243)</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" value="utiles" id="cat3">
-                                    <label class="form-check-label d-flex justify-content-between" for="cat3">
-                                        <span>Útiles Escolares</span>
-                                        <span class="text-muted">(189)</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" value="ropa" id="cat4">
-                                    <label class="form-check-label d-flex justify-content-between" for="cat4">
-                                        <span>Ropa UTP</span>
-                                        <span class="text-muted">(87)</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" value="accesorios" id="cat5">
-                                    <label class="form-check-label d-flex justify-content-between" for="cat5">
-                                        <span>Accesorios</span>
-                                        <span class="text-muted">(134)</span>
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="software" id="cat6">
-                                    <label class="form-check-label d-flex justify-content-between" for="cat6">
-                                        <span>Software</span>
-                                        <span class="text-muted">(45)</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <hr>
-
-                            <!-- Vendedores -->
-                            <div class="mb-4">
-                                <h6 class="fw-bold mb-3">Vendedores</h6>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" value="utp-store" id="vend1">
-                                    <label class="form-check-label d-flex justify-content-between" for="vend1">
-                                        <span>UTP Store Oficial</span>
-                                        <span class="text-muted">(324)</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" value="techperu" id="vend2">
-                                    <label class="form-check-label d-flex justify-content-between" for="vend2">
-                                        <span>TechPeru</span>
-                                        <span class="text-muted">(156)</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" value="libros-academia" id="vend3">
-                                    <label class="form-check-label d-flex justify-content-between" for="vend3">
-                                        <span>Libros Academia</span>
-                                        <span class="text-muted">(98)</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" value="estudiante-pro" id="vend4">
-                                    <label class="form-check-label d-flex justify-content-between" for="vend4">
-                                        <span>Estudiante Pro</span>
-                                        <span class="text-muted">(67)</span>
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="campus-shop" id="vend5">
-                                    <label class="form-check-label d-flex justify-content-between" for="vend5">
-                                        <span>Campus Shop</span>
-                                        <span class="text-muted">(54)</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <hr>
-
-                            <!-- Calificación -->
-                            <div class="mb-4">
-                                <h6 class="fw-bold mb-3">Calificación</h6>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating5">
-                                    <label class="form-check-label" for="rating5">
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <span class="ms-1">y más</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating4">
-                                    <label class="form-check-label" for="rating4">
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <span class="ms-1">y más</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating3">
-                                    <label class="form-check-label" for="rating3">
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <span class="ms-1">y más</span>
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating2">
-                                    <label class="form-check-label" for="rating2">
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <span class="ms-1">y más</span>
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating1">
-                                    <label class="form-check-label" for="rating1">
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <i class="bi bi-star text-warning"></i>
-                                        <span class="ms-1">y más</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <hr>
-
-                            <!-- Stock -->
-                            <div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="soloStock">
-                                    <label class="form-check-label" for="soloStock">
-                                        Solo productos en stock
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Listado de Productos -->
-                <div class="col-lg-9">
-                    <!-- Barra de búsqueda y ordenamiento -->
-                    <div class="card shadow-sm mb-4">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-md-6 mb-3 mb-md-0">
-                                    <div class="input-group">
+            <!-- Listado de Productos -->
+            <div class="col-lg-9">
+                <!-- Barra de búsqueda y ordenamiento -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <div class="input-group">
                                         <span class="input-group-text bg-white">
                                             <i class="bi bi-search"></i>
                                         </span>
-                                        <input type="text" class="form-control border-start-0"
-                                            placeholder="Buscar productos...">
-                                    </div>
+                                    <input type="text" class="form-control border-start-0"
+                                           placeholder="Buscar productos..." name="searchTerm" th:value="${currentSearchTerm}">
                                 </div>
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <select class="form-select">
-                                        <option selected>Más Relevantes</option>
-                                        <option value="precio-asc">Precio: Menor a Mayor</option>
-                                        <option value="precio-desc">Precio: Mayor a Menor</option>
-                                        <option value="nombre">Nombre A-Z</option>
-                                        <option value="rating">Mejor Calificados</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 text-end">
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-outline-secondary active">
-                                            <i class="bi bi-grid-3x3-gap"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-secondary">
-                                            <i class="bi bi-list"></i>
-                                        </button>
-                                    </div>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-outline-secondary active">
+                                        <i class="bi bi-grid-3x3-gap"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary">
+                                        <i class="bi bi-list"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Contador de resultados -->
-                    <div class="mb-3">
-                        <p class="text-muted">
-                            Mostrando <span th:text="${productos.size()}">12</span> de
-                            <span th:text="${totalProductos}">12</span> productos
-                        </p>
-                    </div>
+                <!-- Contador de resultados -->
+                <div class="mb-3">
+                    <p class="text-muted">
+                        Mostrando <span th:text="${productos.size()}">12</span> de
+                        <span th:text="${totalProductos}">12</span> productos
+                    </p>
+                </div>
 
-                    <!-- Grid de Productos -->
-                    <div class="row g-4">
-                        <div class="col-md-6 col-lg-4" th:each="producto : ${productos}">
-                            <div class="card h-100 shadow-sm product-card position-relative">
-                                <!-- Badges -->
-                                <div class="position-absolute top-0 start-0 m-2" style="z-index: 10;">
+                <!-- Grid de Productos -->
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4" th:each="producto : ${productos}">
+                        <div class="card h-100 shadow-sm product-card position-relative">
+                            <!-- Badges -->
+                            <div class="position-absolute top-0 start-0 m-2" style="z-index: 10;">
                                     <span class="badge bg-danger" th:if="${producto.descuento > 0}">
                                         -<span th:text="${producto.descuento}">10</span>%
                                     </span>
-                                    <span class="badge bg-success" th:if="${producto.nuevo}">
+                                <span class="badge bg-success" th:if="${producto.isNuevo}">
                                         Nuevo
                                     </span>
-                                    <span class="badge bg-warning text-dark" th:if="${producto.estado.nombre == 'Agotado'}">
+                                <span class="badge bg-warning text-dark" th:if="${producto.estadoNombre == 'Agotado'}">
                                         Agotado
                                     </span>
-                                </div>
+                            </div>
 
-                                <!-- Imagen del producto -->
-                                <div class="product-image-container position-relative overflow-hidden">
-                                    <img th:src="@{${producto.imagenUrl}}" class="card-img-top"
-                                        th:alt="${producto.nombre}" style="height: 250px; object-fit: cover;">
-                                    <!-- Overlay con botones -->
-                                    <div class="product-overlay position-absolute w-100 h-100 top-0 start-0 
+                            <!-- Imagen del producto -->
+                            <div class="product-image-container position-relative overflow-hidden">
+                                <img th:src="@{${producto.imagenUrlPrincipal}}" class="card-img-top"
+                                     th:alt="${producto.nombre}" style="height: 250px; object-fit: cover;">
+                                <!-- Overlay con botones -->
+                                <div class="product-overlay position-absolute w-100 h-100 top-0 start-0
                                                 d-flex align-items-center justify-content-center">
-                                        <a th:href="@{/producto/{id}(id=${producto.id})}"
-                                            class="btn btn-light btn-sm me-2">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <button class="btn btn-light btn-sm" onclick="agregarAFavoritos(this)"
+                                    <a th:href="@{/producto/{id}(id=${producto.id})}"
+                                       class="btn btn-light btn-sm me-2">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <button class="btn btn-light btn-sm" onclick="agregarAFavoritos(this)"
                                             th:data-producto-id="${producto.id}">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
-                                    </div>
+                                        <i class="bi bi-heart"></i>
+                                    </button>
                                 </div>
+                            </div>
 
-                                <div class="card-body">
-                                    <!-- Vendedor -->
-                                    <p class="text-muted small mb-1">
-                                        Vendido por:
-                                        <span class="text-danger fw-semibold"
-                                            th:text="${producto.vendedor.nombre}">TechPeru</span>
-                                    </p>
+                            <div class="card-body">
+                                <!-- Vendedor -->
+                                <p class="text-muted small mb-1">
+                                    Vendido por:
+                                    <span class="text-danger fw-semibold"
+                                          th:text="${producto.vendedorNombre}">TechPeru</span>
+                                </p>
 
-                                    <!-- Nombre del producto -->
-                                    <h6 class="card-title mb-2" th:text="${producto.nombre}">
-                                        Laptop Lenovo IdeaPad 3 15.6"
-                                    </h6>
+                                <!-- Nombre del producto -->
+                                <h6 class="card-title mb-2" th:text="${producto.nombre}">
+                                    Laptop Lenovo IdeaPad 3 15.6"
+                                </h6>
 
-                                    <!-- Rating -->
-                                    <div class="mb-2">
+                                <!-- Rating -->
+                                <div class="mb-2">
                                         <span th:each="i : ${#numbers.sequence(1, 5)}">
                                             <i class="bi text-warning"
-                                                th:classappend="${i <= producto.rating} ? 'bi-star-fill' : 'bi-star'"></i>
+                                               th:classappend="${i <= producto.rating} ? 'bi-star-fill' : 'bi-star'"></i>
                                         </span>
-                                        <span class="text-muted small ms-1">
-                                            <span th:text="${producto.rating}">4.5</span>
+                                    <span class="text-muted small ms-1">
+                                            <span th:text="${#numbers.formatDecimal(producto.rating, 0, 1)}">4.5</span>
                                             (<span th:text="${producto.numReviews}">128</span>)
                                         </span>
-                                    </div>
+                                </div>
 
-                                    <!-- Precio -->
-                                    <div class="mb-3">
+                                <!-- Precio -->
+                                <div class="mb-3">
                                         <span class="h5 text-danger fw-bold mb-0">
-                                            S/ <span th:text="${producto.precio}">2,499.00</span>
+                                            S/ <span
+                                                th:text="${#numbers.formatDecimal(producto.precio, 0, 2)}">2,499.00</span>
                                         </span>
-                                        <span class="text-muted text-decoration-line-through ms-2"
-                                            th:if="${producto.precioAnterior}"
-                                            th:text="'S/ ' + ${producto.precioAnterior}">
+                                    <span class="text-muted text-decoration-line-through ms-2"
+                                          th:if="${producto.precioAnterior}"
+                                          th:text="'S/ ' + ${#numbers.formatDecimal(producto.precioAnterior, 0, 2)}">
                                             S/ 2,999.00
                                         </span>
-                                    </div>
+                                </div>
 
-                                    <!-- Botones -->
-                                    <div class="d-grid gap-2">
-                                        <a th:href="@{/producto/{id}(id=${producto.id})}"
-                                            class="btn btn-outline-danger btn-sm">
-                                            Ver Detalle
-                                        </a>
-                                        <button class="btn btn-danger btn-sm" onclick="agregarAlCarrito(this)"
-                                            th:data-producto-id="${producto.id}" th:disabled="${producto.estado.nombre == 'Agotado'}">
-                                            <i class="bi bi-cart-plus me-1"></i>
-                                            <span th:text="${producto.estado.nombre == 'Agotado'} ? 'Agotado' : 'Agregar'">Agregar</span>
-                                        </button>
-                                    </div>
+                                <!-- Botones -->
+                                <div class="d-grid gap-2">
+                                    <a th:href="@{/producto/{id}(id=${producto.id})}"
+                                       class="btn btn-outline-danger btn-sm">
+                                        Ver Detalle
+                                    </a>
+                                    <button class="btn btn-danger btn-sm" onclick="agregarAlCarrito(this)"
+                                            th:data-producto-id="${producto.id}"
+                                            th:disabled="${producto.estadoNombre == 'Agotado'}">
+                                        <i class="bi bi-cart-plus me-1"></i>
+                                        <span th:text="${producto.estadoNombre == 'Agotado'} ? 'Agotado' : 'Agregar'">Agregar</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Paginación -->
-                    <nav class="mt-5">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1">Anterior</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Siguiente</a>
-                            </li>
-                        </ul>
-                    </nav>
                 </div>
+
+                <!-- Paginación -->
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
-    <footer th:replace="~{layout/_layout :: footer}"></footer>
+<footer th:replace="~{layout/_layout :: footer}"></footer>
 
-    <style>
-        .product-card {
-            transition: all 0.3s ease;
-        }
+<style>
+    .product-card {
+        transition: all 0.3s ease;
+    }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
-        }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+    }
 
-        .product-image-container {
-            position: relative;
-        }
+    .product-image-container {
+        position: relative;
+    }
 
-        .product-overlay {
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+    .product-overlay {
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
 
-        .product-card:hover .product-overlay {
-            opacity: 1;
-        }
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
 
-        .btn-danger {
-            background-color: #B50D30;
-            border-color: #B50D30;
-        }
+    .btn-danger {
+        background-color: #B50D30;
+        border-color: #B50D30;
+    }
 
-        .btn-danger:hover {
-            background-color: #8a0a24;
-            border-color: #8a0a24;
-        }
+    .btn-danger:hover {
+        background-color: #8a0a24;
+        border-color: #8a0a24;
+    }
 
-        .btn-outline-danger {
-            color: #B50D30;
-            border-color: #B50D30;
-        }
+    .btn-outline-danger {
+        color: #B50D30;
+        border-color: #B50D30;
+    }
 
-        .btn-outline-danger:hover {
-            background-color: #B50D30;
-            border-color: #B50D30;
-            color: white;
-        }
+    .btn-outline-danger:hover {
+        background-color: #B50D30;
+        border-color: #B50D30;
+        color: white;
+    }
 
-        .text-danger {
-            color: #B50D30 !important;
-        }
+    .text-danger {
+        color: #B50D30 !important;
+    }
 
-        .badge.bg-danger {
-            background-color: #B50D30 !important;
-        }
+    .badge.bg-danger {
+        background-color: #B50D30 !important;
+    }
 
-        .page-item.active .page-link {
-            background-color: #B50D30;
-            border-color: #B50D30;
-        }
-    </style>
+    .page-item.active .page-link {
+        background-color: #B50D30;
+        border-color: #B50D30;
+    }
+</style>
 
     <script>
+        const filterForm = document.getElementById('filterForm');
+        const precioMinInput = document.getElementById('precioMin');
+        const precioMaxInput = document.getElementById('precioMax');
+        const rangePriceInput = document.getElementById('rangePrice');
+        const soloStockCheckbox = document.getElementById('soloStock');
+        const categoryCheckboxes = document.querySelectorAll('input[name="categoryId"]');
+        const sellerCheckboxes = document.querySelectorAll('input[name="sellerId"]');
+
+        function submitFilterForm() {
+            const params = new URLSearchParams();
+
+            // Get values from all filter controls
+            if (soloStockCheckbox.checked) {
+                params.set('inStockOnly', 'true');
+            }
+            params.set('minPrice', precioMinInput.value);
+            params.set('maxPrice', precioMaxInput.value);
+
+            categoryCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    params.append('categoryId', cb.value);
+                }
+            });
+
+            sellerCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    params.append('sellerId', cb.value);
+                }
+            });
+
+            const selectedMinRating = document.querySelector('input[name="minRating"]:checked');
+            if (selectedMinRating) {
+                params.set('minRating', selectedMinRating.value);
+            }
+
+            const searchTermInput = document.querySelector('input[name="searchTerm"]');
+            if (searchTermInput && searchTermInput.value) {
+                params.set('searchTerm', searchTermInput.value);
+            }
+
+            const sortBySelect = document.getElementById('sortBySelect');
+            if (sortBySelect && sortBySelect.value) {
+                params.set('sortBy', sortBySelect.value);
+            }
+
+            window.location.search = params.toString();
+        }
+
         function limpiarFiltros() {
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-            document.querySelectorAll('input[type="radio"]').forEach(rb => rb.checked = false);
-            document.getElementById('precioMin').value = 0;
-            document.getElementById('precioMax').value = 5000;
+            precioMinInput.value = 0;
+            precioMaxInput.value = 5000;
+            rangePriceInput.value = 0;
+            soloStockCheckbox.checked = false;
+            categoryCheckboxes.forEach(cb => cb.checked = false);
+            sellerCheckboxes.forEach(cb => cb.checked = false);
+            // Submit the form after clearing filters
+            submitFilterForm();
         }
 
         function agregarAlCarrito(button) {
             const productoId = button.dataset.productoId;
-            alert('Producto agregado al carrito');
+            // Lógica para agregar al carrito (aún no implementada)
         }
 
         function agregarAFavoritos(button) {
+            const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
+            const loginAlert = document.getElementById('loginAlert');
+            const favoriteNotificationAlert = document.getElementById('favoriteNotificationAlert');
+            const favoriteNotificationMessage = document.getElementById('favoriteNotificationMessage');
+
+            // Hide any previous alerts
+            loginAlert.classList.add('d-none');
+            favoriteNotificationAlert.classList.add('d-none');
+
+            if (!isLoggedIn) {
+                loginAlert.classList.remove('d-none');
+                loginAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return; // Stop further execution
+            }
+
             const productoId = button.dataset.productoId;
             const icon = button.querySelector('i');
-            icon.classList.toggle('bi-heart');
-            icon.classList.toggle('bi-heart-fill');
-            icon.classList.toggle('text-danger');
+
+            fetch(`/api/favoritos/toggle/${productoId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 'X-CSRF-TOKEN': csrfToken // Add CSRF token if using Spring Security
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // If response is not OK (e.g., 401, 400, 500), parse error message
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || 'Error desconocido');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (data.added) {
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill');
+                        icon.classList.add('text-danger');
+                        favoriteNotificationAlert.classList.remove('alert-danger');
+                        favoriteNotificationAlert.classList.add('alert-success');
+                    } else {
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.remove('text-danger');
+                        icon.classList.add('bi-heart');
+                        favoriteNotificationAlert.classList.remove('alert-success');
+                        favoriteNotificationAlert.classList.add('alert-danger');
+                    }
+                    favoriteNotificationMessage.innerHTML = data.message; // Update message content
+                    favoriteNotificationAlert.classList.remove('d-none');
+                    favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Hide alert after 3 seconds
+                    setTimeout(() => {
+                        favoriteNotificationAlert.classList.add('d-none');
+                    }, 3000);
+
+                    console.log(data.message);
+                } else {
+                    console.error('Error al actualizar favoritos:', data.message);
+                    favoriteNotificationAlert.classList.remove('alert-success');
+                    favoriteNotificationAlert.classList.add('alert-danger');
+                    favoriteNotificationMessage.innerHTML = data.message;
+                    favoriteNotificationAlert.classList.remove('d-none');
+                    favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => {
+                        favoriteNotificationAlert.classList.add('d-none');
+                    }, 5000); // Keep error message longer
+                }
+            })
+            .catch(error => {
+                console.error('Error en la petición AJAX de favoritos:', error);
+                favoriteNotificationAlert.classList.remove('alert-success');
+                favoriteNotificationAlert.classList.add('alert-danger');
+                favoriteNotificationMessage.innerHTML = 'Error de conexión: ' + error.message;
+                favoriteNotificationAlert.classList.remove('d-none');
+                favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => {
+                    favoriteNotificationAlert.classList.add('d-none');
+                }, 5000); // Keep error message longer
+            });
         }
+
+        // Function to check favorite status for a product
+        function checkFavoriteStatus(productId, iconElement) {
+            const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
+            console.log(`checkFavoriteStatus: Checking productId ${productId}, isLoggedIn: ${isLoggedIn}`);
+            if (!isLoggedIn) return; // No need to check if not logged in
+
+            fetch(`/api/favoritos/isFavorito/${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`checkFavoriteStatus: Response for productId ${productId}:`, data);
+                    if (data.success && data.isFavorito) {
+                        iconElement.classList.remove('bi-heart');
+                        iconElement.classList.add('bi-heart-fill');
+                        iconElement.classList.add('text-danger');
+                    } else {
+                        iconElement.classList.remove('bi-heart-fill');
+                        iconElement.classList.remove('text-danger');
+                        iconElement.classList.add('bi-heart');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al verificar estado de favoritos:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const precioMinInput = document.getElementById('precioMin');
+            const precioMaxInput = document.getElementById('precioMax');
+            const rangePriceInput = document.getElementById('rangePrice');
+            const soloStockCheckbox = document.getElementById('soloStock');
+            const categoryCheckboxes = document.querySelectorAll('input[name="categoryId"]');
+            const sellerCheckboxes = document.querySelectorAll('input[name="sellerId"]');
+            const ratingRadioButtons = document.querySelectorAll('input[name="minRating"]');
+            const sortBySelect = document.getElementById('sortBySelect');
+
+            // Sincronizar slider con input max
+            rangePriceInput.addEventListener('input', function() {
+                precioMaxInput.value = this.value;
+            });
+
+            // Sincronizar input max con slider
+            precioMaxInput.addEventListener('input', function() {
+                if (parseInt(this.value) > parseInt(precioMinInput.value)) {
+                    rangePriceInput.value = this.value;
+                } else {
+                    rangePriceInput.value = precioMinInput.value;
+                    this.value = precioMinInput.value;
+                }
+            });
+
+            // Sincronizar input min con slider (opcional, si el slider controla el max)
+            precioMinInput.addEventListener('input', function() {
+                if (parseInt(this.value) > parseInt(precioMaxInput.value)) {
+                    precioMaxInput.value = this.value;
+                    rangePriceInput.value = this.value;
+                }
+            });
+
+            // Event listeners para enviar el formulario automáticamente al cambiar los filtros
+            soloStockCheckbox.addEventListener('change', submitFilterForm);
+            precioMinInput.addEventListener('change', submitFilterForm);
+            precioMaxInput.addEventListener('change', submitFilterForm);
+            rangePriceInput.addEventListener('change', submitFilterForm); // Submit when slider is released
+
+            categoryCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', submitFilterForm);
+            });
+
+            sellerCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', submitFilterForm);
+            });
+
+            ratingRadioButtons.forEach(radio => {
+                radio.addEventListener('change', submitFilterForm);
+            });
+
+            // Restore selected sort option using data attribute
+            if (sortBySelect) {
+                const currentSortByValue = sortBySelect.getAttribute('data-current-sort-by');
+                console.log('currentSortByValue from data attribute:', currentSortByValue); // Debugging line
+                if (currentSortByValue) {
+                    for (let i = 0; i < sortBySelect.options.length; i++) {
+                        if (sortBySelect.options[i].value === currentSortByValue) {
+                            sortBySelect.options[i].selected = true;
+                            break;
+                        }
+                    }
+                }
+                // New event listener for sortBySelect
+                sortBySelect.addEventListener('change', function() {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set('sortBy', this.value);
+                    // Preserve other filter parameters
+                    params.set('inStockOnly', soloStockCheckbox.checked);
+                    params.set('minPrice', precioMinInput.value);
+                    params.set('maxPrice', precioMaxInput.value);
+                    params.set('searchTerm', document.querySelector('input[name="searchTerm"]').value);
+
+                    // Handle multiple categoryIds
+                    const selectedCategoryIds = Array.from(categoryCheckboxes)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+                    params.delete('categoryId'); // Clear existing ones
+                    selectedCategoryIds.forEach(id => params.append('categoryId', id));
+
+                    // Handle multiple sellerIds
+                    const selectedSellerIds = Array.from(sellerCheckboxes)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+                    params.delete('sellerId'); // Clear existing ones
+                    selectedSellerIds.forEach(id => params.append('sellerId', id));
+
+                    // Handle minRating
+                    const selectedMinRating = document.querySelector('input[name="minRating"]:checked');
+                    if (selectedMinRating) {
+                        params.set('minRating', selectedMinRating.value);
+                    } else {
+                        params.delete('minRating');
+                    }
+
+                    window.location.search = params.toString();
+                });
+            }
+
+            // Check favorite status for all products on page load
+            document.querySelectorAll('.product-card').forEach(card => {
+                const favoriteButton = card.querySelector('button[onclick="agregarAFavoritos(this)"]');
+                if (favoriteButton) {
+                    const productId = favoriteButton.dataset.productoId;
+                    const iconElement = favoriteButton.querySelector('i');
+                    checkFavoriteStatus(productId, iconElement);
+                }
+            });
+        });
     </script>
 </body>
 

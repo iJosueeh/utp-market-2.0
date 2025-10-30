@@ -17,7 +17,7 @@ public class EstadoProducto {
 
     private String descripcion;
 
-    @OneToMany(mappedBy = "estado")
+    @OneToMany(mappedBy = "estado", fetch = FetchType.LAZY)
     private Set<Producto> productos;
 
     public EstadoProducto() {}

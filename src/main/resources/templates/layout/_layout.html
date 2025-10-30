@@ -125,28 +125,10 @@
                                 </button>
                                 <ul class="dropdown-menu rounded-3 shadow border-0 p-2 animate__animated animate__fadeIn"
                                     aria-labelledby="dropdownMenuButton1">
-                                    <li>
-                                        <a th:href="@{/products(category='Tutorías universitarias')}"
+                                    <li th:each="categoria : ${categoriasGlobal}">
+                                        <a th:href="@{/categoria(id=${categoria.id})}"
                                             class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2">
-                                            <i class="bi bi-mortarboard"></i> Tutorías
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a th:href="@{/products(category='Guías de estudio')}"
-                                            class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2">
-                                            <i class="bi bi-journal-text"></i> Guías de estudio
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a th:href="@{/products(category='Ventas de snacks')}"
-                                            class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2">
-                                            <i class="bi bi-cup-straw"></i> Snacks
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a th:href="@{/products(category='Materiales')}"
-                                            class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2">
-                                            <i class="bi bi-box-seam"></i> Materiales
+                                            <i th:classappend="${categoria.icono}"></i> <span th:text="${categoria.nombre}"></span>
                                         </a>
                                     </li>
                                 </ul>
