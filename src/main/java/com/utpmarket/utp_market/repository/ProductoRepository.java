@@ -1,5 +1,7 @@
 package com.utpmarket.utp_market.repository;
 
+import com.utpmarket.utp_market.models.entity.product.Categoria;
+import com.utpmarket.utp_market.models.entity.product.Producto;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,9 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+public interface ProductoRepository extends JpaRepository<Producto, Long> {
+    Long countByCategoria(Categoria categoria);
+    Long countByVendedor(Usuario vendedor);
+    List<Producto> findByStockGreaterThan(Integer stock);
+
     @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.estudianteDetalles WHERE u.email = :email")
     Optional<Usuario> findByEmail (String email);
-
-    List<Usuario> findByRol_Nombre(String nombre);
 }

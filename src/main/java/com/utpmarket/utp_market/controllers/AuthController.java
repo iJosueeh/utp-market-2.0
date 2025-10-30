@@ -1,6 +1,6 @@
 package com.utpmarket.utp_market.controllers;
 
-import com.utpmarket.utp_market.models.entity.Usuario;
+import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.services.AuthService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
