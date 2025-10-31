@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/_layout :: head('Detalle de producto')}">
+    <style>
+        /* 🔹 Pestañas redondeadas tipo tarjeta */
+        .custom-tabs {
+            background-color: #f8f9fa;
+            border-radius: 12px 12px 0 0;
+            border-bottom: 1px solid #dee2e6;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .custom-tabs .nav-link {
+            border: none;
+            border-radius: 12px 12px 0 0;
+            color: #6c757d;
+            font-weight: 500;
+            padding: 10px 25px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .custom-tabs .nav-link:hover {
+            background-color: #e9ecef;
+            color: #000;
+        }
+
+        .custom-tabs .nav-link.active {
+            background-color: #ffffff;
+            color: #000;
+            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
+
+        /* 🔹 Card y contenido */
+        .card {
+            border-radius: 16px;
+            background-color: #ffffff;
+        }
+
+        .card-body {
+            background-color: #ffffff;
+            border-top: none;
+        }
+
+        .card h5 {
+            color: #333;
+        }
+
+        .text-muted {
+            color: #666 !important;
+        }
+    </style>
+</head>
+
+<body>
+<header th:replace="~{layout/_layout :: header}"></header>
+
+<!-- ✅ Margen superior para evitar que el navbar tape el contenido -->
+<main class="container mt-4" style="padding-top: 80px;">
+    <a href="/categoria" class="text-decoration-none d-inline-flex align-items-center text-secondary fw-semibold">
+        <i class="bi bi-arrow-left me-2"></i> Volver a productos
+    </a>
+    <div class="row">
+        <!-- Imagen principal -->
+        <div class="col-md-6 text-center">
+            <img th:if="${detalle.imagenUrl != null}" th:src="${detalle.imagenUrl}" alt="Imagen del producto" class="img-fluid rounded" />
+        </div>
+
+        <!-- Información del producto -->
+        <div class="col-md-6">
+            <h1 class="mb-3" th:text="${detalle.nombre}"></h1>
+            <span th:each="i : ${#numbers.sequence(1, 5)}">
+    <i class="bi text-warning"
+       th:classappend="${i <= detalle.reviewPromedio} ? 'bi-star-fill' :
+                       (${detalle.reviewPromedio >= i - 0.5} ? 'bi-star-half' : 'bi-star')">
+    </i>
+</span>
+            <span class="ms-2">
+    <span th:text="${detalle.reviewPromedio}">4.5</span>
+    (<span th:text="${detalle.totalReviews}">128</span> reseñas)
+</span>
+
+
+            <p>
+                <strong>Precio:</strong>
+                <span class="text-success fw-bold">
+                    S/ <span th:text="${detalle.precio}"></span>
+                </span>
+            </p>
+            <p><strong>Stock disponible:</strong> <span th:text="${detalle.stock}"></span></p>
+
+
+           <hr>
+
+            <!-- ✅ Selector de cantidad y botón Agregar al carrito -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Cantidad</label>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="input-group" style="width: 120px;">
+                        <button class="btn btn-outline-secondary" type="button" onclick="decrementarCantidad()">−</button>
+                        <input type="number" id="cantidad" name="cantidad" class="form-control text-center" value="1" min="1" th:attr="max=${detalle.stock}" />
+                        <button class="btn btn-outline-secondary" type="button" onclick="incrementarCantidad()">+</button>
+                    </div>
+                    <span class="text-muted" th:text="${detalle.stock + ' disponibles'}"></span>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-danger flex-grow-1">
+                    <i class="bi bi-cart-plus me-2"></i> Agregar al Carrito
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="bi bi-heart"></i>
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="bi bi-share"></i>
+                </button>
+            </div>
+            <!-- ✅ Sección de envío y beneficios con íconos Bootstrap -->
+            <div class="mt-4 p-3 border rounded bg-light">
+                <p><i class="bi bi-truck text-danger me-2"></i><strong>Envío gratis</strong> a todo el país</p>
+                <p><i class="bi bi-box-seam text-danger me-2"></i><strong>Entrega estimada:</strong> entre 2 y 5 días hábiles</p>
+                <p><i class="bi bi-shield-check text-danger me-2"></i><strong>Protección de compra:</strong> recibe el producto que esperabas o te devolvemos tu dinero</p>
+            </div>
+
+            <!-- ✅ Reseñas -->
+
+
+        </div>
+    </div>
+
+    <!-- ✅ Sección de reseñas -->
+    <section class="mt-5">
+        <div class="card border-0 shadow-sm rounded-4 p-0">
+            <!-- Pestañas -->
+            <div class="card-header bg-white border-0 p-0 rounded-top-4">
+                <ul class="nav nav-tabs justify-content-center custom-tabs" id="productoTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active text-danger" id="descripcion-tab" data-bs-toggle="tab"
+                                data-bs-target="#descripcion" type="button" role="tab">
+                            Descripción
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-danger" id="reseñas-tab" data-bs-toggle="tab"
+                                data-bs-target="#reseñas" type="button" role="tab">
+                            Reseñas (<span th:text="${detalle.totalReviews}">0</span>)
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contenido -->
+            <div class="card-body tab-content bg-white rounded-bottom-4" id="productoTabsContent">
+                <!-- Descripción -->
+                <div class="tab-pane fade show active" id="descripcion" role="tabpanel">
+                    <h5 class="fw-bold mb-3 text-secondary">Descripción del Producto</h5>
+                    <p class="text-muted mb-0" th:text="${detalle.descripcion}">
+                        La descripción del producto irá aquí.
+                    </p>
+                </div>
+
+                <!-- Reseñas -->
+                <div class="tab-pane fade" id="reseñas" role="tabpanel">
+                    <h5 class="fw-bold mb-3 text-secondary">Reseñas de usuarios</h5>
+                    <div th:if="${reseñas.size() == 0}">
+                        <p class="text-muted">No hay reseñas aún.</p>
+                    </div>
+                    <div th:each="rev : ${reseñas}" class="mb-3 pb-2 border-bottom">
+                        <p class="mb-1">
+                            <strong th:text="${rev.usuario.nombre}">Usuario</strong>:
+                            <span th:text="${rev.comentario}">Comentario</span>
+                        </p>
+                        <div>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <span th:text="${rev.puntaje}">5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ✅ Productos relacionados -->
+    <section class="mt-5">
+        <h3 class="mb-4">Productos relacionados</h3>
+
+        <!-- 🟢 Si hay productos relacionados -->
+        <div class="row" th:if="${relacionados != null and relacionados.size() > 0}">
+            <div class="col-md-3 mb-4" th:each="p : ${relacionados}">
+                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                    <img th:src="${p.imagenPrincipalUrl}" alt="Imagen" class="card-img-top" />
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="fw-semibold mb-1" th:text="${p.nombre}"></h5>
+                        <p class="text-muted mb-2" th:text="'S/ ' + ${p.precio}"></p>
+                        <a th:href="@{'/producto/' + ${p.id}}" class="btn btn-danger rounded-pill mt-auto">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔴 Si NO hay productos relacionados -->
+        <div th:if="${relacionados == null or relacionados.size() == 0}" class="text-center text-muted py-4">
+            <i class="bi bi-box-seam fs-3 d-block mb-2"></i>
+            No hay productos relacionados.
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{layout/_layout :: footer}"></footer>
+
+<script>
+    function incrementarCantidad() {
+        const input = document.getElementById('cantidad');
+        const max = parseInt(input.getAttribute('max'));
+        if (input.value < max) input.value++;
+    }
+
+    function decrementarCantidad() {
+        const input = document.getElementById('cantidad');
+        if (input.value > 1) input.value--;
+    }
+</script>
+</body>
+</html>
