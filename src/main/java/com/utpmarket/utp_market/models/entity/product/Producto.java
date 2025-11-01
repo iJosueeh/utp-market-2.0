@@ -71,6 +71,23 @@ public class Producto {
         this.fecha_creacion = fecha_creacion;
     }
 
+    @Transient
+    public String getImagenPrincipalUrl() {
+        if (imagenes == null || imagenes.isEmpty()) {
+            return "/img/no-image.jpg"; // imagen por defecto
+        }
+
+        // Buscar la imagen principal (isPrincipal = true)
+        return imagenes.stream()
+                .filter(ImageneProducto::isPrincipal) // ✅ correcto getter booleano
+                .map(ImageneProducto::getUrl)          // convierte a Stream<String>
+                .findFirst()                           // toma el primero
+                .orElseGet(() -> imagenes.stream()     // si no hay principal, toma cualquiera
+                        .map(ImageneProducto::getUrl)
+                        .findFirst()
+                        .orElse("/img/no-image.jpg"));
+    }
+
     public Long getId() {
         return id;
     }
@@ -198,4 +215,5 @@ public class Producto {
     public void setEtiquetaProductos(Set<EtiquetaProducto> etiquetaProductos) {
         this.etiquetaProductos = etiquetaProductos;
     }
+
 }

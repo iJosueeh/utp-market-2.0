@@ -1,7 +1,6 @@
 package com.utpmarket.utp_market.services;
 
 import com.utpmarket.utp_market.models.dto.ProductoDTO;
-import com.utpmarket.utp_market.models.entity.product.Categoria;
 import com.utpmarket.utp_market.models.entity.product.ImageneProducto;
 import com.utpmarket.utp_market.models.entity.product.Producto;
 import com.utpmarket.utp_market.models.entity.product.Reviews;
@@ -12,7 +11,6 @@ import com.utpmarket.utp_market.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Comparator;
@@ -31,6 +29,18 @@ public class ProductoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    public List<Producto> getProductosRelacionados(Long productoId) {
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        if (producto.getCategoria() == null) {
+            return List.of(); // 🔹 devuelve lista vacía si no tiene categoría
+        }
+
+        Long categoriaId = producto.getCategoria().getId();
+        return productoRepository.findRelatedProducts(categoriaId, productoId);
+    }
 
     public List<ProductoDTO> findAllProductosDTO() {
         List<Producto> productos = productoRepository.findAll();
@@ -190,4 +200,8 @@ public class ProductoService {
                 precioAnterior
         );
     }
-}
+
+    public Producto findById(Long id) {
+        return productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+    }}
