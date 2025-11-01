@@ -1,7 +1,9 @@
 package com.utpmarket.utp_market.controllers;
 
+import com.utpmarket.utp_market.models.entity.product.Reviews;
 import com.utpmarket.utp_market.models.entity.user.EstudianteDetalles;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
+import com.utpmarket.utp_market.services.ReviewService;
 import com.utpmarket.utp_market.repository.EstudianteDetallesRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
 import com.utpmarket.utp_market.models.entity.order.Pedido;
@@ -29,8 +31,9 @@ public class PageController {
     @Autowired
     private EstudianteDetallesRepository estudianteDetallesRepository;
 
-    @Autowired // <--- AGREGADO: Inyección del PedidoService
-    private PedidoService pedidoService;
+    @Autowired
+    private ReviewService reviewService;
+
     @GetMapping("/about-us")
     public String aboutUs() {
         return "pages/about";
@@ -114,6 +117,10 @@ public class PageController {
 
 
         model.addAttribute("user", usuario);
+
+        // Obtener las reseñas del usuario
+        List<Reviews> reseñasUsuario = reviewService.obtenerReviewsPorUsuario(usuario.getId());
+        model.addAttribute("reviews", reseñasUsuario);
 
         List<String> carrerasUtp = Arrays.asList(
                 "Ingeniería de Sistemas e Informática",
