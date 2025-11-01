@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="genericModal(modalId, modalTitle, formAction, formContentFragment, formContentSelector, submitButtonText)"
+         class="modal fade" th:id="${modalId}" tabindex="-1" th:aria-labelledby="${modalId + 'Label'}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:id="${modalId + 'Label'}" th:text="${modalTitle}"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form th:action="${formAction}" method="post">
+                    <div class="modal-body" th:with="templateName=${formContentFragment}, fragmentName=${formContentSelector}">
+                        <div th:replace="~{${templateName} :: ${fragmentName}}"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" th:text="${submitButtonText}"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

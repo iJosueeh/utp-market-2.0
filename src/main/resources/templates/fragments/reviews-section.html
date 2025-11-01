@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section th:fragment="reviewsSection" class="py-5" style="background-color: #1c1f23;">
+        <div class="container text-center text-white">
+            <h2 class="fw-bold mb-4">Reseñas de estudiantes</h2>
+
+            <div id="carouselResenas" class="carousel slide mx-auto" data-bs-ride="carousel" data-bs-interval="5000"
+                style="max-width: 700px;">
+                <div class="carousel-inner">
+
+                    <!-- Reseña 1 -->
+                    <div class="carousel-item active">
+                        <div class="d-flex flex-column align-items-center">
+                            <img th:src="@{/img/Persona1.jpg}" alt="Valeria R."
+                                class="rounded-circle mb-3 shadow-sm border border-light"
+                                style="width: 100px; height: 100px; object-fit: cover;">
+                            <p class="mb-3 fs-5 fst-italic px-3">
+                                "Vendí mis guías en una tarde. La plataforma es rápida y me pagaron sin problemas."
+                            </p>
+                            <h5 class="fw-bold mb-0">Valeria R.</h5>
+                            <p class="text-white-50">Estudiante de Ingeniería Industrial – 6.º ciclo</p>
+                        </div>
+                    </div>
+
+                    <!-- Reseña 2 -->
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center">
+                            <img th:src="@{/img/Persona2.jpg}" alt="Carlos M."
+                                class="rounded-circle mb-3 shadow-sm border border-light"
+                                style="width: 100px; height: 100px; object-fit: cover;">
+                            <p class="mb-3 fs-5 fst-italic px-3">
+                                "Conseguí tutorías fácilmente. Los estudiantes son muy atentos."
+                            </p>
+                            <h5 class="fw-bold mb-0">Carlos M.</h5>
+                            <p class="text-white-50">Estudiante de Sistemas – 4.º ciclo</p>
+                        </div>
+                    </div>
+
+                    <!-- Reseña 3 -->
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center">
+                            <img th:src="@{/img/Persona3.jpg}" alt="Ana G."
+                                class="rounded-circle mb-3 shadow-sm border border-light"
+                                style="width: 100px; height: 100px; object-fit: cover;">
+                            <p class="mb-3 fs-5 fst-italic px-3">
+                                "Compré snacks en el campus y fue súper práctico."
+                            </p>
+                            <h5 class="fw-bold mb-0">Ana G.</h5>
+                            <p class="text-white-50">Estudiante de Administración – 3.º ciclo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controles -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselResenas"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselResenas"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,18 +1,18 @@
 package com.utpmarket.utp_market.models.dto;
 
 public class Contacto {
+    private String categoria;
     private String nombre;
-    private String email;
-    private String asunto;
+    private String correo;
     private String mensaje;
 
-    public Contacto() {}
+    // Getters and Setters
+    public String getCategoria() {
+        return categoria;
+    }
 
-    public Contacto(String nombre, String email, String asunto, String mensaje) {
-        this.nombre = nombre;
-        this.email = email;
-        this.asunto = asunto;
-        this.mensaje = mensaje;
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public String getNombre() {
@@ -23,20 +23,12 @@ public class Contacto {
         this.nombre = nombre;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAsunto() {
-        return asunto;
-    }
-
-    public void setAsunto(String asunto) {
-        this.asunto = asunto;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getMensaje() {
@@ -45,5 +37,15 @@ public class Contacto {
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
+    }
+
+    @Override
+    public String toString() {
+        return "ContactoDTO{" +
+               "categoria='" + categoria + "'" +
+               ", nombre='" + nombre + "'" +
+               ", correo='" + correo + "'" +
+               ", mensaje='" + mensaje + "'" +
+               '}';
     }
 }

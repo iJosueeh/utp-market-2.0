@@ -1,5 +1,6 @@
 package com.utpmarket.utp_market.controllers;
 
+import com.utpmarket.utp_market.models.dto.FAQItem; // Importar FAQItem
 import com.utpmarket.utp_market.models.entity.user.EstudianteDetalles;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.repository.EstudianteDetallesRepository;
@@ -29,15 +30,29 @@ public class PageController {
     @Autowired
     private EstudianteDetallesRepository estudianteDetallesRepository;
 
-    @Autowired // <--- AGREGADO: Inyección del PedidoService
+    @Autowired
     private PedidoService pedidoService;
+
     @GetMapping("/about-us")
     public String aboutUs() {
         return "pages/about";
     }
 
     @GetMapping("/help")
-    public String help() {
+    public String help(Model model) { // Add Model parameter
+        List<FAQItem> faqItems = List.of(
+                new FAQItem("¿Cómo puedo contactar al soporte?",
+                        "Puedes escribirnos directamente desde el chat de WhatsApp disponible en la plataforma. Solo haz clic en el botón de ayuda y uno de nuestros asesores te responderá."),
+                new FAQItem("¿En qué horario atiende el centro de ayuda?",
+                        "Nuestro equipo responde tus dudas de lunes a sábado de 9:00 a.m. a 9:00 p.m. Fuera de ese horario puedes dejar tu mensaje y lo atenderemos en cuanto estemos disponibles."),
+                new FAQItem("¿Qué tipo de dudas puedo resolver en el chat?",
+                        "Puedes consultar sobre compras, ventas, uso de la plataforma, problemas con tu perfil o cualquier duda general sobre UTP Market."),
+                new FAQItem("¿Hay algún costo por usar el centro de ayuda?",
+                        "No. El servicio de soporte y el chat de WhatsApp son totalmente gratuitos para toda la comunidad UTP."),
+                new FAQItem("¿Qué hago si no responden mi consulta?",
+                        "En caso de que no recibas respuesta en el chat, puedes enviar un reporte desde tu perfil en la sección “Soporte” y un asesor se pondrá en contacto contigo.")
+        );
+        model.addAttribute("faqItems", faqItems);
         return "pages/help";
     }
 
@@ -92,22 +107,15 @@ public class PageController {
         return "pages/shop";
     }
 
-    // MÉTODO PERFIL CORREGIDO
     @GetMapping("/perfil")
-    public String perfil(HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-
-        if (usuario == null) {
+    public String perfil(HttpSession session, Model model, RedirectAttributes redirectAttributes) { // Added RedirectAttributes
+        Usuario usuario;
+        try {
+            usuario = getAuthenticatedUser(session, redirectAttributes);
+            session.setAttribute("usuario", usuario);
+        } catch (IllegalStateException e) {
             return "redirect:/auth/login";
         }
-
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuario.getId());
-        if (optionalUsuario.isEmpty()) {
-            session.invalidate();
-            return "redirect:/auth/login";
-        }
-        usuario = optionalUsuario.get();
-        session.setAttribute("usuario", usuario);
 
         List<Pedido> pedidos = pedidoService.obtenerHistorialPedidosPorUsuario(usuario.getId());
         model.addAttribute("pedidos", pedidos);
@@ -132,18 +140,12 @@ public class PageController {
 
     @PostMapping("/usuario/actualizar")
     public String actualizarInformacionPersonal(@ModelAttribute Usuario usuarioActualizado, HttpSession session, RedirectAttributes redirectAttributes) {
-        Usuario usuarioEnSesion = (Usuario) session.getAttribute("usuario");
-        if (usuarioEnSesion == null) {
+        Usuario usuarioExistente;
+        try {
+            usuarioExistente = getAuthenticatedUser(session, redirectAttributes);
+        } catch (IllegalStateException e) {
             return "redirect:/auth/login";
         }
-
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioEnSesion.getId());
-        if (optionalUsuario.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
-            return "redirect:/perfil";
-        }
-
-        Usuario usuarioExistente = optionalUsuario.get();
 
         usuarioExistente.setNombre(usuarioActualizado.getNombre());
         usuarioExistente.setApellido(usuarioActualizado.getApellido());
@@ -170,18 +172,12 @@ public class PageController {
 
     @PostMapping("/usuario/actualizar-utp")
     public String actualizarInformacionUtp(@ModelAttribute Usuario usuarioActualizado, HttpSession session, RedirectAttributes redirectAttributes) {
-        Usuario usuarioEnSesion = (Usuario) session.getAttribute("usuario");
-        if (usuarioEnSesion == null) {
+        Usuario usuarioExistente;
+        try {
+            usuarioExistente = getAuthenticatedUser(session, redirectAttributes);
+        } catch (IllegalStateException e) {
             return "redirect:/auth/login";
         }
-
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioEnSesion.getId());
-        if (optionalUsuario.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
-            return "redirect:/perfil";
-        }
-
-        Usuario usuarioExistente = optionalUsuario.get();
 
         EstudianteDetalles estudianteDetallesExistente = usuarioExistente.getEstudianteDetalles();
         if (estudianteDetallesExistente == null) {
@@ -201,4 +197,17 @@ public class PageController {
         return "redirect:/perfil";
     }
 
+    private Usuario getAuthenticatedUser(HttpSession session, RedirectAttributes redirectAttributes) {
+        Usuario usuarioEnSesion = (Usuario) session.getAttribute("usuario");
+        if (usuarioEnSesion == null) {
+            throw new IllegalStateException("Usuario no autenticado.");
+        }
+
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioEnSesion.getId());
+        if (optionalUsuario.isEmpty()) {
+            session.invalidate();
+            throw new IllegalStateException("Usuario no encontrado en la base de datos.");
+        }
+        return optionalUsuario.get();
+    }
 }

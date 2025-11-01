@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Fragmento para el formulario de edición de información personal -->
+<div th:fragment="editPersonalInfoForm">
+    <div class="mb-3">
+        <label class="form-label">Nombres</label>
+        <input type="text" class="form-control" name="nombre" th:value="${user.nombre}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Apellidos</label>
+        <input type="text" class="form-control" name="apellido" th:value="${user.apellido}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Teléfono</label>
+        <input type="text" class="form-control" name="estudianteDetalles.telefono" th:value="${user.estudianteDetalles?.telefono}" required>
+    </div>
+</div>
+
+<!-- Fragmento para el formulario de edición de información UTP -->
+<div th:fragment="editUtpInfoForm">
+    <div class="mb-3">
+        <label class="form-label">Código de Estudiante</label>
+        <input type="text" class="form-control" name="estudianteDetalles.codigo_estudiante" th:value="${user.estudianteDetalles?.codigo_estudiante}" readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Carrera</label>
+        <select class="form-select" name="estudianteDetalles.carrera">
+            <option value="">Seleccione una carrera</option>
+            <option th:each="carrera : ${carrerasUtp}"
+                th:value="${carrera}"
+                th:selected="${carrera == user.estudianteDetalles?.carrera}"
+                th:text="${carrera}"></option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Ciclo</label>
+        <select class="form-select" name="estudianteDetalles.ciclo">
+            <option value="">Seleccione un ciclo</option>
+            <option th:each="i : ${#numbers.sequence(1, 10)}"
+                th:value="${i}"
+                th:selected="${i == user.estudianteDetalles?.ciclo}"
+                th:text="${i}"></option>
+        </select>
+    </div>
+</div>
+
+<!-- Fragmento para el formulario de cambio de contraseña -->
+<div th:fragment="changePasswordForm">
+    <div class="mb-3">
+        <label class="form-label">Contraseña actual</label>
+        <input type="password" class="form-control" name="passwordActual" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Nueva contraseña</label>
+        <input type="password" class="form-control" name="passwordNueva" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Confirmar nueva contraseña</label>
+        <input type="password" class="form-control" name="passwordConfirmar" required>
+    </div>
+</div>
+
+</body>
+</html>

@@ -59,34 +59,7 @@
 
                         <!-- Auth Section - Desktop -->
                         <div class="d-none d-lg-block">
-                            <!-- Usuario autenticado -->
-                            <div class="dropdown" th:if="${session.usuario != null}">
-                                <a href="#" class="nav-link text-white dropdown-toggle pe-5" id="userDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Hola, <span th:text="${session.usuario.nombre}">Usuario</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end pe-3" aria-labelledby="userDropdown">
-                                    <li>
-                                        <a class="dropdown-item" th:href="@{/perfil}">Ver Perfil</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <form th:action="@{/auth/logout}" method="post" class="d-inline">
-                                            <button type="submit" class="dropdown-item dropdown-item-logout">
-                                                Cerrar Sesión
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- Usuario no autenticado -->
-                            <a th:if="${session.usuario == null}" th:href="@{/auth/login}"
-                                class="btn btn-icon btn-dark rounded-circle bg-dark me-4">
-                                <i class="bi bi-person align-middle"></i>
-                            </a>
+                            <div th:replace="~{layout/auth-status :: authStatus}"></div>
                         </div>
 
                         <!-- Toggle button para móvil -->
@@ -146,34 +119,7 @@
                                 </a>
 
                                 <!-- Auth Section - Mobile -->
-                                <!-- Usuario autenticado -->
-                                <div class="dropdown" th:if="${session.usuario != null}">
-                                    <a href="#" class="nav-link text-white dropdown-toggle" id="userDropdownMobile"
-                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Hola, <span th:text="${session.usuario.nombre}">Usuario</span>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMobile">
-                                        <li>
-                                            <a class="dropdown-item" th:href="@{/perfil}">Ver Perfil</a>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li>
-                                            <form th:action="@{/auth/logout}" method="post" class="d-inline">
-                                                <button type="submit" class="dropdown-item">
-                                                    Cerrar Sesión
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <!-- Usuario no autenticado -->
-                                <a th:if="${session.usuario == null}" th:href="@{/auth/login}"
-                                    class="btn btn-icon btn-dark rounded-circle bg-dark mx-2">
-                                    <i class="bi bi-person align-middle"></i>
-                                </a>
+                                <div th:replace="~{layout/auth-status :: authStatus}"></div>
                             </div>
                         </li>
                     </ul>

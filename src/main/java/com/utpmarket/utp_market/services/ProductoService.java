@@ -9,7 +9,9 @@ import com.utpmarket.utp_market.repository.CategoriaRepository;
 import com.utpmarket.utp_market.repository.ProductoRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -32,10 +34,10 @@ public class ProductoService {
 
     public List<Producto> getProductosRelacionados(Long productoId) {
         Producto producto = productoRepository.findById(productoId)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
         if (producto.getCategoria() == null) {
-            return List.of(); // 🔹 devuelve lista vacía si no tiene categoría
+            return List.of();
         }
 
         Long categoriaId = producto.getCategoria().getId();
@@ -58,91 +60,13 @@ public class ProductoService {
             String searchTerm,
             Integer minRating,
             String sortBy) {
-
-        List<Producto> productos;
-
-        // Base query: all products or only in-stock products
-        if (inStockOnly != null && inStockOnly) {
-            productos = productoRepository.findByStockGreaterThan(0);
-        } else {
-            productos = productoRepository.findAll();
-        }
-
-        // Apply filters sequentially
-        if (categoryIds != null && !categoryIds.isEmpty()) {
-            productos = productos.stream()
-                    .filter(p -> p.getCategoria() != null && categoryIds.contains(p.getCategoria().getId()))
-                    .collect(Collectors.toList());
-        }
-
-        // Fetch seller entity if ID is provided
-        Optional<Usuario> vendedor = sellerId != null ? usuarioRepository.findById(sellerId) : Optional.empty();
-        if (vendedor.isPresent()) {
-            productos = productos.stream()
-                    .filter(p -> p.getVendedor() != null && p.getVendedor().equals(vendedor.get()))
-                    .collect(Collectors.toList());
-        }
-
-        if (minPrice != null && maxPrice != null) {
-            productos = productos.stream()
-                    .filter(p -> p.getPrecio() >= minPrice && p.getPrecio() <= maxPrice)
-                    .collect(Collectors.toList());
-        } else if (minPrice != null) {
-            productos = productos.stream()
-                    .filter(p -> p.getPrecio() >= minPrice)
-                    .collect(Collectors.toList());
-        } else if (maxPrice != null) {
-            productos = productos.stream()
-                    .filter(p -> p.getPrecio() <= maxPrice)
-                    .collect(Collectors.toList());
-        }
-
-        if (searchTerm != null && !searchTerm.isEmpty()) {
-            String lowerCaseSearchTerm = searchTerm.toLowerCase();
-            productos = productos.stream()
-                    .filter(p -> p.getNombre().toLowerCase().contains(lowerCaseSearchTerm) ||
-                                 p.getDescripcion().toLowerCase().contains(lowerCaseSearchTerm))
-                    .collect(Collectors.toList());
-        }
-
-        if (minRating != null) {
-            productos = productos.stream()
-                    .filter(p -> {
-                        Double averageRating = p.getReviews().stream()
-                                .mapToInt(Reviews::getPuntaje)
-                                .average()
-                                .orElse(0.0);
-                        return averageRating >= minRating;
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        // Apply sorting
-        if (sortBy != null && !sortBy.isEmpty()) {
-            switch (sortBy) {
-                case "precio-asc":
-                    productos.sort(Comparator.comparing(Producto::getPrecio));
-                    break;
-                case "precio-desc":
-                    productos.sort(Comparator.comparing(Producto::getPrecio).reversed());
-                    break;
-                case "nombre-asc":
-                    productos.sort(Comparator.comparing(Producto::getNombre));
-                    break;
-                case "rating-desc":
-                    productos.sort(Comparator.comparing(p -> p.getReviews().stream()
-                            .mapToInt(Reviews::getPuntaje)
-                            .average()
-                            .orElse(0.0), Comparator.reverseOrder()));
-                    break;
-                case "relevancia":
-                default:
-                    // Default sorting (e.g., by creation date or a relevance score)
-                    // For now, let's assume 'relevancia' is just the default order from the DB or no specific sort.
-                    // If you have a 'relevance' field, you would sort by that.
-                    break;
-            }
-        }
+        List<Producto> productos = obtenerProductosBase(inStockOnly);
+        productos = aplicarFiltroCategorias(productos, categoryIds);
+        productos = aplicarFiltroVendedor(productos, sellerId);
+        productos = aplicarFiltroPrecios(productos, minPrice, maxPrice);
+        productos = aplicarFiltroBusqueda(productos, searchTerm);
+        productos = aplicarFiltroCalificacionMinima(productos, minRating);
+        productos = aplicarOrdenacion(productos, sortBy);
 
         return productos.stream()
                 .map(this::convertToDto)
@@ -201,7 +125,106 @@ public class ProductoService {
         );
     }
 
+    private List<Producto> aplicarOrdenacion(List<Producto> productos, String sortBy) {
+        if (sortBy != null && !sortBy.isEmpty()) {
+            switch (sortBy) {
+                case "precio-asc":
+                    productos.sort(Comparator.comparing(Producto::getPrecio));
+                    break;
+                case "precio-desc":
+                    productos.sort(Comparator.comparing(Producto::getPrecio).reversed());
+                    break;
+                case "nombre-asc":
+                    productos.sort(Comparator.comparing(Producto::getNombre));
+                    break;
+                case "rating-desc":
+                    productos.sort(Comparator.comparing(p -> p.getReviews().stream()
+                            .mapToInt(Reviews::getPuntaje)
+                            .average()
+                            .orElse(0.0), Comparator.reverseOrder()));
+                    break;
+                case "relevancia":
+                default:
+                    break;
+            }
+        }
+        return productos;
+    }
+
+    private List<Producto> aplicarFiltroCalificacionMinima(List<Producto> productos, Integer minRating) {
+        if (minRating != null) {
+            return productos.stream()
+                    .filter(p -> {
+                        Double averageRating = p.getReviews().stream()
+                                .mapToInt(Reviews::getPuntaje)
+                                .average()
+                                .orElse(0.0);
+                        return averageRating >= minRating;
+                    })
+                    .collect(Collectors.toList());
+        }
+        return productos;
+    }
+
+    private List<Producto> aplicarFiltroBusqueda(List<Producto> productos, String searchTerm) {
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            String lowerCaseSearchTerm = searchTerm.toLowerCase();
+            return productos.stream()
+                    .filter(p -> p.getNombre().toLowerCase().contains(lowerCaseSearchTerm) ||
+                            p.getDescripcion().toLowerCase().contains(lowerCaseSearchTerm))
+                    .collect(Collectors.toList());
+        }
+        return productos;
+    }
+
+    private List<Producto> aplicarFiltroPrecios(List<Producto> productos, Double minPrice, Double maxPrice) {
+        if (minPrice != null && maxPrice != null) {
+            return productos.stream()
+                    .filter(p -> p.getPrecio() >= minPrice && p.getPrecio() <= maxPrice)
+                    .collect(Collectors.toList());
+        } else if (minPrice != null) {
+            return productos.stream()
+                    .filter(p -> p.getPrecio() >= minPrice)
+                    .collect(Collectors.toList());
+        } else if (maxPrice != null) {
+            return productos.stream()
+                    .filter(p -> p.getPrecio() <= maxPrice)
+                    .collect(Collectors.toList());
+        }
+        return productos;
+    }
+
+    private List<Producto> aplicarFiltroVendedor(List<Producto> productos, Long sellerId) {
+        if (sellerId != null) {
+            Optional<Usuario> vendedor = usuarioRepository.findById(sellerId);
+            if (vendedor.isPresent()) {
+                return productos.stream()
+                        .filter(p -> p.getVendedor() != null && p.getVendedor().equals(vendedor.get()))
+                        .collect(Collectors.toList());
+            }
+        }
+        return productos;
+    }
+
+    private List<Producto> aplicarFiltroCategorias(List<Producto> productos, List<Long> categoryIds) {
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            return productos.stream()
+                    .filter(p -> p.getCategoria() != null && categoryIds.contains(p.getCategoria().getId()))
+                    .collect(Collectors.toList());
+        }
+        return productos;
+    }
+
+    private List<Producto> obtenerProductosBase(Boolean enStockSolamente) {
+        if (enStockSolamente != null && enStockSolamente) {
+            return productoRepository.findByStockGreaterThan(0);
+        } else {
+            return productoRepository.findAll();
+        }
+    }
+
     public Producto findById(Long id) {
         return productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-    }}
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
+    }
+}

@@ -67,8 +67,8 @@
 								<div class="card shadow-sm">
 									<div class="card-body text-center py-5">
 											<div class="mb-4">
-												<img th:if="${user.estudianteDetalles.photoUrl != null}" th:src="${user.estudianteDetalles.photoUrl}" alt="Foto de perfil" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-												<div th:if="${user.estudianteDetalles.photoUrl == null}" class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+												<img th:if="${user.estudianteDetalles != null and user.estudianteDetalles.photoUrl != null}" th:src="${user.estudianteDetalles.photoUrl}" alt="Foto de perfil" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+												<div th:if="${user.estudianteDetalles == null or user.estudianteDetalles.photoUrl == null}" class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
 													<i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
 												</div>
 											</div>
@@ -110,7 +110,7 @@
 												<label class="text-muted small mb-1">Teléfono</label>
 												<p class="fw-semibold">
 													<i class="bi bi-phone me-2 text-muted"></i>
-													<span th:text="${user.estudianteDetalles.telefono}"></span>
+													<span th:text="${user.estudianteDetalles?.telefono}"></span>
 												</p>
 											</div>
 										</div>
@@ -137,15 +137,15 @@
 										<div class="row g-4">
 											<div class="col-md-4">
 												<label class="text-muted small mb-1">Código de Estudiante</label>
-												<p class="fw-semibold" th:text="${user.estudianteDetalles.codigo_estudiante}"></p>
+												<p class="fw-semibold" th:text="${user.estudianteDetalles?.codigo_estudiante}"></p>
 											</div>
 											<div class="col-md-4">
 												<label class="text-muted small mb-1">Carrera</label>
-												<p class="fw-semibold" th:text="${user.estudianteDetalles.carrera}"></p>
+												<p class="fw-semibold" th:text="${user.estudianteDetalles?.carrera}"></p>
 											</div>
 											<div class="col-md-4">
 												<label class="text-muted small mb-1">Ciclo</label>
-												<p class="fw-semibold" th:text="${user.estudianteDetalles.ciclo}"></p>
+												<p class="fw-semibold" th:text="${user.estudianteDetalles?.ciclo}"></p>
 											</div>
 										</div>
 									</div>
@@ -236,206 +236,21 @@
 				</div>
 			</div>
 	
-			<!-- Modal Editar Perfil -->
-			<div class="modal fade" id="editarPerfilModal" tabindex="-1">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Editar Información Personal</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-						</div>
-						<form th:action="@{/usuario/actualizar}" method="post">
-							<div class="modal-body">
-								<div class="mb-3">
-									<label class="form-label">Nombres</label>
-									<input type="text" class="form-control" name="nombre" th:value="${user.nombre}">
-								</div>
-								<div class="mb-3">
-									<label class="form-label">Apellidos</label>
-									<input type="text" class="form-control" name="apellido" th:value="${user.apellido}">
-								</div>
-								<div class="mb-3">
-									<label class="form-label">Teléfono</label>
-									<input type="tel" class="form-control" name="estudianteDetalles.telefono" th:value="${user.estudianteDetalles.telefono}">
-								</div>
-								<div class="mb-3">
-									<label class="form-label">Fecha de Nacimiento</label>
-									<input type="date" class="form-control" name="estudianteDetalles.fecha_nacimiento"
-										th:value="${#dates.format(user.estudianteDetalles.fecha_nacimiento, 'yyyy-MM-dd')}">
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-								<button type="submit" class="btn btn-primary">Guardar cambios</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
+																														<!-- Modal Editar Perfil -->
 	
-			<!-- Modal Editar Informacion UTP -->
-			<div class="modal fade" id="editarInformacionUtpModal" tabindex="-1">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Editar Información UTP</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-						</div>
-						<form th:action="@{/usuario/actualizar-utp}" method="post">
-							<div class="modal-body">
-								<div class="mb-3">
-									<label class="form-label">Código de Estudiante</label>
-									<input type="text" class="form-control" name="estudianteDetalles.codigo_estudiante" th:value="${user.estudianteDetalles.codigo_estudiante}" readonly>
-								</div>
-								<div class="mb-3">
-									<label class="form-label">Carrera</label>
-									<select class="form-select" name="estudianteDetalles.carrera">
-										<option value="">Seleccione una carrera</option>
-										<option th:each="carrera : ${carrerasUtp}"
-											th:value="${carrera}"
-											th:selected="${carrera == user.estudianteDetalles.carrera}"
-											th:text="${carrera}"></option>
-									</select>
-								</div>
-								<div class="mb-3">
-									<label class="form-label">Ciclo</label>
-									<select class="form-select" name="estudianteDetalles.ciclo">
-										<option value="">Seleccione un ciclo</option>
-										<option th:each="i : ${#numbers.sequence(1, 10)}"
-											th:value="${i}"
-											th:selected="${i == user.estudianteDetalles.ciclo}"
-											th:text="${i}"></option>
-									</select>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-								<button type="submit" class="btn btn-primary">Guardar cambios</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
+																														                                                                                                                                                                                                                                    <div th:replace="~{fragments/generic-modal :: genericModal('editarPerfilModal', 'Editar Información Personal', @{/usuario/actualizar}, 'fragments/perfil-forms', 'editPersonalInfoForm', 'Guardar cambios')}"></div>	
+																														<!-- Modal Editar Informacion UTP -->
 	
-			<!-- Modal Cambiar Contraseña -->
-			<div class="modal fade" id="cambiarPasswordModal" tabindex="-1">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Cambiar Contraseña</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-						</div>
-						<form th:action="@{/usuario/cambiar-password}" method="post">
-							<div class="modal-body">
-								<div class="mb-3">
-									<label class="form-label">Contraseña actual</label>
-									<input type="password" class="form-control" name="passwordActual" required>
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Nueva contraseña</label>
-								<input type="password" class="form-control" name="passwordNueva" required>
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Confirmar nueva contraseña</label>
-								<input type="password" class="form-control" name="passwordConfirmar" required>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-								<button type="submit" class="btn btn-primary">Cambiar contraseña</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
+																														                                                                                                                                                                                                                                    <div th:replace="~{fragments/generic-modal :: genericModal('editarInformacionUtpModal', 'Editar Información UTP', @{/usuario/actualizar-utp}, 'fragments/perfil-forms', 'editUtpInfoForm', 'Guardar cambios')}"></div>	
+																														<!-- Modal Cambiar Contraseña -->
+	
+																														                                                                                                                                                                                                                                    <div th:replace="~{fragments/generic-modal :: genericModal('cambiarPasswordModal', 'Cambiar Contraseña', @{/usuario/cambiar-password}, 'fragments/perfil-forms', 'changePasswordForm', 'Guardar cambios')}"></div>
 		</div>
 	</main>
 	
-	<style>
-		.nav-tabs .nav-link {
-			color: #6c757d;
-			border: none;
-			border-bottom: 3px solid transparent;
-			padding: 0.75rem 1rem;
-		}
-	
-		.nav-tabs .nav-link:hover {
-			border-color: transparent;
-			background-color: rgba(0, 0, 0, 0.05);
-		}
-	
-		.nav-tabs .nav-link.active {
-			color: #B50D30;
-			border-color: #B50D30;
-			background-color: transparent;
-		}
-	
-		.card {
-			border: none;
-			border-radius: 0.5rem;
-		}
-	
-		.btn-link {
-			color: #B50D30;
-		}
-	
-		.btn-link:hover {
-			color: #8a0a24;
-		}
-	
-		.btn-primary {
-			background-color: #B50D30;
-			border-color: #B50D30;
-		}
-	
-		.btn-primary:hover {
-			background-color: #8a0a24;
-			border-color: #8a0a24;
-		}
-	
-		.btn-outline-primary {
-			color: #B50D30;
-			border-color: #B50D30;
-		}
-	
-		.btn-outline-primary:hover {
-			background-color: #B50D30;
-			border-color: #B50D30;
-		}
-	</style>
+
 	
 	<footer th:replace="~{layout/_layout :: footer}"></footer>
-		<script>
-			document.addEventListener('DOMContentLoaded', function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const activeTabName = urlParams.get('tab'); // Busca el parámetro 'tab'
-
-                // Si el parámetro existe (ej: ?tab=pedidos)
-                if (activeTabName) {
-
-                    // 1. Desactivar la pestaña 'perfil' que está activa por defecto en el HTML
-                    const perfilTabButton = document.getElementById('perfil-tab');
-                    const perfilTabContent = document.getElementById('perfil');
-
-                    if (perfilTabButton) {
-                        perfilTabButton.classList.remove('active');
-                        perfilTabButton.setAttribute('aria-selected', 'false');
-                    }
-                    if (perfilTabContent) {
-                        perfilTabContent.classList.remove('show', 'active');
-                    }
-
-                    // 2. Activar la pestaña solicitada ('pedidos')
-                    const tabButton = document.getElementById(activeTabName + '-tab');
-                    const tabContent = document.getElementById(activeTabName);
-
-                    if (tabButton && tabContent) {
-                        tabButton.classList.add('active');
-                        tabButton.setAttribute('aria-selected', 'true');
-                        tabContent.classList.add('show', 'active');
-                    }
-                }
-            });
-		</script>
+	<script th:src="@{/js/perfil.js}"></script>
 	</body>
 	</html>

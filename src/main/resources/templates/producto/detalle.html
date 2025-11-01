@@ -1,59 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/_layout :: head('Detalle de producto')}">
-    <style>
-        /* 🔹 Pestañas redondeadas tipo tarjeta */
-        .custom-tabs {
-            background-color: #f8f9fa;
-            border-radius: 12px 12px 0 0;
-            border-bottom: 1px solid #dee2e6;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-        }
-
-        .custom-tabs .nav-link {
-            border: none;
-            border-radius: 12px 12px 0 0;
-            color: #6c757d;
-            font-weight: 500;
-            padding: 10px 25px;
-            background-color: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-
-        .custom-tabs .nav-link:hover {
-            background-color: #e9ecef;
-            color: #000;
-        }
-
-        .custom-tabs .nav-link.active {
-            background-color: #ffffff;
-            color: #000;
-            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
-            font-weight: 600;
-        }
-
-        /* 🔹 Card y contenido */
-        .card {
-            border-radius: 16px;
-            background-color: #ffffff;
-        }
-
-        .card-body {
-            background-color: #ffffff;
-            border-top: none;
-        }
-
-        .card h5 {
-            color: #333;
-        }
-
-        .text-muted {
-            color: #666 !important;
-        }
-    </style>
-</head>
+<head th:replace="~{layout/_layout :: head('Detalle de producto')}"></head>
 
 <body>
 <header th:replace="~{layout/_layout :: header}"></header>
@@ -211,17 +158,6 @@
 
 <footer th:replace="~{layout/_layout :: footer}"></footer>
 
-<script>
-    function incrementarCantidad() {
-        const input = document.getElementById('cantidad');
-        const max = parseInt(input.getAttribute('max'));
-        if (input.value < max) input.value++;
-    }
-
-    function decrementarCantidad() {
-        const input = document.getElementById('cantidad');
-        if (input.value > 1) input.value--;
-    }
-</script>
+<script th:src="@{/js/product-detail.js}"></script>
 </body>
 </html>

@@ -3,7 +3,9 @@ package com.utpmarket.utp_market.services;
 
 import com.utpmarket.utp_market.models.entity.product.ProductoDetalleView;
 import com.utpmarket.utp_market.repository.ProductoDetalleViewRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -22,6 +24,6 @@ public class ProductoDetalleService {
 
     public ProductoDetalleView obtenerPorId(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Detalle de producto no encontrado"));
     }
 }

@@ -37,7 +37,7 @@ public class ProductoDetalleController {
 
         // Detalle del producto (vista combinada)
         ProductoDetalleView detalle = productoDetalleViewRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
         // Productos relacionados
         List<Producto> relacionados = productoService.getProductosRelacionados(id);
