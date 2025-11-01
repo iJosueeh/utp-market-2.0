@@ -6,6 +6,8 @@ import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.services.ReviewService;
 import com.utpmarket.utp_market.repository.EstudianteDetallesRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
+import com.utpmarket.utp_market.models.entity.order.Pedido;
+import com.utpmarket.utp_market.services.PedidoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -93,6 +95,7 @@ public class PageController {
         return "pages/shop";
     }
 
+    // MÉTODO PERFIL CORREGIDO
     @GetMapping("/perfil")
     public String perfil(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
@@ -108,6 +111,10 @@ public class PageController {
         }
         usuario = optionalUsuario.get();
         session.setAttribute("usuario", usuario);
+
+        List<Pedido> pedidos = pedidoService.obtenerHistorialPedidosPorUsuario(usuario.getId());
+        model.addAttribute("pedidos", pedidos);
+
 
         model.addAttribute("user", usuario);
 
