@@ -1,7 +1,9 @@
 package com.utpmarket.utp_market.controllers;
 
+import com.utpmarket.utp_market.models.entity.product.Reviews;
 import com.utpmarket.utp_market.models.entity.user.EstudianteDetalles;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
+import com.utpmarket.utp_market.services.ReviewService;
 import com.utpmarket.utp_market.repository.EstudianteDetallesRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Arrays; // Import Arrays
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +28,9 @@ public class PageController {
 
     @Autowired
     private EstudianteDetallesRepository estudianteDetallesRepository;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping("/about-us")
     public String aboutUs() {
@@ -105,6 +110,10 @@ public class PageController {
         session.setAttribute("usuario", usuario);
 
         model.addAttribute("user", usuario);
+
+        // Obtener las reseñas del usuario
+        List<Reviews> reseñasUsuario = reviewService.obtenerReviewsPorUsuario(usuario.getId());
+        model.addAttribute("reviews", reseñasUsuario);
 
         List<String> carrerasUtp = Arrays.asList(
                 "Ingeniería de Sistemas e Informática",
