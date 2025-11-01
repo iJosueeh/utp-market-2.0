@@ -4,6 +4,8 @@ import com.utpmarket.utp_market.models.entity.user.EstudianteDetalles;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.repository.EstudianteDetallesRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
+import com.utpmarket.utp_market.models.entity.order.Pedido;
+import com.utpmarket.utp_market.services.PedidoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Arrays; // Import Arrays
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +29,8 @@ public class PageController {
     @Autowired
     private EstudianteDetallesRepository estudianteDetallesRepository;
 
+    @Autowired // <--- AGREGADO: Inyección del PedidoService
+    private PedidoService pedidoService;
     @GetMapping("/about-us")
     public String aboutUs() {
         return "pages/about";
@@ -88,6 +92,7 @@ public class PageController {
         return "pages/shop";
     }
 
+    // MÉTODO PERFIL CORREGIDO
     @GetMapping("/perfil")
     public String perfil(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
@@ -103,6 +108,10 @@ public class PageController {
         }
         usuario = optionalUsuario.get();
         session.setAttribute("usuario", usuario);
+
+        List<Pedido> pedidos = pedidoService.obtenerHistorialPedidosPorUsuario(usuario.getId());
+        model.addAttribute("pedidos", pedidos);
+
 
         model.addAttribute("user", usuario);
 
