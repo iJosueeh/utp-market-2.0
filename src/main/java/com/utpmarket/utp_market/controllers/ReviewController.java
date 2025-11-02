@@ -95,7 +95,7 @@ public class ReviewController {
             }
 
             // Obtener la review
-            Reviews review = reviewService.obtenerReviewPorId(id);
+            Reviews review = reviewService.obtenerReviewPorId(id).orElse(null);
 
             if (review == null) {
                 redirectAttributes.addFlashAttribute("error", "Reseña no encontrada");

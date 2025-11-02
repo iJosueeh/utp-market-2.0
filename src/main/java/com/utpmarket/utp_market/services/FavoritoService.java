@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class FavoritoService {
@@ -32,8 +34,13 @@ public class FavoritoService {
 
     @Transactional
     public boolean toggleFavorito(Long userId, Long productId) {
-        System.out.println("FavoritoService: toggleFavorito called with userId = " + userId + ", productId = " + productId);
-        UsuarioProductoPair pair = obtenerUsuarioYProducto(userId, productId);
+        Optional<UsuarioProductoPair> pairOpt = obtenerUsuarioYProducto(userId, productId);
+
+        if (pairOpt.isEmpty()) {
+            return false; // Usuario o Producto no encontrado
+        }
+
+        UsuarioProductoPair pair = pairOpt.get();
         Usuario usuario = pair.usuario;
         Producto producto = pair.producto;
 
@@ -41,24 +48,25 @@ public class FavoritoService {
 
         if (favoritoOpt.isPresent()) {
             favoritoRepository.deleteByUsuarioAndProducto(usuario, producto);
-            return false; // Eliminado de favoritos
+            return false;
         } else {
             Favorito nuevoFavorito = new Favorito();
             nuevoFavorito.setUsuario(usuario);
             nuevoFavorito.setProducto(producto);
             favoritoRepository.save(nuevoFavorito);
-            return true; // Añadido a favoritos
+            return true;
         }
     }
 
     public boolean isFavorito(Long userId, Long productId) {
-        System.out.println("FavoritoService: isFavorito called with userId = " + userId + ", productId = " + productId);
-        try {
-            UsuarioProductoPair pair = obtenerUsuarioYProducto(userId, productId);
-            return favoritoRepository.findByUsuarioAndProducto(pair.usuario, pair.producto).isPresent();
-        } catch (IllegalArgumentException e) {
+        Optional<UsuarioProductoPair> pairOpt = obtenerUsuarioYProducto(userId, productId);
+
+        if (pairOpt.isEmpty()) {
             return false;
         }
+
+        UsuarioProductoPair pair = pairOpt.get();
+        return favoritoRepository.findByUsuarioAndProducto(pair.usuario, pair.producto).isPresent();
     }
 
     public List<Producto> getFavoritosByUsuario(Long userId) {
@@ -79,24 +87,13 @@ public class FavoritoService {
                 .collect(Collectors.toList());
     }
 
-    private UsuarioProductoPair obtenerUsuarioYProducto(Long userId, Long productId) {
+    private Optional<UsuarioProductoPair> obtenerUsuarioYProducto(Long userId, Long productId) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(userId);
         Optional<Producto> productoOpt = productoRepository.findById(productId);
 
         if (usuarioOpt.isEmpty() || productoOpt.isEmpty()) {
-            System.err.println("FavoritoService: Usuario o Producto no encontrado. userId = " + userId + ", productId = " + productId);
-            throw new IllegalArgumentException("Usuario o Producto no encontrado.");
+            return Optional.empty();
         }
-        return new UsuarioProductoPair(usuarioOpt.get(), productoOpt.get());
-    }
-
-    private static class UsuarioProductoPair {
-        final Usuario usuario;
-        final Producto producto;
-
-        UsuarioProductoPair(Usuario usuario, Producto producto) {
-            this.usuario = usuario;
-            this.producto = producto;
-        }
+        return Optional.of(new UsuarioProductoPair(usuarioOpt.get(), productoOpt.get()));
     }
 }

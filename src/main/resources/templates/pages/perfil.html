@@ -6,7 +6,7 @@
 <body>
 <header th:replace="~{layout/_layout :: header}"></header>
 
-<main style="margin-top: 80px; background-color: #f8f9fa; min-height: 100vh;">
+<main class="main-page-content">
     <div class="container py-4">
 
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -69,10 +69,9 @@
                                 <div class="mb-4">
                                     <img th:if="${user.estudianteDetalles != null and user.estudianteDetalles.photoUrl != null}"
                                          th:src="${user.estudianteDetalles.photoUrl}" alt="Foto de perfil"
-                                         class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                                         class="rounded-circle profile-img">
                                     <div th:if="${user.estudianteDetalles == null or user.estudianteDetalles.photoUrl == null}"
-                                         class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center"
-                                         style="width: 150px; height: 150px;">
+                                         class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center profile-img">
                                         <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
                                     </div>
                                 </div>
@@ -309,7 +308,7 @@
                                        class="btn btn-outline-danger btn-sm">
                                         Ver Detalle
                                     </a>
-                                    <button class="btn btn-danger btn-sm" onclick="agregarAlCarrito(this)"
+                                    <button class="btn btn-danger btn-sm add-to-cart-btn"
                                             th:data-producto-id="${producto.id}"
                                             th:disabled="${producto.estadoNombre == 'Agotado'}">
                                         <i class="bi bi-cart-plus me-1"></i>
