@@ -43,4 +43,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Refactorización de onclick a event listener para agregar al carrito
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.productoId;
+            // Asumiendo que agregarAlCarrito es una función global o definida en otro script
+            if (typeof agregarAlCarrito === 'function') {
+                agregarAlCarrito(this); // Pasa el elemento del botón si la función lo requiere
+            } else {
+                console.warn('La función agregarAlCarrito no está definida.');
+                // Aquí podrías implementar la lógica directamente si agregarAlCarrito no es global
+                // Por ejemplo, una llamada AJAX para añadir al carrito
+            }
+        });
+    });
 });

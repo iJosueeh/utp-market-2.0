@@ -43,6 +43,17 @@ public class PageController {
     @Autowired
     private ReviewService reviewService;
 
+    private static final List<String> CARRERAS_UTP = Arrays.asList(
+            "Ingeniería de Sistemas e Informática",
+            "Ingeniería de Software",
+            "Ingeniería Industrial",
+            "Ingeniería Civil",
+            "Administración de Empresas",
+            "Contabilidad",
+            "Derecho",
+            "Arquitectura"
+    );
+
     @GetMapping("/about-us")
     public String aboutUs() {
         return "pages/about";
@@ -118,14 +129,13 @@ public class PageController {
     }
 
     @GetMapping("/perfil")
-    public String perfil(HttpSession session, Model model, RedirectAttributes redirectAttributes) { // Added RedirectAttributes
-        Usuario usuario;
-        try {
-            usuario = getAuthenticatedUser(session, redirectAttributes);
-            session.setAttribute("usuario", usuario);
-        } catch (IllegalStateException e) {
+    public String perfil(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        Optional<Usuario> usuarioOpt = getAuthenticatedUser(session, redirectAttributes);
+        if (usuarioOpt.isEmpty()) {
             return "redirect:/auth/login";
         }
+        Usuario usuario = usuarioOpt.get();
+        session.setAttribute("usuario", usuario);
 
         List<Pedido> pedidos = pedidoService.obtenerHistorialPedidosPorUsuario(usuario.getId());
         model.addAttribute("pedidos", pedidos);
@@ -137,17 +147,7 @@ public class PageController {
         List<Reviews> reseñasUsuario = reviewService.obtenerReviewsPorUsuario(usuario.getId());
         model.addAttribute("reviews", reseñasUsuario);
 
-        List<String> carrerasUtp = Arrays.asList(
-                "Ingeniería de Sistemas e Informática",
-                "Ingeniería de Software",
-                "Ingeniería Industrial",
-                "Ingeniería Civil",
-                "Administración de Empresas",
-                "Contabilidad",
-                "Derecho",
-                "Arquitectura"
-        );
-        model.addAttribute("carrerasUtp", carrerasUtp);
+        model.addAttribute("carrerasUtp", CARRERAS_UTP);
         List<ProductoDTO> favoritos = favoritoService.getFavoritosByUsuarioDTO(usuario.getId());
         model.addAttribute("favoritos", favoritos);
         return "pages/perfil";
@@ -155,22 +155,16 @@ public class PageController {
 
     @PostMapping("/usuario/actualizar")
     public String actualizarInformacionPersonal(@ModelAttribute Usuario usuarioActualizado, HttpSession session, RedirectAttributes redirectAttributes) {
-        Usuario usuarioExistente;
-        try {
-            usuarioExistente = getAuthenticatedUser(session, redirectAttributes);
-        } catch (IllegalStateException e) {
+        Optional<Usuario> usuarioExistenteOpt = getAuthenticatedUser(session, redirectAttributes);
+        if (usuarioExistenteOpt.isEmpty()) {
             return "redirect:/auth/login";
         }
-
+        Usuario usuarioExistente = usuarioExistenteOpt.get();
         usuarioExistente.setNombre(usuarioActualizado.getNombre());
         usuarioExistente.setApellido(usuarioActualizado.getApellido());
 
         if (usuarioActualizado.getEstudianteDetalles() != null) {
-            EstudianteDetalles estudianteDetallesExistente = usuarioExistente.getEstudianteDetalles();
-            if (estudianteDetallesExistente == null) {
-                estudianteDetallesExistente = new EstudianteDetalles();
-                estudianteDetallesExistente.setUsuario(usuarioExistente);
-            }
+            EstudianteDetalles estudianteDetallesExistente = getOrCreateEstudianteDetalles(usuarioExistente);
             estudianteDetallesExistente.setTelefono(usuarioActualizado.getEstudianteDetalles().getTelefono());
             estudianteDetallesExistente.setFecha_nacimiento(usuarioActualizado.getEstudianteDetalles().getFecha_nacimiento());
             estudianteDetallesRepository.save(estudianteDetallesExistente);
@@ -187,18 +181,12 @@ public class PageController {
 
     @PostMapping("/usuario/actualizar-utp")
     public String actualizarInformacionUtp(@ModelAttribute Usuario usuarioActualizado, HttpSession session, RedirectAttributes redirectAttributes) {
-        Usuario usuarioExistente;
-        try {
-            usuarioExistente = getAuthenticatedUser(session, redirectAttributes);
-        } catch (IllegalStateException e) {
+        Optional<Usuario> usuarioExistenteOpt = getAuthenticatedUser(session, redirectAttributes);
+        if (usuarioExistenteOpt.isEmpty()) {
             return "redirect:/auth/login";
         }
-
-        EstudianteDetalles estudianteDetallesExistente = usuarioExistente.getEstudianteDetalles();
-        if (estudianteDetallesExistente == null) {
-            estudianteDetallesExistente = new EstudianteDetalles();
-            estudianteDetallesExistente.setUsuario(usuarioExistente);
-        }
+        Usuario usuarioExistente = usuarioExistenteOpt.get();
+        EstudianteDetalles estudianteDetallesExistente = getOrCreateEstudianteDetalles(usuarioExistente);
 
         estudianteDetallesExistente.setCodigo_estudiante(usuarioActualizado.getEstudianteDetalles().getCodigo_estudiante());
         estudianteDetallesExistente.setCiclo(usuarioActualizado.getEstudianteDetalles().getCiclo());
@@ -212,17 +200,26 @@ public class PageController {
         return "redirect:/perfil";
     }
 
-    private Usuario getAuthenticatedUser(HttpSession session, RedirectAttributes redirectAttributes) {
+    private Optional<Usuario> getAuthenticatedUser(HttpSession session, RedirectAttributes redirectAttributes) {
         Usuario usuarioEnSesion = (Usuario) session.getAttribute("usuario");
         if (usuarioEnSesion == null) {
-            throw new IllegalStateException("Usuario no autenticado.");
+            return Optional.empty();
         }
 
         Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioEnSesion.getId());
         if (optionalUsuario.isEmpty()) {
             session.invalidate();
-            throw new IllegalStateException("Usuario no encontrado en la base de datos.");
+            return Optional.empty();
         }
-        return optionalUsuario.get();
+        return optionalUsuario;
+    }
+
+    private EstudianteDetalles getOrCreateEstudianteDetalles(Usuario usuario) {
+        EstudianteDetalles estudianteDetalles = usuario.getEstudianteDetalles();
+        if (estudianteDetalles == null) {
+            estudianteDetalles = new EstudianteDetalles();
+            estudianteDetalles.setUsuario(usuario);
+        }
+        return estudianteDetalles;
     }
 }
