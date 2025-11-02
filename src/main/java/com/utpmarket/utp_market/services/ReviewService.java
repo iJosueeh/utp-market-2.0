@@ -72,9 +72,8 @@ public class ReviewService {
      * Obtener una review por ID
      */
     @Transactional(readOnly = true)
-    public Reviews obtenerReviewPorId(Long id) {
-        Optional<Reviews> review = reviewsRepository.findById(id);
-        return review.orElse(null);
+    public Optional<Reviews> obtenerReviewPorId(Long id) {
+        return reviewsRepository.findById(id);
     }
 
     /**
