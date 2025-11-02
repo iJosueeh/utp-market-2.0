@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="faqItem(faq, index)" class="accordion-item mb-3 border-0 shadow-sm rounded-3">
+    <h2 class="accordion-header" th:id="${'faq' + index}">
+        <button class="accordion-button collapsed fw-semibold text-danger" type="button"
+                data-bs-toggle="collapse" th:attr="data-bs-target=${'#collapse' + index}" aria-expanded="false"
+                th:aria-controls="${'collapse' + index}">
+            <span th:text="${faq.question}"></span>
+        </button>
+    </h2>
+    <div th:id="${'collapse' + index}" class="accordion-collapse collapse" th:aria-labelledby="${'faq' + index}"
+         data-bs-parent="#faqAccordion">
+        <div class="accordion-body text-dark">
+            <span th:text="${faq.answer}"></span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

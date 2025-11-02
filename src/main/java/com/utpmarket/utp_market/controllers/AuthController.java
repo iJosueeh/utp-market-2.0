@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.utpmarket.utp_market.models.enums.RegistroResultado;
 import java.util.Optional;
 
 @Controller
@@ -56,13 +57,19 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registrarUsuario(@ModelAttribute("usuario") Usuario usuario, Model model) {
-        String resultado = authService.registrarUsuario(usuario);
+        RegistroResultado resultado = authService.registrarUsuario(usuario);
 
-        if (resultado.contains("registrado correctamente")) {
-            model.addAttribute("success", resultado);
+        if (resultado == RegistroResultado.EXITO) {
+            model.addAttribute("success", "Usuario registrado correctamente.");
             return "auth/login";
         } else {
-            model.addAttribute("error", resultado);
+            String mensajeError = switch (resultado) {
+                case CORREO_INVALIDO -> "El correo debe ser institucional (@utp.edu.pe).";
+                case CORREO_YA_REGISTRADO -> "El correo ya está registrado.";
+                case ERROR_ROL_NO_ENCONTRADO -> "Error interno: Rol de usuario no encontrado.";
+                default -> "Ocurrió un error durante el registro.";
+            };
+            model.addAttribute("error", mensajeError);
             return "auth/register";
         }
     }

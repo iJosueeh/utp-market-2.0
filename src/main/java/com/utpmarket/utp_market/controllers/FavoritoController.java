@@ -20,13 +20,10 @@ public class FavoritoController {
 
     @PostMapping("/toggle/{productId}")
     public ResponseEntity<?> toggleFavorito(@PathVariable Long productId, HttpSession session) {
-        Long userId = null;
-        Usuario loggedInUser = (Usuario) session.getAttribute("usuario");
-
-        if (loggedInUser != null) {
-            userId = loggedInUser.getId();
-        } else {
-            // User is not logged in, return an error
+        Long userId;
+        try {
+            userId = getUserIdFromSession(session);
+        } catch (IllegalStateException e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
             errorResponse.put("message", "Debes iniciar sesión para realizar esta acción.");
@@ -61,13 +58,10 @@ public class FavoritoController {
 
     @GetMapping("/isFavorito/{productId}")
     public ResponseEntity<?> isFavorito(@PathVariable Long productId, HttpSession session) {
-        Long userId = null;
-        Usuario loggedInUser = (Usuario) session.getAttribute("usuario");
-
-        if (loggedInUser != null) {
-            userId = loggedInUser.getId();
-        } else {
-            // User is not logged in, return false as it cannot be a favorite for an anonymous user
+        Long userId;
+        try {
+            userId = getUserIdFromSession(session);
+        } catch (IllegalStateException e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("isFavorito", false);
@@ -91,5 +85,13 @@ public class FavoritoController {
             errorResponse.put("message", "Error al verificar favoritos: " + e.getMessage());
             return ResponseEntity.internalServerError().body(errorResponse);
         }
+    }
+
+    private Long getUserIdFromSession(HttpSession session) {
+        Usuario loggedInUser = (Usuario) session.getAttribute("usuario");
+        if (loggedInUser == null) {
+            throw new IllegalStateException("Usuario no autenticado.");
+        }
+        return loggedInUser.getId();
     }
 }

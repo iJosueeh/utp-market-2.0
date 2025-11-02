@@ -218,4 +218,8 @@ public class Usuario {
     public void setCitas(Set<Cita> citas) {
         this.citas = citas;
     }
+
+    public String getNombreCompleto() {
+        return this.nombre + " " + this.apellido;
+    }
 }

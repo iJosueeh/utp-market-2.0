@@ -5,11 +5,13 @@ import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.services.PedidoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class PedidoController {
     public String mostrarHistorial(HttpSession session, Model model) {
         Usuario usuarioLogueado = (Usuario) session.getAttribute("usuario");
         if (usuarioLogueado == null) {
-            return "redirect:/login";
+            return "redirect:/auth/login";
         }
 
         List<Pedido> pedidos = pedidoService.obtenerHistorialPedidosPorUsuario(usuarioLogueado.getId());
@@ -44,8 +46,7 @@ public class PedidoController {
         }
         Pedido pedido = pedidoService.obtenerPedidoPorId(id);
         if (pedido == null) {
-            model.addAttribute("error", "Pedido no encontrado");
-            return "redirect:/pedidos/historial";
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido no encontrado");
         }
 
         if (!pedido.getUsuario().getId().equals(usuarioLogueado.getId())) {

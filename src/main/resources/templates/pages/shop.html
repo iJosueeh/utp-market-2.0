@@ -84,31 +84,6 @@
     </main>
 
     <footer th:replace="~{layout/_layout :: footer}"></footer>
-
-    <style>
-        /* Efecto hover para las tarjetas */
-        .hover-card {
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .hover-card:hover {
-            transform: translateY(-5px);
-            border-color: #dc3545;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        }
-
-        /* Espaciado del main para el navbar fixed */
-        main {
-            min-height: calc(100vh - 200px);
-        }
-
-        /* Animación sutil para los iconos */
-        .hover-card:hover i {
-            transform: scale(1.1);
-            transition: transform 0.3s ease;
-        }
-    </style>
 </body>
 
 </html>

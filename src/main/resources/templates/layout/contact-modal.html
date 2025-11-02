@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="contactModal(modalId, modalTitle, modalDescription, categoryValue)" class="modal fade" th:id="${modalId}" tabindex="-1" th:aria-labelledby="${modalId + 'Label'}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form th:action="@{/contacto}" method="post" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title" th:id="${modalId + 'Label'}" th:text="${modalTitle}"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p th:text="${modalDescription}"></p>
+
+                        <input type="hidden" name="categoria" th:value="${categoryValue}">
+
+                        <div class="mb-3">
+                            <label th:for="${modalId + 'Nombre'}" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" th:id="${modalId + 'Nombre'}" name="nombre" required>
+                            <div class="invalid-feedback">Por favor, ingresa tu nombre.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label th:for="${modalId + 'Correo'}" class="form-label">Correo</label>
+                            <input type="email" class="form-control" th:id="${modalId + 'Correo'}" name="correo" required>
+                            <div class="invalid-feedback">Por favor, ingresa un correo válido.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label th:for="${modalId + 'Mensaje'}" class="form-label">Mensaje</label>
+                            <textarea class="form-control" th:id="${modalId + 'Mensaje'}" name="mensaje" rows="3" required></textarea>
+                            <div class="invalid-feedback">Por favor, escribe un mensaje.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

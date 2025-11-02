@@ -1,50 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{layout/_layout :: head('UTP Market | Detalle Pedido')}">
-    <style>
-        .producto-item {
-            border-bottom: 1px solid #e9ecef;
-            padding: 1rem 0;
-        }
-        .producto-item:last-child {
-            border-bottom: none;
-        }
-        .producto-imagen {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-        .badge-estado {
-            font-size: 1rem;
-            padding: 0.5rem 1.5rem;
-        }
-        .total-box {
-            /* Estilo para el total */
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 1rem;
-            border-radius: 0.5rem;
-        }
-        .recojo-box {
-            /* Estilo para la caja de recojo */
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 1rem;
-            border-radius: 0.5rem;
-        }
-        .descripcion-limit {
-             /* Estilos para limitar la descripción a 2 líneas y evitar solapamiento */
-             display: -webkit-box;
-             -webkit-line-clamp: 2;
-             -webkit-box-orient: vertical;
-             overflow: hidden;
-             text-overflow: ellipsis;
-             min-height: 1.8em;
-        }
-    </style>
-</head>
+<head th:replace="~{layout/_layout :: head('UTP Market | Detalle Pedido')}"></head>
 
 <body>
 <header th:replace="~{layout/_layout :: header}"></header>
@@ -62,11 +19,12 @@
 
                 <div class="d-flex justify-content-end mb-3">
                          <span class="badge badge-estado"
-                               th:classappend="${pedido.estado.nombre == 'Entregado' ? 'bg-success' :
-                                                 pedido.estado.nombre == 'Cancelado' ? 'bg-danger' :
-                                                 pedido.estado.nombre == 'En proceso' ? 'bg-warning text-dark' :
-                                                 'bg-info'}"
-                               th:text="${pedido.estado.nombre}">
+                               th:with="estadoNombre=${pedido.estado.nombre}"
+                               th:classappend="${estadoNombre == 'Entregado' ? 'bg-success' :
+                                                 (estadoNombre == 'Cancelado' ? 'bg-danger' :
+                                                 (estadoNombre == 'En proceso' ? 'bg-warning text-dark' :
+                                                 'bg-info'))}"
+                               th:text="${estadoNombre}">
                             En proceso
                          </span>
                 </div>

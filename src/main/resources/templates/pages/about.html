@@ -6,7 +6,7 @@
 <body>
     <header th:replace="~{layout/_layout :: header}"></header>
 
-    <section class="container py-5" style="margin-top: 100px; margin-bottom: 100px;">
+    <section class="container py-5 section-spacing-y-100">
         <div class="row align-items-center">
 
             <!-- Imagen -->
@@ -16,7 +16,7 @@
 
             <!-- Texto -->
             <div class="col-md-6">
-                <h5 class="text-uppercase fw-bold mb-2" style="color: #B50D30;">
+                <h5 class="text-uppercase fw-bold mb-2 text-utp-red">
                     Acerca de nosotros
                 </h5>
                 <h2 class="fw-bold mb-3">UTP Market</h2>
@@ -31,7 +31,7 @@
         </div>
     </section>
 
-    <section style="background-color: #a3002a; padding: 100px 0;">
+    <section class="bg-utp-red-padding-y-100">
         <div class="container text-center text-white">
             <!-- Título -->
             <h6 class="text-uppercase fw-bold">Nuestra Identidad</h6>
@@ -117,8 +117,7 @@
 
             <!-- Derecha: Imagen -->
             <div class="col-md-6 mt-4 mt-md-0 d-flex justify-content-center">
-                <img th:src="@{/img/objetivos-img.png}" alt="Objetivos UTP Market" class="img-fluid rounded shadow"
-                    style="max-height: 420px; object-fit: cover;" />
+                <img th:src="@{/img/objetivos-img.png}" alt="Objetivos UTP Market" class="img-fluid rounded shadow img-max-height-420" />
             </div>
         </div>
     </section>

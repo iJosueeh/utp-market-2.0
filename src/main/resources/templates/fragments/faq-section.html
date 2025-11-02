@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section th:fragment="faqSection" class="faq-section py-5" style="background-color: #B50D30;">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-5 text-white">Preguntas Frecuentes</h2>
+
+            <div class="accordion w-75 mx-auto" id="faqAccordion">
+                <div class="accordion-item border-0 mb-3 rounded-3">
+                    <h2 class="accordion-header" id="heading0">
+                        <button class="accordion-button text-danger fw-bold" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse0" aria-expanded="true" aria-controls="collapse0">
+                            ¿Qué es UTP Market?
+                        </button>
+                    </h2>
+                    <div id="collapse0" class="accordion-collapse collapse show" aria-labelledby="heading0"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                            UTP Market es una plataforma creada por y para estudiantes UTP, donde puedes comprar y
+                            vender servicios,
+                            materiales, guías y más de manera segura.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 mb-3 rounded-3">
+                    <h2 class="accordion-header" id="heading1">
+                        <button class="accordion-button collapsed text-danger fw-bold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false"
+                            aria-controls="collapse1">
+                            ¿Quiénes pueden usar la plataforma?
+                        </button>
+                    </h2>
+                    <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading1"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                            La comunidad está pensada principalmente para estudiantes UTP, aunque en un futuro
+                            podría abrirse a otros
+                            usuarios verificados.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 mb-3 rounded-3">
+                    <h2 class="accordion-header" id="heading2">
+                        <button class="accordion-button collapsed text-danger fw-bold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false"
+                            aria-controls="collapse2">
+                            ¿Es seguro comprar y vender aquí?
+                        </button>
+                    </h2>
+                    <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                            Sí. Solo interactúas con estudiantes UTP, lo que genera un entorno de confianza dentro
+                            de la comunidad.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 mb-3 rounded-3">
+                    <h2 class="accordion-header" id="heading3">
+                        <button class="accordion-button collapsed text-danger fw-bold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false"
+                            aria-controls="collapse3">
+                            ¿Qué puedo vender en UTP Market?
+                        </button>
+                    </h2>
+                    <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                            Puedes vender materiales de estudio, servicios académicos, guías, apuntes, accesorios y
+                            artículos
+                            relacionados con la vida universitaria.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 mb-3 rounded-3">
+                    <h2 class="accordion-header" id="heading4">
+                        <button class="accordion-button collapsed text-danger fw-bold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false"
+                            aria-controls="collapse4">
+                            ¿Qué hago si tengo un problema con mi compra o venta?
+                        </button>
+                    </h2>
+                    <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body bg-white text-dark rounded-bottom-3">
+                            Puedes reportar el caso al soporte de la plataforma desde tu perfil, y nuestro equipo te
+                            ayudará a
+                            solucionarlo.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

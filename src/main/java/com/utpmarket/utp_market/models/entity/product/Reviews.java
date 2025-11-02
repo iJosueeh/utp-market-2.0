@@ -2,8 +2,8 @@ package com.utpmarket.utp_market.models.entity.product;
 
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import jakarta.persistence.*;
-
 import java.util.Set;
+import java.time.LocalDateTime; // Necesario para fechaCreacion
 
 @Entity
 @Table(name = "reviews")
@@ -25,9 +25,13 @@ public class Reviews {
 
     private Integer puntaje;
 
+    @Column(name = "fecha_creacion")
+    private LocalDateTime fechaCreacion; // Para registrar cuándo se envió
+
     @OneToMany(mappedBy = "reviews", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RespuestaReview> respuestas;
 
+    // --- CONSTRUCTORES ---
     public Reviews() {}
 
     public Reviews(Long id, String comentario, Producto producto, Usuario usuario, Integer puntaje) {
@@ -38,6 +42,7 @@ public class Reviews {
         this.puntaje = puntaje;
     }
 
+    // --- GETTERS Y SETTERS ---
     public Long getId() {
         return id;
     }
@@ -84,5 +89,12 @@ public class Reviews {
 
     public void setRespuestas(Set<RespuestaReview> respuestas) {
         this.respuestas = respuestas;
+    }
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 }

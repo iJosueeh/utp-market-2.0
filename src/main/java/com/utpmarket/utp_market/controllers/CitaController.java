@@ -22,6 +22,8 @@ public class CitaController {
             citaService.guardarCita(cita);
             redirectAttributes.addFlashAttribute("successMessage", "¡Mensaje enviado y guardado con éxito! Gracias por contactarnos.");
         } catch (Exception e) {
+            System.err.println("Error al guardar la cita: " + e.getMessage());
+            e.printStackTrace(); // Para depuración
             redirectAttributes.addFlashAttribute("errorMessage", "Hubo un problema al enviar el mensaje. Inténtalo nuevamente.");
         }
         return "redirect:/#contacto";
