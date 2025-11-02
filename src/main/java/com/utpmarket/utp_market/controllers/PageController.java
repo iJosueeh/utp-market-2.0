@@ -1,9 +1,11 @@
 package com.utpmarket.utp_market.controllers;
 
-import com.utpmarket.utp_market.models.dto.FAQItem; // Importar FAQItem
+import com.utpmarket.utp_market.models.dto.FAQItem;
 import com.utpmarket.utp_market.models.dto.ProductoDTO;
+import com.utpmarket.utp_market.models.entity.product.Reviews;
 import com.utpmarket.utp_market.models.entity.user.EstudianteDetalles;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
+import com.utpmarket.utp_market.services.ReviewService;
 import com.utpmarket.utp_market.repository.EstudianteDetallesRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
 import com.utpmarket.utp_market.models.entity.order.Pedido;
@@ -44,7 +46,7 @@ public class PageController {
     }
 
     @GetMapping("/help")
-    public String help(Model model) { // Add Model parameter
+    public String help(Model model) {
         List<FAQItem> faqItems = List.of(
                 new FAQItem("¿Cómo puedo contactar al soporte?",
                         "Puedes escribirnos directamente desde el chat de WhatsApp disponible en la plataforma. Solo haz clic en el botón de ayuda y uno de nuestros asesores te responderá."),
@@ -127,6 +129,10 @@ public class PageController {
 
 
         model.addAttribute("user", usuario);
+
+        // Obtener las reseñas del usuario
+        List<Reviews> reseñasUsuario = reviewService.obtenerReviewsPorUsuario(usuario.getId());
+        model.addAttribute("reviews", reseñasUsuario);
 
         List<String> carrerasUtp = Arrays.asList(
                 "Ingeniería de Sistemas e Informática",
