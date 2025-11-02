@@ -1,83 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head th:replace="~{layout/_layout :: head('Detalle de producto')}">
-    <style>
-        /* 🔹 Pestañas redondeadas tipo tarjeta */
-        .custom-tabs {
-            background-color: #f8f9fa;
-            border-radius: 12px 12px 0 0;
-            border-bottom: 1px solid #dee2e6;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-        }
-
-        .custom-tabs .nav-link {
-            border: none;
-            border-radius: 12px 12px 0 0;
-            color: #6c757d;
-            font-weight: 500;
-            padding: 10px 25px;
-            background-color: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-
-        .custom-tabs .nav-link:hover {
-            background-color: #e9ecef;
-            color: #000;
-        }
-
-        .custom-tabs .nav-link.active {
-            background-color: #ffffff;
-            color: #000;
-            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
-            font-weight: 600;
-        }
-
-        .card {
-            border-radius: 16px;
-            background-color: #ffffff;
-        }
-
-        .card-body {
-            background-color: #ffffff;
-            border-top: none;
-        }
-
-        .card h5 {
-            color: #333;
-        }
-
-        .text-muted {
-            color: #666 !important;
-        }
-
-        /* ========== ESTRELLAS INTERACTIVAS (Formulario) ========== */
-        .rating-stars {
-            display: flex;
-            flex-direction: row-reverse;
-            justify-content: flex-end;
-            gap: 5px;
-            font-size: 2rem;
-        }
-
-        .rating-stars input[type="radio"] {
-            display: none;
-        }
-
-        .rating-stars label {
-            cursor: pointer;
-            color: #ddd;
-            transition: color 0.2s;
-        }
-
-        .rating-stars label:hover,
-        .rating-stars label:hover ~ label,
-        .rating-stars input[type="radio"]:checked ~ label {
-            color: #ffc107;
-        }
-    </style>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/_layout :: head('Detalle de producto')}"></head>
 
 <body>
 <div th:replace="~{layout/_layout :: header}"></div>
@@ -364,23 +287,6 @@
 
 <div th:replace="~{layout/_layout :: footer}"></div>
 
-<script>
-    function incrementarCantidad() {
-        const input = document.getElementById('cantidad');
-        const max = parseInt(input.getAttribute('max')) || 999;
-        const current = parseInt(input.value) || 1;
-        if (current < max) {
-            input.value = current + 1;
-        }
-    }
-
-    function decrementarCantidad() {
-        const input = document.getElementById('cantidad');
-        const current = parseInt(input.value) || 1;
-        if (current > 1) {
-            input.value = current - 1;
-        }
-    }
-</script>
+<script th:src="@{/js/product-detail.js}"></script>
 </body>
 </html>

@@ -14,11 +14,14 @@ import java.util.Optional;
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
     Long countByCategoria(Categoria categoria);
+
     Long countByVendedor(Usuario vendedor);
+
     List<Producto> findByStockGreaterThan(Integer stock);
 
     @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.estudianteDetalles WHERE u.email = :email")
-    Optional<Usuario> findByEmail (String email);
+    Optional<Usuario> findByEmail(String email);
+
     @Query("SELECT p FROM Producto p WHERE p.categoria.id = :categoriaId AND p.id <> :productoId")
     List<Producto> findRelatedProducts(@Param("categoriaId") Long categoriaId,
                                        @Param("productoId") Long productoId);

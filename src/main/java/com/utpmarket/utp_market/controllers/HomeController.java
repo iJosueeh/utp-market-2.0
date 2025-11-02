@@ -13,7 +13,7 @@ public class HomeController {
     public String inicio(Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
         if (usuario != null) {
-            model.addAttribute("nombreCompleto", usuario.getNombre() + " " + usuario.getApellido());
+            model.addAttribute("nombreCompleto", usuario.getNombreCompleto());
             model.addAttribute("correo", usuario.getEmail());
         }
         return "index";

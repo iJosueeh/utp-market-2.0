@@ -35,30 +35,18 @@ public class ProductoDetalleController {
 
         Producto detalle = null;
 
-        try {
-            // 1. Intentamos obtener el producto
-            detalle = productoService.findById(id);
-        } catch (NoSuchElementException | IllegalArgumentException e) {
-            System.out.println("ERROR: Producto con ID " + id + " no encontrado o inválido.");
-        }
+        ProductoDetalleView detalle = productoDetalleViewRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
-        // 🚨 CORRECCIÓN CLAVE: La variable 'detalle' debe ser agregada al Model
-        // antes de cualquier retorno para que Thymeleaf no falle si es nulo.
         model.addAttribute("detalle", detalle);
         model.addAttribute("success", success);
         model.addAttribute("error", error);
 
 
-        // 2. Si el producto no existe, la vista (detalle.html) se encargará de mostrar
-        // el mensaje de "Producto no encontrado" gracias al 'th:if="${detalle == null}"'
-        // y como 'detalle' ya está en el Model, se evita el error de parseo.
         if (detalle == null) {
             return "producto/detalle";
         }
 
-        // --- SI EL PRODUCTO EXISTE, CONTINUAMOS CARGANDO LOS DEMÁS DATOS ---
-
-        // --- Reviews del producto ---
         double reviewPromedio = reviewService.obtenerPromedioPuntaje(id);
         long totalReviews = reviewService.contarReviewsPorProducto(id);
 
