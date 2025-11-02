@@ -40,6 +40,9 @@ public class PageController {
     @Autowired
     private PedidoService pedidoService;
 
+    @Autowired
+    private ReviewService reviewService;
+
     @GetMapping("/about-us")
     public String aboutUs() {
         return "pages/about";

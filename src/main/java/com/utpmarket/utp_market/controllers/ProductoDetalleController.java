@@ -1,18 +1,22 @@
 package com.utpmarket.utp_market.controllers;
 
 import com.utpmarket.utp_market.models.entity.product.Producto;
+import com.utpmarket.utp_market.models.entity.product.ProductoDetalleView;
 import com.utpmarket.utp_market.models.entity.product.Reviews;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
+import com.utpmarket.utp_market.repository.ProductoDetalleViewRepository;
 import com.utpmarket.utp_market.services.ProductoService;
 import com.utpmarket.utp_market.services.ReviewService;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,6 +30,9 @@ public class ProductoDetalleController {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private ProductoDetalleViewRepository productoDetalleViewRepository;
+
     @GetMapping("/producto/{id}")
     public String verDetalleProducto(@PathVariable Long id,
                                      HttpSession session,
@@ -33,15 +40,12 @@ public class ProductoDetalleController {
                                      @RequestParam(required = false) String success,
                                      @RequestParam(required = false) String error) {
 
-        Producto detalle = null;
-
         ProductoDetalleView detalle = productoDetalleViewRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
         model.addAttribute("detalle", detalle);
         model.addAttribute("success", success);
         model.addAttribute("error", error);
-
 
         if (detalle == null) {
             return "producto/detalle";
