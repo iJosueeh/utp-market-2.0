@@ -71,4 +71,15 @@ public class AuthService {
         }
         return Optional.empty();
     }
+
+    public void changePassword(Usuario usuario, String currentPassword, String newPassword, String confirmPassword) throws Exception {
+        if (!passwordEncoder.matches(currentPassword, usuario.getPassword())) {
+            throw new Exception("La contraseña actual es incorrecta");
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            throw new Exception("Las contraseñas no coinciden");
+        }
+        usuario.setPassword(passwordEncoder.encode(newPassword));
+        usuarioRepository.save(usuario);
+    }
 }
