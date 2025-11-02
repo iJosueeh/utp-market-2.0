@@ -137,6 +137,15 @@ public class PageController {
         Usuario usuario = usuarioOpt.get();
         session.setAttribute("usuario", usuario);
 
+        if (session.getAttribute("success") != null) {
+            model.addAttribute("success", session.getAttribute("success"));
+            session.removeAttribute("success");
+        }
+        if (session.getAttribute("error") != null) {
+            model.addAttribute("error", session.getAttribute("error"));
+            session.removeAttribute("error");
+        }
+
         List<Pedido> pedidos = pedidoService.obtenerHistorialPedidosPorUsuario(usuario.getId());
         model.addAttribute("pedidos", pedidos);
 
