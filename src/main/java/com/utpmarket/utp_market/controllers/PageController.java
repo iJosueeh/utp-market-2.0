@@ -1,11 +1,13 @@
 package com.utpmarket.utp_market.controllers;
 
 import com.utpmarket.utp_market.models.dto.FAQItem; // Importar FAQItem
+import com.utpmarket.utp_market.models.dto.ProductoDTO;
 import com.utpmarket.utp_market.models.entity.user.EstudianteDetalles;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.repository.EstudianteDetallesRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
 import com.utpmarket.utp_market.models.entity.order.Pedido;
+import com.utpmarket.utp_market.services.FavoritoService;
 import com.utpmarket.utp_market.services.PedidoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class PageController {
 
     @Autowired
     private EstudianteDetallesRepository estudianteDetallesRepository;
+
+    @Autowired
+    private FavoritoService favoritoService;
 
     @Autowired
     private PedidoService pedidoService;
@@ -134,7 +139,8 @@ public class PageController {
                 "Arquitectura"
         );
         model.addAttribute("carrerasUtp", carrerasUtp);
-
+        List<ProductoDTO> favoritos = favoritoService.getFavoritosByUsuarioDTO(usuario.getId());
+        model.addAttribute("favoritos", favoritos);
         return "pages/perfil";
     }
 

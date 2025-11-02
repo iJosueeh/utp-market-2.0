@@ -1,5 +1,6 @@
 package com.utpmarket.utp_market.services;
 
+import com.utpmarket.utp_market.models.dto.ProductoDTO;
 import com.utpmarket.utp_market.models.entity.user.Favorito;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.models.entity.product.Producto;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FavoritoService {
@@ -23,6 +26,9 @@ public class FavoritoService {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private ProductoService productoService;
 
     @Transactional
     public boolean toggleFavorito(Long userId, Long productId) {
@@ -55,14 +61,22 @@ public class FavoritoService {
         }
     }
 
-    private static class UsuarioProductoPair {
-        final Usuario usuario;
-        final Producto producto;
-
-        UsuarioProductoPair(Usuario usuario, Producto producto) {
-            this.usuario = usuario;
-            this.producto = producto;
+    public List<Producto> getFavoritosByUsuario(Long userId) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(userId);
+        if (usuarioOpt.isEmpty()) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
         }
+        Usuario usuario = usuarioOpt.get();
+        return favoritoRepository.findAllByUsuario(usuario).stream()
+                .map(Favorito::getProducto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductoDTO> getFavoritosByUsuarioDTO(Long userId) {
+        List<Producto> productos = getFavoritosByUsuario(userId);
+        return productos.stream()
+                .map(productoService::convertToDto)
+                .collect(Collectors.toList());
     }
 
     private UsuarioProductoPair obtenerUsuarioYProducto(Long userId, Long productId) {
@@ -74,5 +88,15 @@ public class FavoritoService {
             throw new IllegalArgumentException("Usuario o Producto no encontrado.");
         }
         return new UsuarioProductoPair(usuarioOpt.get(), productoOpt.get());
+    }
+
+    private static class UsuarioProductoPair {
+        final Usuario usuario;
+        final Producto producto;
+
+        UsuarioProductoPair(Usuario usuario, Producto producto) {
+            this.usuario = usuario;
+            this.producto = producto;
+        }
     }
 }

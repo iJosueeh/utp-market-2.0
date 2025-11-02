@@ -73,7 +73,7 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
 
-    private ProductoDTO convertToDto(Producto producto) {
+    public ProductoDTO convertToDto(Producto producto) {
         String imagenUrlPrincipal = producto.getImagenes().stream()
                 .filter(ImageneProducto::isPrincipal)
                 .map(ImageneProducto::getUrl)

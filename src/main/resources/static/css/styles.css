@@ -140,6 +140,7 @@
 .btn-outline-primary {
     color: #B50D30;
     border-color: #B50D30;
+    background-color: #B50D30;
 }
 
 .btn-outline-primary:hover {
@@ -317,4 +318,28 @@ main {
 .img-max-height-420 {
     max-height: 420px;
     object-fit: cover;
+}
+
+/* Product Card Styles */
+.product-card {
+transition: all 0.3s ease;
+}
+
+.product-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.product-image-container {
+position: relative;
+}
+
+.product-overlay {
+background: rgba(0, 0, 0, 0.5);
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-overlay {
+opacity: 1;
 }

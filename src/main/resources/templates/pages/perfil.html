@@ -1,256 +1,352 @@
 <!DOCTYPE html>
-	<html lang="es" xmlns:th="http://www.thymeleaf.org">
-	
-	<head th:replace="~{layout/_layout :: head('UTP Market | Perfil')}"></head>
-	
-	<body>
-		<header th:replace="~{layout/_layout :: header}"></header>
-	
-		<main style="margin-top: 80px; background-color: #f8f9fa; min-height: 100vh;">
-			<div class="container py-4">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
-				<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-					<span th:text="${success}"></span>
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>
-				<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-					<span th:text="${error}"></span>
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>
+<head th:replace="~{layout/_layout :: head('UTP Market | Perfil')}"></head>
 
-				<!-- Encabezado -->
-				<div class="mb-4">
-					<h2 class="fw-bold mb-1">Mi Cuenta</h2>
-					<p class="text-muted">Gestiona tu perfil y preferencias de UTP Market</p>
-				</div>
-	
-				<!-- Tabs de navegación -->
-				<ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
-					<li class="nav-item" role="presentation">
-						<button class="nav-link active" id="perfil-tab" data-bs-toggle="tab" data-bs-target="#perfil"
-							type="button" role="tab">
-							<i class="bi bi-person me-2"></i>Perfil
-						</button>
-					</li>
-					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="pedidos-tab" data-bs-toggle="tab" data-bs-target="#pedidos"
-							type="button" role="tab">
-							<i class="bi bi-bag me-2"></i>Pedidos
-						</button>
-					</li>
-					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="favoritos-tab" data-bs-toggle="tab" data-bs-target="#favoritos"
-							type="button" role="tab">
-							<i class="bi bi-heart me-2"></i>Favoritos
-						</button>
-					</li>
-					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="resenas-tab" data-bs-toggle="tab" data-bs-target="#resenas"
-							type="button" role="tab">
-							<i class="bi bi-star me-2"></i>Reseñas
-						</button>
-					</li>
-				</ul>
-	
-				<!-- Contenido de los tabs -->
-				<div class="tab-content" id="profileTabsContent">
-					<!-- Tab Perfil -->
-					<div class="tab-pane fade show active" id="perfil" role="tabpanel">
-						<div class="mb-4">
-							<h4 class="fw-bold mb-1">Mi Perfil</h4>
-							<p class="text-muted">Gestiona tu información personal</p>
-						</div>
-	
-						<div class="row g-4">
-							<!-- Tarjeta de Foto de Perfil -->
-							<div class="col-lg-4">
-								<div class="card shadow-sm">
-									<div class="card-body text-center py-5">
-											<div class="mb-4">
-												<img th:if="${user.estudianteDetalles != null and user.estudianteDetalles.photoUrl != null}" th:src="${user.estudianteDetalles.photoUrl}" alt="Foto de perfil" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-												<div th:if="${user.estudianteDetalles == null or user.estudianteDetalles.photoUrl == null}" class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
-													<i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
-												</div>
-											</div>
-											<h5 class="mb-1" th:text="${user.nombre + ' ' + user.apellido}"></h5>
-											<p class="text-muted mb-4">Estudiante UTP</p>
-											<!-- Botón de cambiar foto deshabilitado temporalmente -->
-									</div>
-								</div>
-							</div>
-	
-							<!-- Información Personal -->
-							<div class="col-lg-8">
-								<div class="card shadow-sm">
-									<div class="card-header bg-white d-flex justify-content-between align-items-center">
-										<h6 class="mb-0 fw-bold">Información Personal</h6>
-										<button class="btn btn-link text-decoration-none p-0" data-bs-toggle="modal"
-											data-bs-target="#editarPerfilModal">
-											<i class="bi bi-pencil me-1"></i>Editar
-										</button>
-									</div>
-									<div class="card-body">
-										<div class="row g-4">
-											<div class="col-md-6">
-												<label class="text-muted small mb-1">Nombres</label>
-												<p class="fw-semibold" th:text="${user.nombre}"></p>
-											</div>
-											<div class="col-md-6">
-												<label class="text-muted small mb-1">Apellidos</label>
-												<p class="fw-semibold" th:text="${user.apellido}"></p>
-											</div>
-											<div class="col-md-6">
-												<label class="text-muted small mb-1">Correo Electrónico</label>
-												<p class="fw-semibold">
-													<i class="bi bi-envelope me-2 text-muted"></i>
-													<span th:text="${user.email}"></span>
-												</p>
-											</div>
-											<div class="col-md-6">
-												<label class="text-muted small mb-1">Teléfono</label>
-												<p class="fw-semibold">
-													<i class="bi bi-phone me-2 text-muted"></i>
-													<span th:text="${user.estudianteDetalles?.telefono}"></span>
-												</p>
-											</div>
-										</div>
-									</div>
-								</div>
-	
-								<!-- Información UTP -->
-								<div class="card shadow-sm mt-4">
-									<div class="card-header bg-white d-flex justify-content-between align-items-center">
-										<div class="d-flex align-items-center">
-											<div class="bg-danger rounded p-2 me-3">
-												<i class="bi bi-mortarboard text-white"></i>
-											</div>
-											<div>
-												<h6 class="mb-0 fw-bold">Información UTP</h6>
-												<small class="text-muted">Datos de tu cuenta universitaria</small>
-											</div>
-										</div>
-										<button class="btn btn-link text-decoration-none p-0" data-bs-toggle="modal" data-bs-target="#editarInformacionUtpModal">
-											<i class="bi bi-pencil me-1"></i>Editar
-										</button>
-									</div>
-									<div class="card-body">
-										<div class="row g-4">
-											<div class="col-md-4">
-												<label class="text-muted small mb-1">Código de Estudiante</label>
-												<p class="fw-semibold" th:text="${user.estudianteDetalles?.codigo_estudiante}"></p>
-											</div>
-											<div class="col-md-4">
-												<label class="text-muted small mb-1">Carrera</label>
-												<p class="fw-semibold" th:text="${user.estudianteDetalles?.carrera}"></p>
-											</div>
-											<div class="col-md-4">
-												<label class="text-muted small mb-1">Ciclo</label>
-												<p class="fw-semibold" th:text="${user.estudianteDetalles?.ciclo}"></p>
-											</div>
-										</div>
-									</div>
-								</div>
-	
-								<!-- Seguridad -->
-								<div class="card shadow-sm mt-4">
-									<div class="card-header bg-white">
-										<h6 class="mb-0 fw-bold">Seguridad</h6>
-									</div>
-									<div class="card-body">
-										<div
-											class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-											<div>
-												<p class="mb-1 fw-semibold">Contraseña</p>
-												<small class="text-muted">Última actualización: 1 Oct 2024</small>
-											</div>
-											<button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
-												data-bs-target="#cambiarPasswordModal">
-												Cambiar contraseña
-											</button>
-										</div>
-										<div class="d-flex justify-content-between align-items-center">
-											<div>
-												<p class="mb-1 fw-semibold">Autenticación en dos pasos</p>
-												<small class="text-muted">Agrega una capa extra de seguridad</small>
-											</div>
-											<button class="btn btn-outline-secondary btn-sm">
-												Configurar
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-	
-					<!-- Tab Pedidos -->
-					<div class="tab-pane fade" id="pedidos" role="tabpanel">
+<body>
+<header th:replace="~{layout/_layout :: header}"></header>
 
-						<div th:if="${not #lists.isEmpty(pedidos)}">
-							<h4 class="fw-bold mb-3">Historial de Compras</h4>
+<main style="margin-top: 80px; background-color: #f8f9fa; min-height: 100vh;">
+    <div class="container py-4">
 
-							<div th:each="pedido : ${pedidos}" class="card shadow-sm mb-3">
-								<div class="card-body d-flex justify-content-between align-items-center">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-									<div class="d-flex flex-column">
-										<a th:href="@{/pedidos/detalle/{id}(id=${pedido.id})}"
-										   class="fw-semibold mb-1 text-decoration-none text-primary"
-										   th:text="'PED-' + ${#strings.toUpperCase(pedido.numero_pedido)}">
-										</a>
-										<small class="text-muted" th:text="${#dates.format(pedido.fecha_pedido, 'dd/MM/yyyy')}"></small>
-									</div>
+        <!-- Encabezado -->
+        <div class="mb-4">
+            <h2 class="fw-bold mb-1">Mi Cuenta</h2>
+            <p class="text-muted">Gestiona tu perfil y preferencias de UTP Market</p>
+        </div>
 
-									<span class="badge bg-warning text-dark me-3" th:text="${pedido.estado.nombre}"></span>
+        <!-- Tabs de navegación -->
+        <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="perfil-tab" data-bs-toggle="tab" data-bs-target="#perfil"
+                        type="button" role="tab">
+                    <i class="bi bi-person me-2"></i>Perfil
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pedidos-tab" data-bs-toggle="tab" data-bs-target="#pedidos"
+                        type="button" role="tab">
+                    <i class="bi bi-bag me-2"></i>Pedidos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="favoritos-tab" data-bs-toggle="tab" data-bs-target="#favoritos"
+                        type="button" role="tab">
+                    <i class="bi bi-heart me-2"></i>Favoritos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="resenas-tab" data-bs-toggle="tab" data-bs-target="#resenas"
+                        type="button" role="tab">
+                    <i class="bi bi-star me-2"></i>Reseñas
+                </button>
+            </li>
+        </ul>
 
-									<span class="fw-bold" th:text="'S/ ' + ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')}"></span>
+        <!-- Contenido de los tabs -->
+        <div class="tab-content" id="profileTabsContent">
+            <!-- Tab Perfil -->
+            <div class="tab-pane fade show active" id="perfil" role="tabpanel">
+                <div class="mb-4">
+                    <h4 class="fw-bold mb-1">Mi Perfil</h4>
+                    <p class="text-muted">Gestiona tu información personal</p>
+                </div>
 
-								</div>
-							</div>
+                <div class="row g-4">
+                    <!-- Tarjeta de Foto de Perfil -->
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body text-center py-5">
+                                <div class="mb-4">
+                                    <img th:if="${user.estudianteDetalles != null and user.estudianteDetalles.photoUrl != null}"
+                                         th:src="${user.estudianteDetalles.photoUrl}" alt="Foto de perfil"
+                                         class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                                    <div th:if="${user.estudianteDetalles == null or user.estudianteDetalles.photoUrl == null}"
+                                         class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center"
+                                         style="width: 150px; height: 150px;">
+                                        <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
+                                    </div>
+                                </div>
+                                <h5 class="mb-1" th:text="${user.nombre + ' ' + user.apellido}"></h5>
+                                <p class="text-muted mb-4">Estudiante UTP</p>
+                                <!-- Botón de cambiar foto deshabilitado temporalmente -->
+                            </div>
+                        </div>
+                    </div>
 
-						</div>
+                    <!-- Información Personal -->
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0 fw-bold">Información Personal</h6>
+                                <button class="btn btn-link text-decoration-none p-0" data-bs-toggle="modal"
+                                        data-bs-target="#editarPerfilModal">
+                                    <i class="bi bi-pencil me-1"></i>Editar
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="text-muted small mb-1">Nombres</label>
+                                        <p class="fw-semibold" th:text="${user.nombre}"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-muted small mb-1">Apellidos</label>
+                                        <p class="fw-semibold" th:text="${user.apellido}"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-muted small mb-1">Correo Electrónico</label>
+                                        <p class="fw-semibold">
+                                            <i class="bi bi-envelope me-2 text-muted"></i>
+                                            <span th:text="${user.email}"></span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-muted small mb-1">Teléfono</label>
+                                        <p class="fw-semibold">
+                                            <i class="bi bi-phone me-2 text-muted"></i>
+                                            <span th:text="${user.estudianteDetalles?.telefono}"></span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div th:if="${#lists.isEmpty(pedidos)}" class="text-center py-5">
-							<i class="bi bi-bag text-muted" style="font-size: 4rem;"></i>
-							<h5 class="mt-3">No tienes pedidos aún</h5>
-							<p class="text-muted">Tus pedidos aparecerán aquí</p>
-						</div>
-					</div>
+                        <!-- Información UTP -->
+                        <div class="card shadow-sm mt-4">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-danger rounded p-2 me-3">
+                                        <i class="bi bi-mortarboard text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Información UTP</h6>
+                                        <small class="text-muted">Datos de tu cuenta universitaria</small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-link text-decoration-none p-0" data-bs-toggle="modal"
+                                        data-bs-target="#editarInformacionUtpModal">
+                                    <i class="bi bi-pencil me-1"></i>Editar
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-4">
+                                    <div class="col-md-4">
+                                        <label class="text-muted small mb-1">Código de Estudiante</label>
+                                        <p class="fw-semibold"
+                                           th:text="${user.estudianteDetalles?.codigo_estudiante}"></p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="text-muted small mb-1">Carrera</label>
+                                        <p class="fw-semibold" th:text="${user.estudianteDetalles?.carrera}"></p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="text-muted small mb-1">Ciclo</label>
+                                        <p class="fw-semibold" th:text="${user.estudianteDetalles?.ciclo}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-					<!-- Tab Favoritos -->
-					<div class="tab-pane fade" id="favoritos" role="tabpanel">
-						<div class="text-center py-5">
-							<i class="bi bi-heart text-muted" style="font-size: 4rem;"></i>
-							<h5 class="mt-3">No tienes favoritos</h5>
-							<p class="text-muted">Guarda tus productos favoritos aquí</p>
-						</div>
-					</div>
-	
-					<!-- Tab Reseñas -->
-					<div class="tab-pane fade" id="resenas" role="tabpanel">
-						<div class="text-center py-5">
-							<i class="bi bi-star text-muted" style="font-size: 4rem;"></i>
-							<h5 class="mt-3">No has dejado reseñas</h5>
-							<p class="text-muted">Tus reseñas aparecerán aquí</p>
-						</div>
-					</div>
-				</div>
-			</div>
-	
-																														<!-- Modal Editar Perfil -->
-	
-																														                                                                                                                                                                                                                                    <div th:replace="~{fragments/generic-modal :: genericModal('editarPerfilModal', 'Editar Información Personal', @{/usuario/actualizar}, 'fragments/perfil-forms', 'editPersonalInfoForm', 'Guardar cambios')}"></div>	
-																														<!-- Modal Editar Informacion UTP -->
-	
-																														                                                                                                                                                                                                                                    <div th:replace="~{fragments/generic-modal :: genericModal('editarInformacionUtpModal', 'Editar Información UTP', @{/usuario/actualizar-utp}, 'fragments/perfil-forms', 'editUtpInfoForm', 'Guardar cambios')}"></div>	
-																														<!-- Modal Cambiar Contraseña -->
-	
-																														                                                                                                                                                                                                                                    <div th:replace="~{fragments/generic-modal :: genericModal('cambiarPasswordModal', 'Cambiar Contraseña', @{/usuario/cambiar-password}, 'fragments/perfil-forms', 'changePasswordForm', 'Guardar cambios')}"></div>
-		</div>
-	</main>
-	
+                        <!-- Seguridad -->
+                        <div class="card shadow-sm mt-4">
+                            <div class="card-header bg-white">
+                                <h6 class="mb-0 fw-bold">Seguridad</h6>
+                            </div>
+                            <div class="card-body">
+                                <div
+                                        class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                                    <div>
+                                        <p class="mb-1 fw-semibold">Contraseña</p>
+                                        <small class="text-muted">Última actualización: 1 Oct 2024</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#cambiarPasswordModal">
+                                        Cambiar contraseña
+                                    </button>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="mb-1 fw-semibold">Autenticación en dos pasos</p>
+                                        <small class="text-muted">Agrega una capa extra de seguridad</small>
+                                    </div>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        Configurar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-	
-	<footer th:replace="~{layout/_layout :: footer}"></footer>
-	<script th:src="@{/js/perfil.js}"></script>
-	</body>
-	</html>
+            <!-- Tab Pedidos -->
+            <div class="tab-pane fade" id="pedidos" role="tabpanel">
+
+                <div th:if="${not #lists.isEmpty(pedidos)}">
+                    <h4 class="fw-bold mb-3">Historial de Compras</h4>
+
+                    <div th:each="pedido : ${pedidos}" class="card shadow-sm mb-3">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+
+                            <div class="d-flex flex-column">
+                                <a th:href="@{/pedidos/detalle/{id}(id=${pedido.id})}"
+                                   class="fw-semibold mb-1 text-decoration-none text-primary"
+                                   th:text="'PED-' + ${#strings.toUpperCase(pedido.numero_pedido)}">
+                                </a>
+                                <small class="text-muted"
+                                       th:text="${#dates.format(pedido.fecha_pedido, 'dd/MM/yyyy')}"></small>
+                            </div>
+
+                            <span class="badge bg-warning text-dark me-3" th:text="${pedido.estado.nombre}"></span>
+
+                            <span class="fw-bold"
+                                  th:text="'S/ ' + ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')}"></span>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div th:if="${#lists.isEmpty(pedidos)}" class="text-center py-5">
+                    <i class="bi bi-bag text-muted" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3">No tienes pedidos aún</h5>
+                    <p class="text-muted">Tus pedidos aparecerán aquí</p>
+                </div>
+            </div>
+
+            <!-- Tab Favoritos -->
+            <div class="tab-pane fade" id="favoritos" role="tabpanel">
+                <div th:if="${favoritos.isEmpty()}" class="text-center py-5">
+                    <i class="bi bi-heart text-muted" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3">No tienes favoritos</h5>
+                    <p class="text-muted">Guarda tus productos favoritos aquí</p>
+                </div>
+                <div class="row g-4" th:if="${!favoritos.isEmpty()}">
+                    <div class="col-md-6 col-lg-4" th:each="producto : ${favoritos}">
+                        <div class="card h-100 shadow-sm product-card position-relative">
+                            <!-- Badges -->
+                            <div class="position-absolute top-0 start-0 m-2" style="z-index: 10;">
+										<span class="badge bg-danger" th:if="${producto.descuento > 0}">
+											-<span th:text="${producto.descuento}">10</span>%
+										</span>
+                                <span class="badge bg-success" th:if="${producto.isNuevo}">
+											Nuevo
+										</span>
+                                <span class="badge bg-warning text-dark" th:if="${producto.estadoNombre == 'Agotado'}">
+											Agotado
+										</span>
+                            </div>
+
+                            <!-- Imagen del producto -->
+                            <div class="product-image-container position-relative overflow-hidden">
+                                <img th:src="@{${producto.imagenUrlPrincipal}}" class="card-img-top"
+                                     th:alt="${producto.nombre}" style="height: 250px; object-fit: cover;">
+                                <!-- Overlay con botones -->
+                                <div class="product-overlay position-absolute w-100 h-100 top-0 start-0
+													d-flex align-items-center justify-content-center">
+                                    <a th:href="@{/producto/{id}(id=${producto.id})}"
+                                       class="btn btn-light btn-sm me-2">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <button class="btn btn-light btn-sm add-to-favorites-btn"
+                                            th:data-producto-id="${producto.id}">
+                                        <i class="bi bi-heart-fill text-danger"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <!-- Vendedor -->
+                                <p class="text-muted small mb-1">
+                                    Vendido por:
+                                    <span class="text-danger fw-semibold"
+                                          th:text="${producto.vendedorNombre}">TechPeru</span>
+                                </p>
+
+                                <!-- Nombre del producto -->
+                                <h6 class="card-title mb-2" th:text="${producto.nombre}">
+                                    Laptop Lenovo IdeaPad 3 15.6"
+                                </h6>
+
+                                <!-- Rating -->
+                                <div class="mb-2">
+												<span th:each="i : ${#numbers.sequence(1, 5)}">
+													<i class="bi text-warning"
+                                                       th:classappend="${i <= producto.rating} ? 'bi-star-fill' : 'bi-star'"></i>
+												</span>
+                                    <span class="text-muted small ms-1">
+													<span th:text="${#numbers.formatDecimal(producto.rating, 0, 1)}">4.5</span>
+													(<span th:text="${producto.numReviews}">128</span>)
+												</span>
+                                </div>
+
+                                <!-- Precio -->
+                                <div class="mb-3">
+												<span class="h5 text-danger fw-bold mb-0">
+													S/ <span
+                                                        th:text="${#numbers.formatDecimal(producto.precio, 0, 2)}">2,499.00</span>
+												</span>
+                                    <span class="text-muted text-decoration-line-through ms-2"
+                                          th:if="${producto.precioAnterior}"
+                                          th:text="'S/ ' + ${#numbers.formatDecimal(producto.precioAnterior, 0, 2)}">
+													S/ 2,999.00
+												</span>
+                                </div>
+
+                                <!-- Botones -->
+                                <div class="d-grid gap-2">
+                                    <a th:href="@{/producto/{id}(id=${producto.id})}"
+                                       class="btn btn-outline-danger btn-sm">
+                                        Ver Detalle
+                                    </a>
+                                    <button class="btn btn-danger btn-sm" onclick="agregarAlCarrito(this)"
+                                            th:data-producto-id="${producto.id}"
+                                            th:disabled="${producto.estadoNombre == 'Agotado'}">
+                                        <i class="bi bi-cart-plus me-1"></i>
+                                        <span th:text="${producto.estadoNombre == 'Agotado'} ? 'Agotado' : 'Agregar'">Agregar</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Reseñas -->
+            <div class="tab-pane fade" id="resenas" role="tabpanel">
+                <div class="text-center py-5">
+                    <i class="bi bi-star text-muted" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3">No has dejado reseñas</h5>
+                    <p class="text-muted">Tus reseñas aparecerán aquí</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Perfil -->
+
+    <div th:replace="~{fragments/generic-modal :: genericModal('editarPerfilModal', 'Editar Información Personal', @{/usuario/actualizar}, 'fragments/perfil-forms', 'editPersonalInfoForm', 'Guardar cambios')}"></div>
+    <!-- Modal Editar Informacion UTP -->
+
+    <div th:replace="~{fragments/generic-modal :: genericModal('editarInformacionUtpModal', 'Editar Información UTP', @{/usuario/actualizar-utp}, 'fragments/perfil-forms', 'editUtpInfoForm', 'Guardar cambios')}"></div>
+    <!-- Modal Cambiar Contraseña -->
+
+    <div th:replace="~{fragments/generic-modal :: genericModal('cambiarPasswordModal', 'Cambiar Contraseña', @{/usuario/cambiar-password}, 'fragments/perfil-forms', 'changePasswordForm', 'Guardar cambios')}"></div>
+    </div>
+</main>
+
+
+<footer th:replace="~{layout/_layout :: footer}"></footer>
+<script th:src="@{/js/perfil.js}"></script>
+</body>
+</html>
