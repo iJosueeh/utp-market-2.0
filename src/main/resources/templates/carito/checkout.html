@@ -18,15 +18,18 @@
               <h5 class="card-title mb-0">Dirección de Envío</h5>
             </div>
             <div class="d-grid gap-2">
-              <button class="btn btn-outline-secondary text-start d-flex align-items-center py-3 mb-2" type="button">
-                <i class="bi bi-check-circle-fill text-danger me-2"></i>
-                <i class="bi bi-geo-alt-fill text-danger me-2"></i>
-                Casa Juan Pérez Av. Arequipa 1234, Dpto, 502, Lince, Lima +51 987 654 321
-              </button>
-              <button class="btn btn-outline-secondary text-start d-flex align-items-center py-3 mb-2" type="button">
-                <i class="bi bi-geo-alt-fill text-danger me-2"></i>
-                Universidad Juan Pérez Campus UTP - Av. Petit Thouars, San Isidro Lima +51 987 654 321
-              </button>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="direccionEnvio" id="direccion1" value="Av. Arequipa 1234, Dpto, 502, Lince" data-calle="Av. Arequipa 1234, Dpto, 502" data-distrito="Lince" checked>
+                <label class="form-check-label" for="direccion1">
+                  Casa Juan Pérez Av. Arequipa 1234, Dpto, 502, Lince, Lima +51 987 654 321
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="direccionEnvio" id="direccion2" value="Campus UTP - Av. Petit Thouars, San Isidro" data-calle="Campus UTP - Av. Petit Thouars" data-distrito="San Isidro">
+                <label class="form-check-label" for="direccion2">
+                  Universidad Juan Pérez Campus UTP - Av. Petit Thouars, San Isidro Lima +51 987 654 321
+                </label>
+              </div>
               <button class="btn btn-link text-decoration-none" type="button">+ Agregar Nueva Dirección</button>
             </div>
           </div>
@@ -42,9 +45,12 @@
             <div class="accordion" id="paymentMethods">
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
-                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Tarjeta de Crédito/Débito
-                  </button>
+                  <div class="form-check accordion-button">
+                    <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago1" value="1" checked>
+                    <label class="form-check-label" for="metodoPago1" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Tarjeta de Crédito/Débito
+                    </label>
+                  </div>
                 </h2>
                 <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#paymentMethods">
                   <div class="accordion-body">
@@ -85,9 +91,12 @@
               </div>
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingTwo">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Yape/Plin
-                  </button>
+                  <div class="form-check accordion-button collapsed">
+                    <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago2" value="2">
+                    <label class="form-check-label" for="metodoPago2" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                      Yape/Plin
+                    </label>
+                  </div>
                 </h2>
                 <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#paymentMethods">
                   <div class="accordion-body">
@@ -97,9 +106,12 @@
               </div>
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingThree">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Transferencia Bancaria
-                  </button>
+                  <div class="form-check accordion-button collapsed">
+                    <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago3" value="3">
+                    <label class="form-check-label" for="metodoPago3" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      Transferencia Bancaria
+                    </label>
+                  </div>
                 </h2>
                 <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#paymentMethods">
                   <div class="accordion-body">
@@ -138,18 +150,16 @@
             <span th:text="'S/ ' + ${#numbers.formatDecimal(total, 0, 2)}">S/ 0.00</span>
           </div>
 
-          <form th:action="@{/carrito/realizar-pago}" method="post">
+          <form th:action="@{/carrito/realizar-pago}" method="post" id="checkoutForm">
+            <input type="hidden" id="selectedCalle" name="calle" value="">
+            <input type="hidden" id="selectedDistrito" name="distrito" value="">
+            <input type="hidden" id="selectedMetodoPagoId" name="metodoPagoId" value="">
             <button type="submit" class="btn btn-danger w-100">Finalizar Compra</button>
           </form>
-          <p class="text-muted small mt-2">
-            <i class="bi bi-shield-lock"></i> Compra 100% segura
-          </p>
-        </div>
-      </div>
-    </div>
-  </main>
 
   <div th:replace="layout/_layout :: footer"></div>
+
+  <script th:src="@{/js/checkout.js}"></script>
 
 </body>
 </html>

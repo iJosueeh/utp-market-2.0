@@ -1,8 +1,11 @@
 package com.utpmarket.utp_market.controllers;
 
 import com.utpmarket.utp_market.models.dto.CarritoItemDTO;
+import com.utpmarket.utp_market.models.embeddable.Direccion;
+import com.utpmarket.utp_market.models.entity.order.Pedido;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.services.CarritoService;
+import com.utpmarket.utp_market.services.PedidoService;
 import com.utpmarket.utp_market.services.ProductoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.Year;
 import java.util.List;
-import java.util.Random;
 
 @Controller
 @RequestMapping("/carrito")
@@ -24,6 +25,9 @@ public class CarritoController {
 
     @Autowired
     private ProductoService productoService;
+
+    @Autowired
+    private PedidoService pedidoService;
 
     @GetMapping
     public String verCarrito(HttpSession session, Model model) {
@@ -60,7 +64,7 @@ public class CarritoController {
         if (referer != null && !referer.isEmpty()) {
             return "redirect:" + referer;
         } else {
-            return "redirect:/"; // Fallback to home page if Referer is not available
+            return "redirect:/";
         }
     }
 
@@ -96,28 +100,30 @@ public class CarritoController {
     }
 
     @PostMapping("/realizar-pago")
-    public String realizarPago(HttpSession session, Model model) {
+    public String realizarPago(@RequestParam Long metodoPagoId,
+                               @RequestParam String calle,
+                               @RequestParam String distrito,
+                               HttpSession session,
+                               RedirectAttributes redirectAttributes) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
         if (usuario == null) {
             return "redirect:/auth/login";
         }
 
-        List<CarritoItemDTO> carritoItems = carritoService.obtenerItems(usuario.getId());
+        try {
+            Direccion direccionEnvio = new Direccion(calle, distrito);
+            Pedido pedido = pedidoService.crearPedido(usuario.getId(), metodoPagoId, direccionEnvio);
 
-        for (CarritoItemDTO item : carritoItems) {
-            productoService.reducirStock(item.getProducto().getId(), item.getCantidad());
+            redirectAttributes.addFlashAttribute("userEmail", usuario.getEmail());
+            redirectAttributes.addFlashAttribute("orderNumber", pedido.getNumero_pedido());
+            return "redirect:/carrito/pedido-confirmacion";
+
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/carrito/checkout";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al procesar el pago. Intenta nuevamente.");
+            return "redirect:/carrito/checkout";
         }
-
-        carritoService.limpiarCarrito(usuario.getId());
-
-        Random random = new Random();
-        int year = Year.now().getValue();
-        int randomNum = 1000 + random.nextInt(9000);
-        String orderNumber = "ORD-" + year + "-" + randomNum;
-
-        model.addAttribute("userEmail", usuario.getEmail());
-        model.addAttribute("orderNumber", orderNumber);
-
-        return "carito/pedido-confirmacion";
     }
 }
