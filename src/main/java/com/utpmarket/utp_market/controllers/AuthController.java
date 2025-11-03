@@ -85,4 +85,24 @@ public class AuthController {
         return "redirect:/auth/login";
     }
 
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam String currentPassword,
+                                 @RequestParam String newPassword,
+                                 @RequestParam String confirmPassword,
+                                 HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        if (usuario == null) {
+            return "redirect:/auth/login";
+        }
+
+        try {
+            authService.changePassword(usuario, currentPassword, newPassword, confirmPassword);
+            session.setAttribute("success", "Contraseña actualizada correctamente.");
+        } catch (Exception e) {
+            session.setAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/perfil";
+    }
+
 }

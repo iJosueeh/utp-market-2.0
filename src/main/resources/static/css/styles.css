@@ -355,3 +355,7 @@ opacity: 1;
     height: 150px;
     object-fit: cover;
 }
+
+.img-register-cover {
+    object-fit: cover;
+}
