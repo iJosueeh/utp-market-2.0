@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/_layout :: head('Checkout | UTP Market')}"></head>
+
+<body>
+<!-- Importar layout general -->
+<div th:replace="~{layout/_layout :: header}"></div>
+  <main class="container my-5" style="padding-top: 80px;">
+    <div class="row">
+      <!-- Alerts for success/error messages -->
+      <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+          <span th:text="${success}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+          <span th:text="${error}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      <!-- Columna Izquierda -->
+      <div class="col-lg-8">            <!-- Card Dirección de Envío -->
+            <div class="card mb-4 border border-light">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 30px; height: 30px;">1
+                        </div>
+                        <h5 class="card-title mb-0">Dirección de Envío</h5>
+                    </div>
+                    <div class="d-grid gap-2">
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="direccionEnvio" id="direccion1" value="Av. Arequipa 1234, Dpto, 502, Lince" data-calle="Av. Arequipa 265" data-distrito="Lima" checked>
+                                        <label class="form-check-label" for="direccion1">
+                                          UTP Sede Lima Centro: Av. Arequipa 265, Lima
+                                        </label>
+                                      </div>
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="direccionEnvio" id="direccion2" value="Campus UTP - Av. Petit Thouars, San Isidro" data-calle="Av. Petit Thouars 116" data-distrito="Lima">
+                                        <label class="form-check-label" for="direccion2">
+                                          UTP Sede Petit Thouars: Av. Petit Thouars 116, Lima
+                                        </label>
+                                      </div>
+                        <button class="btn btn-link text-decoration-none" type="button">+ Agregar Nueva Dirección
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Método de Pago -->
+            <div class="card border border-light">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 30px; height: 30px;">2
+                        </div>
+                        <h5 class="card-title mb-0">Método de Pago</h5>
+                    </div>
+                                <div class="accordion" id="paymentMethods">
+                                  <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingZero">
+                                      <div class="form-check accordion-button">
+                                        <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago0" value="1" checked>
+                                        <label class="form-check-label" for="metodoPago0" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="true" aria-controls="collapseZero">
+                                          Nombre efectivo
+                                        </label>
+                                      </div>
+                                    </h2>
+                                    <div id="collapseZero" class="accordion-collapse collapse show" aria-labelledby="headingZero" data-bs-parent="#paymentMethods">
+                                      <div class="accordion-body">
+                                        Paga en efectivo al momento de recoger tu pedido.
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                      <div class="form-check accordion-button collapsed">
+                                        <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago1" value="2">
+                                        <label class="form-check-label" for="metodoPago1" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                          Tarjeta de Crédito
+                                        </label>
+                                      </div>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#paymentMethods">
+                                      <div class="accordion-body">
+                                        <form>
+                                          <div class="mb-3">
+                                            <label for="cardName" class="form-label">Nombre en la Tarjeta</label>
+                                            <div class="input-group">
+                                              <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                              <input type="text" class="form-control" id="cardName" placeholder="Nombre Completo" required>
+                                            </div>
+                                          </div>
+                                          <div class="mb-3">
+                                            <label for="cardNumber" class="form-label">Número de Tarjeta</label>
+                                            <div class="input-group">
+                                              <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                                              <input type="text" class="form-control" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" required pattern="[0-9]{16}" maxlength="16">
+                                            </div>
+                                          </div>
+                                          <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                              <label for="expiryDate" class="form-label">Fecha de Vencimiento</label>
+                                              <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                                                <input type="text" class="form-control" id="expiryDate" placeholder="MM/AA" required pattern="(0[1-9]|1[0-2])\/[0-9]{2}" maxlength="5">
+                                              </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                              <label for="cvv" class="form-label">CVV</label>
+                                              <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                                <input type="text" class="form-control" id="cvv" placeholder="XXX" required pattern="[0-9]{3,4}" maxlength="4">
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                      <div class="form-check accordion-button collapsed">
+                                        <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago2" value="3">
+                                        <label class="form-check-label" for="metodoPago2" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                          Tarjeta de Débito
+                                        </label>
+                                      </div>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#paymentMethods">
+                                      <div class="accordion-body">
+                                        <form>
+                                          <div class="mb-3">
+                                            <label for="debitCardName" class="form-label">Nombre en la Tarjeta</label>
+                                            <div class="input-group">
+                                              <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                              <input type="text" class="form-control" id="debitCardName" placeholder="Nombre Completo" required>
+                                            </div>
+                                          </div>
+                                          <div class="mb-3">
+                                            <label for="debitCardNumber" class="form-label">Número de Tarjeta</label>
+                                            <div class="input-group">
+                                              <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                                              <input type="text" class="form-control" id="debitCardNumber" placeholder="XXXX XXXX XXXX XXXX" required pattern="[0-9]{16}" maxlength="16">
+                                            </div>
+                                          </div>
+                                          <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                              <label for="debitExpiryDate" class="form-label">Fecha de Vencimiento</label>
+                                              <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                                                <input type="text" class="form-control" id="debitExpiryDate" placeholder="MM/AA" required pattern="(0[1-9]|1[0-2])\/[0-9]{2}" maxlength="5">
+                                              </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                              <label for="debitCvv" class="form-label">CVV</label>
+                                              <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                                <input type="text" class="form-control" id="debitCvv" placeholder="XXX" required pattern="[0-9]{3,4}" maxlength="4">
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingThree">
+                                      <div class="form-check accordion-button collapsed">
+                                        <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago3" value="4">
+                                        <label class="form-check-label" for="metodoPago3" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                          Yape
+                                        </label>
+                                      </div>
+                                    </h2>
+                                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#paymentMethods">
+                                      <div class="accordion-body">
+                                        Escanea el código QR para pagar con Yape.
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingFour">
+                                      <div class="form-check accordion-button collapsed">
+                                        <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago4" value="5">
+                                        <label class="form-check-label" for="metodoPago4" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                          Plin
+                                        </label>
+                                      </div>
+                                    </h2>
+                                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#paymentMethods">
+                                      <div class="accordion-body">
+                                        Escanea el código QR para pagar con Plin.
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div class="col-lg-4">
+            <div class="card p-3 shadow-sm">
+                <h6 class="fw-bold mb-3">Resumen del pedido</h6>
+                <div th:each="item : ${carritoItems}" class="d-flex align-items-center mb-2">
+                    <img th:src="@{${item.producto.imagenUrlPrincipal}}" alt="Producto" class="img-fluid rounded me-2"
+                         style="width: 50px; height: 50px; object-fit: cover;">
+                    <div>
+                        <p class="mb-0" th:text="${item.producto.nombre}">Nombre del Producto</p>
+                        <p class="text-muted small mb-0"
+                           th:text="${item.cantidad} + ' x S/' + ${#numbers.formatDecimal(item.producto.precio, 0, 2)} + ' = S/' + ${#numbers.formatDecimal(item.subtotal, 0, 2)}">
+                            1 x S/ 0.00 = S/ 0.00</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(subtotal, 0, 2)}">S/ 0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Envío</span>
+                    <span th:text="${subtotal > 100} ? 'GRATIS' : 'S/ 10.00'">GRATIS</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between fw-bold my-3">
+                    <span>Total</span>
+                    <span th:text="'S/ ' + ${#numbers.formatDecimal(total, 0, 2)}">S/ 0.00</span>
+                </div>
+
+                <form th:action="@{/carrito/realizar-pago}" method="post" id="checkoutForm">
+                    <input type="hidden" id="selectedCalle" name="calle" value="">
+                    <input type="hidden" id="selectedDistrito" name="distrito" value="">
+                    <input type="hidden" id="selectedMetodoPagoId" name="metodoPagoId" value="">
+                    <button type="submit" class="btn btn-danger w-100">Finalizar Compra</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{layout/_layout :: footer}"></div>
+<div th:replace="~{chatbot :: chatbot}"></div>
+<script th:src="@{/js/checkout.js}"></script>
+</body>
+</html>

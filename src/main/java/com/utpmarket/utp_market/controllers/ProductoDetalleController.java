@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Controller
 public class ProductoDetalleController {
@@ -47,29 +46,25 @@ public class ProductoDetalleController {
         model.addAttribute("success", success);
         model.addAttribute("error", error);
 
-        if (detalle == null) {
-            return "producto/detalle";
-        }
-
         double reviewPromedio = reviewService.obtenerPromedioPuntaje(id);
         long totalReviews = reviewService.contarReviewsPorProducto(id);
 
-        List<Reviews> reseñas = reviewService.obtenerReviewsPorProducto(id);
+        List<Reviews> resenas = reviewService.obtenerReviewsPorProducto(id);
 
         model.addAttribute("reviewPromedio", reviewPromedio);
         model.addAttribute("totalReviews", totalReviews);
-        model.addAttribute("reseñas", reseñas);
+        model.addAttribute("resenas", resenas);
 
         // --- Usuario actual ---
         Usuario usuario = (Usuario) session.getAttribute("usuario");
-        boolean usuarioYaReseño = false;
+        boolean usuarioYaResenio = false;
 
         if (usuario != null) {
-            usuarioYaReseño = reviewService.usuarioYaHizoReview(usuario.getId(), id);
+            usuarioYaResenio = reviewService.usuarioYaHizoReview(usuario.getId(), id);
         }
 
         model.addAttribute("usuario", usuario);
-        model.addAttribute("usuarioYaReseño", usuarioYaReseño);
+        model.addAttribute("usuarioYaResenio", usuarioYaResenio);
 
         // --- Productos relacionados ---
         List<Producto> relacionados = productoService.getProductosRelacionados(id);

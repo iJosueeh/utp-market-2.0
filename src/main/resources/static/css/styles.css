@@ -173,8 +173,8 @@
     border-bottom: none;
 }
 .producto-imagen {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
     border-radius: 8px;
 }
@@ -203,7 +203,7 @@
      -webkit-box-orient: vertical;
      overflow: hidden;
      text-overflow: ellipsis;
-     min-height: 1.8em;
+     min-height: 2.4em; /* Increased min-height for better text adjustment */
 }
 /* Producto Detalle page specific styles */
 /* 🔹 Pestañas redondeadas tipo tarjeta */
@@ -354,4 +354,37 @@ opacity: 1;
     width: 150px;
     height: 150px;
     object-fit: cover;
+}
+
+.img-register-cover {
+    object-fit: cover;
+}
+
+.logo-width-90 {
+    max-width: 120px;
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Estilos para el sistema de calificación por estrellas */
+.rating-stars {
+    display: inline-block;
+    direction: rtl; /* Para que las estrellas se alineen a la derecha y el hover funcione de izquierda a derecha */
+}
+
+.rating-stars input {
+    display: none; /* Ocultar los radio buttons */
+}
+
+.rating-stars label {
+    color: #ccc; /* Color por defecto de las estrellas */
+    font-size: 1.5rem; /* Tamaño de las estrellas */
+    padding: 0 2px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.rating-stars label:hover,
+.rating-stars label:hover ~ label,
+.rating-stars input:checked ~ label {
+    color: #ffc107; /* Color de las estrellas al pasar el ratón o seleccionadas (amarillo de Bootstrap) */
 }

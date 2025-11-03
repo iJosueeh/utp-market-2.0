@@ -88,6 +88,26 @@ public class ReviewService {
      * Crear una nueva review con validación
      */
     @Transactional
+    public Reviews actualizarReview(Long reviewId, Long usuarioId, Integer nuevoPuntaje, String nuevoComentario) {
+        Reviews review = reviewsRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("Reseña no encontrada"));
+
+        if (!review.getUsuario().getId().equals(usuarioId)) {
+            throw new SecurityException("No tienes permiso para actualizar esta reseña");
+        }
+
+        if (nuevoPuntaje < 1 || nuevoPuntaje > 5) {
+            throw new IllegalArgumentException("El puntaje debe estar entre 1 y 5");
+        }
+
+        review.setPuntaje(nuevoPuntaje);
+        review.setComentario(nuevoComentario);
+        review.setFechaModificacion(LocalDateTime.now());
+
+        return reviewsRepository.save(review);
+    }
+
+    @Transactional
     public Reviews crearReview(Usuario usuario, Producto producto, Integer puntaje, String comentario) {
         // Verificar que no exista una review previa
         if (usuarioYaHizoReview(usuario.getId(), producto.getId())) {
