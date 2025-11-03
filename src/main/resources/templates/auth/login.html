@@ -26,8 +26,8 @@
                     </div>
 
                     <!-- Mensaje de error -->
-                    <div th:if="${param.error}" class="alert alert-danger py-2 small" role="alert">
-                        Correo o contraseña incorrectos.
+                    <div th:if="${error}" class="alert alert-danger py-2 small" role="alert">
+                        <span th:text="${error}"></span>
                     </div>
 
                     <!-- Formulario -->
@@ -78,6 +78,9 @@
                     <p class="text-center small">
                         ¿Aún no tienes una cuenta?
                         <a th:href="@{/auth/register}" class="fw-bold text-utp-red">Regístrate aquí</a>
+                    </p>
+                    <p class="text-center small mt-3">
+                        <a th:href="@{/}" class="fw-bold text-utp-red">Volver al inicio</a>
                     </p>
                 </main>
             </div>

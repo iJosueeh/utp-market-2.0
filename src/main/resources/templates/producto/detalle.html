@@ -248,6 +248,19 @@
                                                 </span>
                                             </div>
                                         </div>
+                                        <div th:if="${session.usuario != null and session.usuario.id == rev.usuario.id}" class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReviewModal"
+                                                    th:data-review-id="${rev.id}"
+                                                    th:data-review-puntaje="${rev.puntaje}"
+                                                    th:data-review-comentario="${rev.comentario}">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </button>
+                                            <form th:action="@{/reviews/eliminar/{id}(id=${rev.id})}" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta reseña?');">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i> Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
 
                                     <p class="mb-0 text-dark" th:text="${rev.comentario}">
@@ -288,6 +301,46 @@
 </main>
 
 <div th:replace="~{layout/_layout :: footer}"></div>
+
+<div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editReviewModalLabel">Editar Reseña</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/reviews/actualizar}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="reviewId" id="editReviewId">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Calificación *</label>
+                        <div class="rating-stars" id="editRatingStars">
+                            <input type="radio" name="puntaje" value="5" id="editStar5" required />
+                            <label for="editStar5" title="5 estrellas"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" name="puntaje" value="4" id="editStar4" />
+                            <label for="editStar4" title="4 estrellas"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" name="puntaje" value="3" id="editStar3" />
+                            <label for="editStar3" title="3 estrellas"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" name="puntaje" value="2" id="editStar2" />
+                            <label for="editStar2" title="2 estrellas"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" name="puntaje" value="1" id="editStar1" />
+                            <label for="editStar1" title="1 estrella"><i class="bi bi-star-fill"></i></label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editComentario" class="form-label fw-semibold">Comentario *</label>
+                        <textarea class="form-control" id="editComentario" name="comentario" rows="3" maxlength="500" required></textarea>
+                        <small class="text-muted">Máximo 500 caracteres</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script th:src="@{/js/detalle.js}"></script>
 

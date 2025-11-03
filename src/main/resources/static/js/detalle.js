@@ -75,4 +75,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const iconElement = favoriteButton.querySelector('i');
         checkFavoriteStatus(productId, iconElement);
     }
+
+    var editReviewModal = document.getElementById('editReviewModal');
+    if (editReviewModal) { // Check if modal exists
+        editReviewModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Button that triggered the modal
+            var reviewId = button.getAttribute('data-review-id');
+            var reviewPuntaje = button.getAttribute('data-review-puntaje');
+            var reviewComentario = button.getAttribute('data-review-comentario');
+
+            var modalReviewId = editReviewModal.querySelector('#editReviewId');
+            var modalComentario = editReviewModal.querySelector('#editComentario');
+            var modalRatingStars = editReviewModal.querySelector('#editRatingStars');
+
+            modalReviewId.value = reviewId;
+            modalComentario.value = reviewComentario;
+
+            // Set the correct star rating
+            var stars = modalRatingStars.querySelectorAll('input[name="puntaje"]');
+            stars.forEach(function(star) {
+                if (star.value == reviewPuntaje) {
+                    star.checked = true;
+                } else {
+                    star.checked = false;
+                }
+            });
+        });
+    }
 });

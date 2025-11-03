@@ -26,12 +26,14 @@ public class Reviews {
     private Integer puntaje;
 
     @Column(name = "fecha_creacion")
-    private LocalDateTime fechaCreacion; // Para registrar cuándo se envió
+    private LocalDateTime fechaCreacion;
+
+    @Column(name = "fecha_modificacion")
+    private LocalDateTime fechaModificacion;
 
     @OneToMany(mappedBy = "reviews", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RespuestaReview> respuestas;
 
-    // --- CONSTRUCTORES ---
     public Reviews() {}
 
     public Reviews(Long id, String comentario, Producto producto, Usuario usuario, Integer puntaje) {
@@ -42,7 +44,6 @@ public class Reviews {
         this.puntaje = puntaje;
     }
 
-    // --- GETTERS Y SETTERS ---
     public Long getId() {
         return id;
     }
@@ -96,5 +97,13 @@ public class Reviews {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public LocalDateTime getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(LocalDateTime fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
     }
 }

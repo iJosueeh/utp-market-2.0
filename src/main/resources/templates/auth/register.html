@@ -4,13 +4,13 @@
 <head th:replace="~{layout/_layout :: head('UTP Market | Registro')}"></head>
 
 <body class="bg-utp-red-body"> <!-- Fondo rojo (como el que mencionaste) -->
-    <section class="container-fluid vh-100 px-0">
+    <section class="container-fluid vh-90 px-0">
         <div class="row h-100 g-0">
 
             <!-- Lado izquierdo con imagen -->
             <div class="col-md-6 d-none d-md-block">
                 <img src="https://res.cloudinary.com/dy8qrtq40/image/upload/v1756951338/register-img_h3sody.webp"
-                    alt="UTP Market Background" class="img-fluid w-100 h-100 img-register-cover" />
+                    alt="UTP Market Background" class="img-fluid w-100 img-register-cover" />
             </div>
 
             <!-- Lado derecho con formulario -->
@@ -85,6 +85,9 @@
                     <p class="text-center mt-3">
                         ¿Ya tienes una cuenta?
                         <a th:href="@{/auth/login}" class="fw-bold text-utp-red">Iniciar Sesión</a>
+                    </p>
+                    <p class="text-center mt-3">
+                        <a th:href="@{/}" class="fw-bold text-utp-red">Volver al inicio</a>
                     </p>
                 </div>
             </div>
