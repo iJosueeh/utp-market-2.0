@@ -9,7 +9,7 @@
 
 ## 🚀 Descripción
 
-**UTP Market 2.0** es una innovadora plataforma de comercio electrónico diseñada específicamente para la comunidad universitaria. Facilita la compra y venta de productos y servicios relevantes para la vida estudiantil, desde materiales de estudio hasta artículos personales. Construida con la robustez de **Spring Boot**, la flexibilidad de **Thymeleaf** y la fiabilidad de **PostgreSQL**, esta aplicación ofrece una experiencia de usuario completa y segura.
+**UTP Market** es una innovadora plataforma de comercio electrónico diseñada específicamente para la comunidad universitaria. Facilita la compra y venta de productos y servicios relevantes para la vida estudiantil, desde materiales de estudio hasta artículos personales. Construida con la robustez de **Spring Boot**, la flexibilidad de **Thymeleaf** y la fiabilidad de **PostgreSQL**, esta aplicación ofrece una experiencia de usuario completa y segura.
 
 ## ✨ Características Principales
 
