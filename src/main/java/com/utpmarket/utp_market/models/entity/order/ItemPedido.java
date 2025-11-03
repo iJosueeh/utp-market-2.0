@@ -20,15 +20,17 @@ public class ItemPedido {
     private Producto producto;
 
     private Integer cantidad;
+    private Double precioUnitario; // Add this field
     private Double subtotal;
 
     public ItemPedido() {}
 
-    public ItemPedido(Long id, Pedido pedido, Producto producto, Integer cantidad, Double subtotal) {
+    public ItemPedido(Long id, Pedido pedido, Producto producto, Integer cantidad, Double precioUnitario, Double subtotal) {
         this.id = id;
         this.pedido = pedido;
         this.producto = producto;
         this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario; // Initialize in constructor
         this.subtotal = subtotal;
     }
 
@@ -70,5 +72,13 @@ public class ItemPedido {
 
     public void setSubtotal(Double subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public Double getPrecioUnitario() {
+        return precioUnitario;
+    }
+
+    public void setPrecioUnitario(Double precioUnitario) {
+        this.precioUnitario = precioUnitario;
     }
 }

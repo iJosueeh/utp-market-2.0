@@ -1,7 +1,6 @@
 package com.utpmarket.utp_market.models.dto;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 public class ProductoDTO {
     private Long id;
@@ -19,11 +18,10 @@ public class ProductoDTO {
     private String imagenUrlPrincipal;
     private Double rating;
     private Integer numReviews;
-    private Double descuento; // Asumimos 0.0 si no hay descuento
-    private Boolean isNuevo; // Calculado
-    private Double precioAnterior; // Asumimos null si no hay precio anterior
+    private Double descuento;
+    private Boolean isNuevo;
+    private Double precioAnterior;
 
-    // Constructor
     public ProductoDTO(Long id, String nombre, String descripcion, Double precio, String estadoNombre, Integer stock,
                        Long categoriaId, String categoriaNombre, Long vendedorId, String vendedorNombre,
                        Boolean isDestacado, Timestamp fechaCreacion, String imagenUrlPrincipal, Double rating,
