@@ -22,7 +22,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.estudianteDetalles WHERE u.email = :email")
     Optional<Usuario> findByEmail(String email);
 
-    @Query("SELECT p FROM Producto p WHERE p.categoria.id = :categoriaId AND p.id <> :productoId")
+    @Query("SELECT p FROM Producto p LEFT JOIN FETCH p.imagenes WHERE p.categoria.id = :categoriaId AND p.id <> :productoId")
     List<Producto> findRelatedProducts(@Param("categoriaId") Long categoriaId,
                                        @Param("productoId") Long productoId);
 

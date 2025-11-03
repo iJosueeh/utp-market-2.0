@@ -227,4 +227,14 @@ public class ProductoService {
         return productoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
     }
+
+    public void reducirStock(Long productoId, int cantidad) {
+        Producto producto = findById(productoId);
+        int nuevoStock = producto.getStock() - cantidad;
+        if (nuevoStock < 0) {
+            throw new IllegalArgumentException("No hay suficiente stock para el producto: " + producto.getNombre());
+        }
+        producto.setStock(nuevoStock);
+        productoRepository.save(producto);
+    }
 }
