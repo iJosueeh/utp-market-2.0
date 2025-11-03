@@ -313,12 +313,15 @@
                                        class="btn btn-outline-danger btn-sm">
                                         Ver Detalle
                                     </a>
-                                    <button class="btn btn-danger btn-sm" onclick="agregarAlCarrito(this)"
-                                            th:data-producto-id="${producto.id}"
-                                            th:disabled="${producto.estadoNombre == 'Agotado'}">
-                                        <i class="bi bi-cart-plus me-1"></i>
-                                        <span th:text="${producto.estadoNombre == 'Agotado'} ? 'Agotado' : 'Agregar'">Agregar</span>
-                                    </button>
+                                    <form th:action="@{/carrito/agregar}" method="post">
+                                        <input type="hidden" name="productoId" th:value="${producto.id}" />
+                                        <input type="hidden" name="cantidad" value="1" />
+                                        <button type="submit" class="btn btn-danger btn-sm w-100"
+                                                th:disabled="${producto.estadoNombre == 'Agotado'}">
+                                            <i class="bi bi-cart-plus me-1"></i>
+                                            <span th:text="${producto.estadoNombre == 'Agotado'} ? 'Agotado' : 'Agregar'">Agregar</span>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

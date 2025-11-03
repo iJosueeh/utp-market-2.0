@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/_layout :: head('Confirmación de Pedido | UTP Market')}"></head>
+
+<body class="bg-light">
+  <div th:replace="layout/_layout :: header"></div>
+
+  <main class="container my-5" style="padding-top: 80px;">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="card text-center p-4 shadow-sm">
+          <div class="card-body">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+            <h3 class="text-success mt-3">¡Pedido Realizado con Éxito!</h3>
+            <p class="text-muted">Tu pedido ha sido procesado correctamente.</p>
+
+            <div class="bg-light rounded p-3 my-4">
+              <p class="text-muted mb-1">Número de pedido</p>
+              <h4 class="text-danger" th:text="${orderNumber}">ORD-2024-7100</h4>
+            </div>
+
+            <div class="row text-center my-4">
+              <div class="col-6">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <i class="bi bi-box-seam fs-2"></i>
+                    <p class="fw-bold mb-1">Tiempo de entrega</p>
+                    <p class="text-muted small">3-5 días hábiles</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <i class="bi bi-download fs-2"></i>
+                    <p class="fw-bold mb-1">Comprobante</p>
+                    <a href="#" class="text-danger small">Descargar PDF</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-secondary" role="alert">
+              Hemos enviado la confirmación de tu pedido a <strong th:text="${userEmail}">user@example.com</strong>.
+            </div>
+
+            <div class="d-flex justify-content-center gap-2 mt-4">
+              <a th:href="@{/}" class="btn btn-light border">
+                <i class="bi bi-arrow-left"></i> Volver al inicio
+              </a>
+              <a th:href="@{/pedidos/historial}" class="btn btn-dark">
+                <i class="bi bi-box-seam"></i> Ver mis pedidos
+              </a>
+            </div>
+
+            <hr class="my-4">
+
+            <div>
+              <p class="text-muted">¿Necesitas ayuda?</p>
+              <button class="btn btn-sm btn-outline-secondary">Chat en Vivo</button>
+              <button class="btn btn-sm btn-outline-secondary">Contactar Soporte</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div th:replace="layout/_layout :: footer"></div>
+</body>
+</html>

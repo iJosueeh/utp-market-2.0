@@ -4,6 +4,7 @@ import com.utpmarket.utp_market.models.entity.user.Usuario;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,7 +22,7 @@ public class Carrito {
     private Timestamp fecha_creacion;
 
     @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ItemsCarrito> itemsCarrito;
+    private Set<ItemsCarrito> itemsCarrito = new HashSet<>();
 
     public Carrito() {}
 

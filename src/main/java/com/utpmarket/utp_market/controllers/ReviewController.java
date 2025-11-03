@@ -58,21 +58,21 @@ public class ReviewController {
             reviewService.crearReview(usuario, producto, puntaje, comentario);
 
             redirectAttributes.addFlashAttribute("success", "¡Reseña enviada exitosamente!");
-            return "redirect:/productos/detalle/" + productoId;
+            return "redirect:/producto/" + productoId;
 
         } catch (IllegalStateException e) {
             // Ya existe una review del usuario para este producto
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/productos/detalle/" + productoId;
+            return "redirect:/producto/" + productoId;
 
         } catch (IllegalArgumentException e) {
             // Error de validación (puntaje inválido, etc.)
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/productos/detalle/" + productoId;
+            return "redirect:/producto/" + productoId;
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al enviar la reseña. Intenta nuevamente.");
-            return "redirect:/productos/detalle/" + productoId;
+            return "redirect:/producto/" + productoId;
         }
     }
 
@@ -80,6 +80,38 @@ public class ReviewController {
      * Eliminar una review (solo el dueño puede eliminarla)
      * POST /reviews/eliminar/{id}
      */
+    @PostMapping("/actualizar")
+    public String actualizarReview(
+            @RequestParam Long reviewId,
+            @RequestParam Integer puntaje,
+            @RequestParam String comentario,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+            if (usuario == null) {
+                redirectAttributes.addFlashAttribute("error", "Debes iniciar sesión para actualizar una reseña");
+                return "redirect:/auth/login";
+            }
+
+            reviewService.actualizarReview(reviewId, usuario.getId(), puntaje, comentario);
+            redirectAttributes.addFlashAttribute("success", "Reseña actualizada exitosamente!");
+            return "redirect:/producto/" + reviewService.obtenerReviewPorId(reviewId).get().getProducto().getId();
+
+        } catch (SecurityException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/perfil"; // O a la página de detalle del producto si se prefiere
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/perfil"; // O a la página de detalle del producto
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar la reseña. Intenta nuevamente.");
+            return "redirect:/perfil"; // O a la página de detalle del producto
+        }
+    }
+
     @PostMapping("/eliminar/{id}")
     public String eliminarReview(
             @PathVariable Long id,
