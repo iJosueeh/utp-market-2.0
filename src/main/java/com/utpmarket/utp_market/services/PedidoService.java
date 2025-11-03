@@ -130,6 +130,7 @@ public class PedidoService {
             itemPedido.setProducto(productoService.findById(itemDTO.getProducto().getId()));
             itemPedido.setCantidad(itemDTO.getCantidad());
             itemPedido.setPrecioUnitario(itemDTO.getProducto().getPrecio());
+            itemPedido.setSubtotal(itemDTO.getSubtotal()); // Set the subtotal
             itemsPedido.add(itemPedido);
         }
         itemPedidoRepository.saveAll(itemsPedido);

@@ -4,7 +4,7 @@
 
 <body>
   <!-- Importar layout general -->
-  <div th:replace="layout/_layout :: header"></div>
+  <div th:replace="~{layout/_layout :: header}"></div>
 
   <main class="container my-5" style="padding-top: 80px;">
     <div class="row">
@@ -29,7 +29,7 @@
             <div class="col-md-3 text-center">
               <div class="d-flex justify-content-center align-items-center">
                 <button class="btn btn-light border" onclick="disminuir(this)">-</button>
-                <input type="number" min="1" value="1" class="form-control text-center mx-2" style="width: 60px;" th:value="${item.cantidad}">
+                <input type="number" min="0" class="form-control text-center mx-2 cart-quantity-input" style="width: 60px;" th:value="${item.cantidad}" th:data-item-id="${item.id}">
                 <button class="btn btn-light border" onclick="aumentar(this)">+</button>
               </div>
             </div>
@@ -70,17 +70,9 @@
     </div>
   </main>
 
-  <div th:replace="layout/_layout :: footer"></div>
+  <div th:replace="~{layout/_layout :: footer}"></div>
 
-  <script>
-    function aumentar(btn) {
-      const input = btn.parentNode.querySelector('input');
-      input.stepUp();
-    }
-    function disminuir(btn) {
-      const input = btn.parentNode.querySelector('input');
-      if (input.value > 1) input.stepDown();
-    }
-  </script>
+  <div th:replace="~{chatbot :: chatbot}"></div>
+<script th:src="@{/js/carrito.js}"></script>
 </body>
 </html>

@@ -36,9 +36,8 @@
                     <div class="card-body">
                         <div th:each="item : ${pedido.itemsPedido}" class="producto-item">
 
-                            <div class="d-flex align-items-start">
-
-                                <div class="me-3 flex-shrink-0">
+                            <div class="row align-items-center">
+                                <div class="col-auto me-3">
                                     <img th:if="${!#lists.isEmpty(item.producto.imagenes)}"
                                          th:src="@{${item.producto.imagenes[0].url}}"
                                          class="producto-imagen"
@@ -49,12 +48,31 @@
                                     </div>
                                 </div>
 
-                                <div class="flex-grow-1">
+                                <div class="col">
                                     <h6 class="mb-1" th:text="${item.producto.nombre}">Nombre del Producto</h6>
                                     <small class="text-muted descripcion-limit" th:text="${item.producto.descripcion}">Descripción breve</small>
+                                    <div class="d-md-none mt-2">
+                                        <span class="badge bg-secondary me-2">
+                                            Cant: <span th:text="${item.cantidad}">1</span>
+                                        </span>
+                                        <small class="text-muted">Precio unit:</small>
+                                        <strong th:if="${item.subtotal != null and item.cantidad != null and item.cantidad != 0}">
+                                            S/ <span th:text="${#numbers.formatDecimal(item.subtotal / item.cantidad, 1, 2)}">0.00</span>
+                                        </strong>
+                                        <strong th:unless="${item.subtotal != null and item.cantidad != null and item.cantidad != 0}">
+                                            S/ 0.00
+                                        </strong>
+                                        <br>
+                                        <strong class="text-primary" th:if="${item.subtotal != null}">
+                                            Subtotal: S/ <span th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">0.00</span>
+                                        </strong>
+                                        <strong class="text-primary" th:unless="${item.subtotal != null}">
+                                            Subtotal: S/ 0.00
+                                        </strong>
+                                    </div>
                                 </div>
 
-                                <div class="text-end ms-4 flex-shrink-0" style="min-width: 120px;">
+                                <div class="col-md-auto text-end d-none d-md-block">
                                     <div class="mb-2">
                                             <span class="badge bg-secondary">
                                                 Cant: <span th:text="${item.cantidad}">1</span>
@@ -63,10 +81,20 @@
 
                                     <p class="mb-0">
                                         <small class="text-muted">Precio unit:</small><br>
-                                        <strong>S/ <span th:text="${#numbers.formatDecimal(item.subtotal / item.cantidad, 1, 2)}">90.00</span></strong>
+                                        <strong th:if="${item.subtotal != null and item.cantidad != null and item.cantidad != 0}">
+                                            S/ <span th:text="${#numbers.formatDecimal(item.subtotal / item.cantidad, 1, 2)}">0.00</span>
+                                        </strong>
+                                        <strong th:unless="${item.subtotal != null and item.cantidad != null and item.cantidad != 0}">
+                                            S/ 0.00
+                                        </strong>
                                     </p>
                                     <p class="mb-0 text-primary">
-                                        <strong>Subtotal: S/ <span th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">90.00</span></strong>
+                                        <strong th:if="${item.subtotal != null}">
+                                            Subtotal: S/ <span th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">0.00</span>
+                                        </strong>
+                                        <strong class="text-primary" th:unless="${item.subtotal != null}">
+                                            Subtotal: S/ 0.00
+                                        </strong>
                                     </p>
                                 </div>
                             </div>
@@ -75,7 +103,7 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4" th:if="${pedido != null}">
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>Información del Pedido</h6>
@@ -135,5 +163,6 @@
 </main>
 
 <footer th:replace="~{layout/_layout :: footer}"></footer>
+<div th:replace="~{chatbot :: chatbot}"></div>
 </body>
 </html>

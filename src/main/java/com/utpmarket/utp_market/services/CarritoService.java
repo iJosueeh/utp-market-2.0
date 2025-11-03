@@ -96,6 +96,29 @@ public class CarritoService {
         itemsCarritoRepository.deleteAllByCarrito(carrito);
     }
 
+    public void actualizarCantidadItem(Long userId, Long itemId, int nuevaCantidad) {
+        if (nuevaCantidad <= 0) {
+            eliminarProducto(userId, itemId); // If quantity is 0 or less, remove the item
+            return;
+        }
+
+        Carrito carrito = getOrCreateCarrito(userId);
+        ItemsCarrito item = itemsCarritoRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Item de carrito no encontrado"));
+
+        if (!item.getCarrito().getId().equals(carrito.getId())) {
+            throw new SecurityException("El item no pertenece al carrito del usuario");
+        }
+
+        Producto producto = item.getProducto();
+        if (nuevaCantidad > producto.getStock()) {
+            throw new IllegalArgumentException("No hay suficiente stock para el producto: " + producto.getNombre());
+        }
+
+        item.setCantidad(nuevaCantidad);
+        itemsCarritoRepository.save(item);
+    }
+
     private Carrito getOrCreateCarrito(Long userId) {
         Usuario usuario = usuarioRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));

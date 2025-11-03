@@ -61,11 +61,31 @@ public class CarritoController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
-        if (referer != null && !referer.isEmpty()) {
-            return "redirect:" + referer;
-        } else {
-            return "redirect:/";
+        return "redirect:/carrito";
+    }
+
+    @PostMapping("/actualizar-cantidad")
+    public String actualizarCantidadItem(@RequestParam Long itemId,
+                                         @RequestParam int cantidad,
+                                         HttpSession session,
+                                         RedirectAttributes redirectAttributes) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        if (usuario == null) {
+            return "redirect:/auth/login";
         }
+
+        try {
+            carritoService.actualizarCantidadItem(usuario.getId(), itemId, cantidad);
+            redirectAttributes.addFlashAttribute("success", "Cantidad actualizada.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (SecurityException e) {
+            redirectAttributes.addFlashAttribute("error", "No tienes permiso para modificar este item.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar la cantidad.");
+        }
+
+        return "redirect:/carrito";
     }
 
     @GetMapping("/eliminar/{itemId}")
@@ -97,6 +117,11 @@ public class CarritoController {
         model.addAttribute("total", total);
 
         return "carito/checkout";
+    }
+
+    @GetMapping("/pedido-confirmacion")
+    public String pedidoConfirmacion(Model model, HttpSession session) {
+        return "carito/pedido-confirmacion";
     }
 
     @PostMapping("/realizar-pago")

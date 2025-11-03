@@ -37,8 +37,8 @@
                 </h2>
 
                 <div class="accordion" id="faqAccordion">
-                    <div th:each="faq, iterStat : ${faqItems}" th:insert="~{fragments/faq-item :: faqItem(faq=${faq}, index=${iterStat.index + 1})}">
-                        <!-- FAQ item will be inserted here -->
+                    <div th:each="faq, iterStat : ${faqItems}">
+                        <div th:insert="~{fragments/faq-item :: faqItem(faq=${faq}, index=${iterStat.index + 1})}"></div>
                     </div>
                 </div>
             </div>
@@ -76,6 +76,7 @@
     </main>
 
     <footer th:replace="~{layout/_layout :: footer}"></footer>
+    <div th:replace="~{chatbot :: chatbot}"></div>
 </body>
 
 </html>
