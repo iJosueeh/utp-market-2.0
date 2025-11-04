@@ -65,9 +65,61 @@ function limpiarFiltros() {
     submitFilterForm();
 }
 
+function mostrarAlertaCategoria(mensaje, tipo = 'success') {
+    const favoriteNotificationAlert = document.getElementById('favoriteNotificationAlert');
+    const favoriteNotificationMessage = document.getElementById('favoriteNotificationMessage');
+    
+    if (!favoriteNotificationAlert || !favoriteNotificationMessage) return;
+    
+    // Remover clases de tipo de alerta y animaciones previas
+    favoriteNotificationAlert.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-info', 'alert-warning', 'animate__fadeOutUp');
+    favoriteNotificationAlert.classList.add('alert-' + tipo, 'animate__fadeInDown');
+    
+    const iconClass = tipo === 'success' ? 'bi-check-circle-fill' : 
+                      tipo === 'danger' ? 'bi-exclamation-triangle-fill' : 
+                      tipo === 'info' ? 'bi-info-circle-fill' : 'bi-exclamation-circle-fill';
+    
+    favoriteNotificationMessage.innerHTML = `<i class="bi ${iconClass} me-2"></i>${mensaje}`;
+    favoriteNotificationAlert.classList.remove('d-none');
+    favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    setTimeout(() => {
+        favoriteNotificationAlert.classList.remove('animate__fadeInDown');
+        favoriteNotificationAlert.classList.add('animate__fadeOutUp');
+        setTimeout(() => {
+            favoriteNotificationAlert.classList.add('d-none');
+            favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
+        }, 500);
+    }, 5000);
+}
+
 function agregarAlCarrito(button) {
     const productoId = button.dataset.productoId;
-    // Lógica para agregar al carrito (aún no implementada)
+    
+    const formData = new URLSearchParams();
+    formData.append('productoId', productoId);
+    formData.append('cantidad', 1);
+
+    fetch('/carrito/agregar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            mostrarAlertaCategoria('¡Producto agregado al carrito exitosamente!', 'success');
+        } else {
+            return response.text().then(text => {
+                mostrarAlertaCategoria('Error al agregar al carrito: ' + text, 'danger');
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error en la petición AJAX:', error);
+        mostrarAlertaCategoria('Error de conexión al agregar al carrito.', 'danger');
+    });
 }
 
 function agregarAFavoritos(button) {
@@ -76,14 +128,36 @@ function agregarAFavoritos(button) {
     const favoriteNotificationAlert = document.getElementById('favoriteNotificationAlert');
     const favoriteNotificationMessage = document.getElementById('favoriteNotificationMessage');
 
-    // Hide any previous alerts
-    loginAlert.classList.add('d-none');
-    favoriteNotificationAlert.classList.add('d-none');
+    // Hide any previous alerts with animation
+    if (!loginAlert.classList.contains('d-none')) {
+        loginAlert.classList.add('animate__fadeOutUp');
+        setTimeout(() => {
+            loginAlert.classList.add('d-none');
+            loginAlert.classList.remove('animate__fadeOutUp');
+        }, 500);
+    }
+    if (!favoriteNotificationAlert.classList.contains('d-none')) {
+        favoriteNotificationAlert.classList.add('animate__fadeOutUp');
+        setTimeout(() => {
+            favoriteNotificationAlert.classList.add('d-none');
+            favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
+        }, 500);
+    }
 
     if (!isLoggedIn) {
-        loginAlert.classList.remove('d-none');
+        loginAlert.classList.remove('d-none', 'animate__fadeOutUp');
+        loginAlert.classList.add('animate__fadeInDown');
         loginAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return; // Stop further execution
+        
+        setTimeout(() => {
+            loginAlert.classList.remove('animate__fadeInDown');
+            loginAlert.classList.add('animate__fadeOutUp');
+            setTimeout(() => {
+                loginAlert.classList.add('d-none');
+                loginAlert.classList.remove('animate__fadeOutUp');
+            }, 500);
+        }, 5000);
+        return;
     }
 
     const productoId = button.dataset.productoId;
@@ -93,12 +167,10 @@ function agregarAFavoritos(button) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            // 'X-CSRF-TOKEN': csrfToken // Add CSRF token if using Spring Security
         }
     })
     .then(response => {
         if (!response.ok) {
-            // If response is not OK (e.g., 401, 400, 500), parse error message
             return response.json().then(errorData => {
                 throw new Error(errorData.message || 'Error desconocido');
             });
@@ -107,51 +179,71 @@ function agregarAFavoritos(button) {
     })
     .then(data => {
         if (data.success) {
+            const iconClass = data.added ? 'bi-check-circle-fill' : 'bi-info-circle-fill';
+            
             if (data.added) {
                 icon.classList.remove('bi-heart');
-                icon.classList.add('bi-heart-fill');
-                icon.classList.add('text-danger');
-                favoriteNotificationAlert.classList.remove('alert-danger');
+                icon.classList.add('bi-heart-fill', 'text-danger');
+                favoriteNotificationAlert.classList.remove('alert-danger', 'alert-info');
                 favoriteNotificationAlert.classList.add('alert-success');
             } else {
-                icon.classList.remove('bi-heart-fill');
-                icon.classList.remove('text-danger');
+                icon.classList.remove('bi-heart-fill', 'text-danger');
                 icon.classList.add('bi-heart');
-                favoriteNotificationAlert.classList.remove('alert-success');
-                favoriteNotificationAlert.classList.add('alert-danger');
+                favoriteNotificationAlert.classList.remove('alert-success', 'alert-danger');
+                favoriteNotificationAlert.classList.add('alert-info');
             }
-            favoriteNotificationMessage.innerHTML = data.message; // Update message content
-            favoriteNotificationAlert.classList.remove('d-none');
+            
+            favoriteNotificationMessage.innerHTML = `<i class="bi ${iconClass} me-2"></i>${data.message}`;
+            favoriteNotificationAlert.classList.remove('d-none', 'animate__fadeOutUp');
+            favoriteNotificationAlert.classList.add('animate__fadeInDown');
             favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            // Hide alert after 3 seconds
             setTimeout(() => {
-                favoriteNotificationAlert.classList.add('d-none');
+                favoriteNotificationAlert.classList.remove('animate__fadeInDown');
+                favoriteNotificationAlert.classList.add('animate__fadeOutUp');
+                setTimeout(() => {
+                    favoriteNotificationAlert.classList.add('d-none');
+                    favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
+                }, 500);
             }, 3000);
 
             console.log(data.message);
         } else {
             console.error('Error al actualizar favoritos:', data.message);
-            favoriteNotificationAlert.classList.remove('alert-success');
+            favoriteNotificationAlert.classList.remove('alert-success', 'alert-info');
             favoriteNotificationAlert.classList.add('alert-danger');
-            favoriteNotificationMessage.innerHTML = data.message;
-            favoriteNotificationAlert.classList.remove('d-none');
+            favoriteNotificationMessage.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>${data.message}`;
+            favoriteNotificationAlert.classList.remove('d-none', 'animate__fadeOutUp');
+            favoriteNotificationAlert.classList.add('animate__fadeInDown');
             favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
             setTimeout(() => {
-                favoriteNotificationAlert.classList.add('d-none');
-            }, 5000); // Keep error message longer
+                favoriteNotificationAlert.classList.remove('animate__fadeInDown');
+                favoriteNotificationAlert.classList.add('animate__fadeOutUp');
+                setTimeout(() => {
+                    favoriteNotificationAlert.classList.add('d-none');
+                    favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
+                }, 500);
+            }, 5000);
         }
     })
     .catch(error => {
         console.error('Error en la petición AJAX de favoritos:', error);
-        favoriteNotificationAlert.classList.remove('alert-success');
+        favoriteNotificationAlert.classList.remove('alert-success', 'alert-info');
         favoriteNotificationAlert.classList.add('alert-danger');
-        favoriteNotificationMessage.innerHTML = 'Error de conexión: ' + error.message;
-        favoriteNotificationAlert.classList.remove('d-none');
+        favoriteNotificationMessage.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>Error de conexión: ${error.message}`;
+        favoriteNotificationAlert.classList.remove('d-none', 'animate__fadeOutUp');
+        favoriteNotificationAlert.classList.add('animate__fadeInDown');
         favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
         setTimeout(() => {
-            favoriteNotificationAlert.classList.add('d-none');
-        }, 5000); // Keep error message longer
+            favoriteNotificationAlert.classList.remove('animate__fadeInDown');
+            favoriteNotificationAlert.classList.add('animate__fadeOutUp');
+            setTimeout(() => {
+                favoriteNotificationAlert.classList.add('d-none');
+                favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
+            }, 500);
+        }, 5000);
     });
 }
 

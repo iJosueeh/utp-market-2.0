@@ -8,12 +8,28 @@
 
   <main class="container my-5" style="padding-top: 80px;">
     <div class="row">
+      <!-- Contenedor para alertas dinámicas -->
+      <div id="dynamicAlertContainer" class="col-12"></div>
+
       <!-- Carrito -->
       <div class="col-lg-8">
         <a th:href="@{/categoria}" class="btn btn-link text-dark mb-3 ps-0">
           <i class="bi bi-arrow-left me-2"></i> Seguir Comprando
         </a>
         <h5 class="fw-bold mb-4">Carrito de Compras</h5>
+
+        <!-- Mensaje cuando el carrito está vacío -->
+        <div th:if="${#lists.isEmpty(carritoItems)}" class="text-center py-5">
+          <div class="alert alert-info animate__animated animate__fadeInDown border-0 shadow-sm" role="alert">
+            <i class="bi bi-cart-x display-1 text-muted d-block mb-3"></i>
+            <h4 class="alert-heading">Tu carrito está vacío</h4>
+            <p class="mb-3">¡Explora nuestros productos y encuentra lo que necesitas para tu vida universitaria!</p>
+            <hr>
+            <a th:href="@{/categoria}" class="btn btn-danger mt-2">
+              <i class="bi bi-shop me-2"></i>Ver Productos
+            </a>
+          </div>
+        </div>
 
         <div th:each="item : ${carritoItems}" class="card mb-3 shadow-sm border-0">
           <div class="row g-0 align-items-center">
@@ -34,9 +50,11 @@
               </div>
             </div>
             <div class="col-md-2 d-flex flex-column align-items-center justify-content-center px-2">
-              <a class="btn btn-sm btn-danger mb-2 ms-2" th:href="@{/carrito/eliminar/{id}(id=${item.id})}">
+              <button class="btn btn-sm btn-danger mb-2 ms-2 btn-eliminar-item" 
+                      th:data-item-id="${item.id}"
+                      th:data-producto-nombre="${item.producto.nombre}">
                 <i class="bi bi-trash"></i>
-              </a>
+              </button>
               <p class="fw-bold mt-2 ms-2" th:text="'Subtotal: S/ ' + ${item.subtotal}">Subtotal: S/ 0.00</p>
             </div>
           </div>

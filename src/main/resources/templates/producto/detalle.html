@@ -7,11 +7,17 @@
 
 <main class="container mt-4" style="padding-top: 80px;">
 
-    <div th:if="${detalle == null}" class="alert alert-danger text-center my-5">
+    <!-- Contenedor para alertas dinámicas -->
+    <div id="dynamicAlertContainer"></div>
+
+    <div th:if="${detalle == null}" class="alert alert-danger text-center my-5 animate__animated animate__fadeInDown">
+        <i class="bi bi-exclamation-triangle-fill display-1 text-danger d-block mb-3"></i>
         <h4 class="alert-heading">Producto no encontrado</h4>
         <p>Lo sentimos, el producto con el ID especificado no existe o fue eliminado.</p>
         <hr>
-        <a th:href="@{/categoria}" class="btn btn-danger">Volver al listado de productos</a>
+        <a th:href="@{/categoria}" class="btn btn-danger">
+            <i class="bi bi-arrow-left me-2"></i>Volver al listado de productos
+        </a>
     </div>
 
     <div th:if="${detalle != null}">
@@ -132,12 +138,12 @@
                     <div class="tab-pane fade" id="resenas" role="tabpanel">
                         <h5 class="fw-bold mb-4 text-secondary">Reseñas de usuarios</h5>
 
-                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show animate__animated animate__fadeInDown" role="alert">
                             <i class="bi bi-exclamation-circle me-2"></i>
                             <span th:text="${error}"></span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show animate__animated animate__fadeInDown" role="alert">
                             <i class="bi bi-check-circle me-2"></i>
                             <span th:text="${success}"></span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

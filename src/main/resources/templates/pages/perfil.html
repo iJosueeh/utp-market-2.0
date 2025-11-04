@@ -9,14 +9,19 @@
 <main class="main-page-content">
     <div class="container py-4">
 
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show animate__animated animate__fadeInDown" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
             <span th:text="${success}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show animate__animated animate__fadeInDown" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
             <span th:text="${error}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+
+        <!-- Contenedor para notificaciones dinámicas -->
+        <div id="dynamicAlertContainer"></div>
 
         <!-- Encabezado -->
         <div class="mb-4">

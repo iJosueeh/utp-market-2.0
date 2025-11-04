@@ -74,10 +74,6 @@
     pointer-events: auto;
 }
 
-.msgbg-primary {
-    background-color: #B50D30;
-}
-
 .rounded-bottom-left-0 {
     border-bottom-left-radius: 0 !important;
 }
@@ -130,23 +126,175 @@
 .btn-primary {
     background-color: #B50D30;
     border-color: #B50D30;
+    color: white;
 }
 
 .btn-primary:hover {
     background-color: #8a0a24;
     border-color: #8a0a24;
+    color: white;
+}
+
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #8a0a24 !important;
+    border-color: #8a0a24 !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.25rem rgba(181, 13, 48, 0.25) !important;
 }
 
 .btn-outline-primary {
-    color: white;
+    color: #B50D30;
     border-color: #B50D30;
-    background-color: #B50D30;
+    background-color: transparent;
 }
 
 .btn-outline-primary:hover {
     background-color: #B50D30;
     border-color: #B50D30;
+    color: white;
 }
+
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    background-color: #8a0a24 !important;
+    border-color: #8a0a24 !important;
+    color: white !important;
+}
+
+/* Botón de peligro/danger (rojo) */
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #bb2d3b;
+    border-color: #bb2d3b;
+    color: white;
+}
+
+.btn-danger:focus,
+.btn-danger:active {
+    background-color: #bb2d3b !important;
+    border-color: #bb2d3b !important;
+    color: white !important;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+    background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.btn-outline-danger:focus,
+.btn-outline-danger:active {
+    background-color: #bb2d3b !important;
+    border-color: #bb2d3b !important;
+    color: white !important;
+}
+
+/* Botón con clase msgbg-primary (login, etc) */
+.msgbg-primary {
+    background-color: #B50D30 !important;
+    border-color: #B50D30 !important;
+    color: white !important;
+    transition: all 0.3s ease;
+}
+
+.msgbg-primary:hover {
+    background-color: #8a0a24 !important;
+    border-color: #8a0a24 !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(181, 13, 48, 0.3);
+}
+
+.msgbg-primary:focus,
+.msgbg-primary:active {
+    background-color: #6d0819 !important;
+    border-color: #6d0819 !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.25rem rgba(181, 13, 48, 0.25) !important;
+}
+
+/* Botones secundarios */
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a;
+    border-color: #5c636a;
+    color: white;
+}
+
+/* Botones de luz */
+.btn-light {
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+    color: #212529;
+}
+
+.btn-light:hover {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    color: #212529;
+}
+
+/* Botón light-primary para navbar */
+.btn-light-primary {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white !important;
+    transition: all 0.3s ease;
+}
+
+.btn-light-primary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white !important;
+}
+
+.btn-light-primary:focus,
+.btn-light-primary:active {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+}
+/* Estilos globales para asegurar que los botones mantengan texto blanco */
+button[type="submit"],
+.btn {
+    transition: all 0.3s ease;
+}
+
+/* Asegurar que todos los botones de Bootstrap mantengan su color correcto */
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary:not(:disabled):not(.disabled).active,
+.show > .btn-primary.dropdown-toggle {
+    color: white;
+    background-color: #8a0a24;
+    border-color: #8a0a24;
+}
+
+.btn-danger:not(:disabled):not(.disabled):active,
+.btn-danger:not(:disabled):not(.disabled).active,
+.show > .btn-danger.dropdown-toggle {
+    color: white;
+    background-color: #bb2d3b;
+    border-color: #bb2d3b;
+}
+
 /* Pedidos Historial page specific styles */
 .pedido-card {
     transition: transform 0.2s, box-shadow 0.2s;
@@ -308,6 +456,38 @@ main {
 
 .text-utp-red {
     color: #B50D30 !important;
+}
+
+.text-utp-red:hover {
+    color: #8a0a24 !important;
+}
+
+/* Enlaces que actúan como botones */
+a.btn {
+    text-decoration: none;
+}
+
+a.btn:hover {
+    text-decoration: none;
+}
+
+/* Asegurar color de texto blanco en botones danger y primary */
+a.btn-danger,
+a.btn-primary,
+a.msgbg-primary {
+    color: white !important;
+}
+
+a.btn-danger:hover,
+a.btn-primary:hover,
+a.msgbg-primary:hover {
+    color: white !important;
+}
+
+/* Botones outline mantienen su color de borde en hover */
+a.btn-outline-danger:hover,
+a.btn-outline-primary:hover {
+    color: white !important;
 }
 
 .bg-utp-red-padding-y-100 {
