@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.utpmarket.utp_market.models.enums.RegistroResultado;
+
 import java.util.Optional;
 
 @Controller
@@ -104,5 +105,4 @@ public class AuthController {
 
         return "redirect:/perfil";
     }
-
 }
