@@ -345,6 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sellerCheckboxes = document.querySelectorAll('input[name="sellerId"]');
     const ratingRadioButtons = document.querySelectorAll('input[name="minRating"]');
     const sortBySelect = document.getElementById('sortBySelect');
+    const searchTermInput = document.querySelector('input[name="searchTerm"]'); // Get the search input
 
     // Initialize pagination variables from data attributes
     totalProducts = parseInt(document.body.getAttribute('data-total-productos') || '0');
@@ -391,10 +392,14 @@ document.addEventListener('DOMContentLoaded', function() {
         radio.addEventListener('change', submitFilterForm);
     });
 
+    // Add event listener for the search term input
+    if (searchTermInput) {
+        searchTermInput.addEventListener('change', submitFilterForm);
+    }
+
     // Restore selected sort option using data attribute
     if (sortBySelect) {
         const currentSortByValue = sortBySelect.getAttribute('data-current-sort-by');
-        console.log('currentSortByValue from data attribute:', currentSortByValue); // Debugging line
         if (currentSortByValue) {
             for (let i = 0; i < sortBySelect.options.length; i++) {
                 if (sortBySelect.options[i].value === currentSortByValue) {

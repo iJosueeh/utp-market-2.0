@@ -6,13 +6,13 @@ import com.utpmarket.utp_market.models.dto.VendedorDTO;
 import com.utpmarket.utp_market.services.CategoriaService;
 import com.utpmarket.utp_market.services.ProductoService;
 import com.utpmarket.utp_market.services.UsuarioService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -38,7 +38,7 @@ public class CategoriaPageController {
             @RequestParam(value = "minRating", required = false) Integer minRating,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             Model model,
-            HttpSession session) { // Inject HttpSession
+            Principal principal) {
 
         List<CategoriaDTO> categorias = categoriaService.findAllCategoriasWithProductCount();
         List<VendedorDTO> vendedores = usuarioService.findAllVendedoresWithProductCount();
@@ -69,8 +69,8 @@ public class CategoriaPageController {
         model.addAttribute("currentMinRating", minRating);
         model.addAttribute("currentSortBy", sortBy != null ? sortBy : "relevancia");
 
-        // Set isLoggedIn based on session
-        model.addAttribute("isLoggedIn", session.getAttribute("usuario") != null); // Check if 'usuario' object exists in session
+        // Set isLoggedIn based on Spring Security Principal
+        model.addAttribute("isLoggedIn", principal != null);
 
         return "pages/categoria";
     }
