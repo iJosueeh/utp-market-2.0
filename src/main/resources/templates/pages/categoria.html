@@ -9,13 +9,15 @@
 <main style="margin-top: 80px; background-color: #f8f9fa;">
     <div class="container-fluid py-4">
         <!-- Bootstrap Alert Placeholder -->
-        <div id="loginAlert" class="alert alert-warning alert-dismissible fade show d-none animate__animated" role="alert">
+        <div id="loginAlert" class="alert alert-warning alert-dismissible fade show d-none animate__animated"
+             role="alert">
             Debes iniciar sesión para añadir productos a favoritos.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
         <!-- Favorite Notification Alert Placeholder -->
-        <div id="favoriteNotificationAlert" class="alert alert-success alert-dismissible fade show d-none animate__animated" role="alert">
+        <div id="favoriteNotificationAlert"
+             class="alert alert-success alert-dismissible fade show d-none animate__animated" role="alert">
             <span id="favoriteNotificationMessage"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -35,167 +37,183 @@
         </div>
 
         <div class="row">
-                            <!-- Sidebar de Filtros -->
-                            <div class="col-lg-3 mb-4">
-                                <form id="filterForm" th:action="@{/categoria}" method="get">
-                                    <div class="card shadow-sm">
-                                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                                            <h5 class="mb-0 fw-bold">Filtros</h5>
-                                            <button type="button" class="btn btn-link text-danger text-decoration-none p-0"
-                                                onclick="limpiarFiltros()">
-                                                <i class="bi bi-x-circle"></i> Limpiar
-                                            </button>
-                                        </div>
-                                        <div class="card-body">
-                                            <!-- Filtro de Precio -->
-                                            <div class="mb-4">
-                                                <h6 class="fw-bold mb-3">Rango de Precio</h6>
-                                                <div class="mb-3">
-                                                    <label for="precioMin" class="form-label small">Mínimo</label>
-                                                    <div class="input-group input-group-sm">
-                                                        <span class="input-group-text">S/</span>
-                                                        <input type="number" class="form-control" id="precioMin" name="minPrice"
-                                                            th:value="${currentMinPrice != null ? currentMinPrice : 0}" min="0">
-                                                    </div>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="precioMax" class="form-label small">Máximo</label>
-                                                    <div class="input-group input-group-sm">
-                                                        <span class="input-group-text">S/</span>
-                                                        <input type="number" class="form-control" id="precioMax" name="maxPrice"
-                                                            th:value="${currentMaxPrice != null ? currentMaxPrice : 5000}" max="5000">
-                                                    </div>
-                                                </div>
-                                                <input type="range" class="form-range" min="0" max="5000" step="50" id="rangePrice"
-                                                    th:value="${currentMaxPrice != null ? currentMaxPrice : 5000}">
-                                            </div>
-            
-                                            <hr>
-                                            <!-- Ordenamiento -->
-                                            <div class="mb-4">
-                                                <h6 class="fw-bold mb-3">Ordenar por</h6>
-                                                <select class="form-select" name="sortBy" id="sortBySelect" th:attr="data-current-sort-by=${currentSortBy}">
-                                                    <option value="relevancia" th:selected="${currentSortBy == 'relevancia'}">Más Relevantes</option>
-                                                    <option value="precio-asc" th:selected="${currentSortBy == 'precio-asc'}">Precio: Menor a Mayor</option>
-                                                    <option value="precio-desc" th:selected="${currentSortBy == 'precio-desc'}">Precio: Mayor a Menor</option>
-                                                    <option value="nombre-asc" th:selected="${currentSortBy == 'nombre-asc'}">Nombre A-Z</option>
-                                                    <option value="rating-desc" th:selected="${currentSortBy == 'rating-desc'}">Mejor Calificados</option>
-                                                </select>
-                                            </div>
-            
-                                            <hr>
-            
-                                            <!-- Categorías -->
-                                            <div class="mb-4">
-                                                <h6 class="fw-bold mb-3">Categorías</h6>
-                                                                                <div class="form-check mb-2" th:each="categoria : ${categorias}">
-                                                                                    <input class="form-check-input" type="checkbox" name="categoryId"
-                                                                                        th:value="${categoria.id}" th:id="'cat' + ${categoria.id}"
-                                                                                        th:checked="${currentCategoryIds != null and currentCategoryIds.contains(categoria.id)}">
-                                                                                    <label class="form-check-label d-flex justify-content-between" th:for="'cat' + ${categoria.id}">
-                                                                                        <span th:text="${categoria.nombre}"></span>
-                                                                                        <span class="text-muted" th:text="'(' + ${categoria.cantidadProductos} + ')'">(0)</span>
-                                                                                    </label>
-                                                                                </div>                                            </div>
-            
-                                            <hr>
-            
-                                            <!-- Vendedores -->
-                                            <div class="mb-4">
-                                                <h6 class="fw-bold mb-3">Vendedores</h6>
-                                                <div class="form-check mb-2" th:each="vendedor : ${vendedores}">
-                                                    <input class="form-check-input" type="checkbox" name="sellerId"
-                                                        th:value="${vendedor.id}" th:id="'vend' + ${vendedor.id}"
-                                                        th:checked="${currentSellerId != null and currentSellerId == vendedor.id}">
-                                                    <label class="form-check-label d-flex justify-content-between" th:for="'vend' + ${vendedor.id}">
-                                                        <span th:text="${vendedor.nombre}"></span>
-                                                        <span class="text-muted" th:text="'(' + ${vendedor.cantidadProductos} + ')'">(0)</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-            
-                                            <hr>
-            
-                                                                            <!-- Calificación -->
-                                                                            <div class="mb-4">
-                                                                                <h6 class="fw-bold mb-3">Calificación</h6>
-                                                                                <div class="form-check mb-2">
-                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating5" value="5"
-                                                                                        th:checked="${currentMinRating != null and currentMinRating == 5}">
-                                                                                    <label class="form-check-label" for="rating5">
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <span class="ms-1">y más</span>
-                                                                                    </label>
-                                                                                </div>
-                                                                                <div class="form-check mb-2">
-                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating4" value="4"
-                                                                                        th:checked="${currentMinRating != null and currentMinRating == 4}">
-                                                                                    <label class="form-check-label" for="rating4">
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <span class="ms-1">y más</span>
-                                                                                    </label>
-                                                                                </div>
-                                                                                <div class="form-check mb-2">
-                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating3" value="3"
-                                                                                        th:checked="${currentMinRating != null and currentMinRating == 3}">
-                                                                                    <label class="form-check-label" for="rating3">
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <span class="ms-1">y más</span>
-                                                                                    </label>
-                                                                                </div>
-                                                                                <div class="form-check mb-2">
-                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating2" value="2"
-                                                                                        th:checked="${currentMinRating != null and currentMinRating == 2}">
-                                                                                    <label class="form-check-label" for="rating2">
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <span class="ms-1">y más</span>
-                                                                                    </label>
-                                                                                </div>
-                                                                                <div class="form-check">
-                                                                                    <input class="form-check-input" type="radio" name="minRating" id="rating1" value="1"
-                                                                                        th:checked="${currentMinRating != null and currentMinRating == 1}">
-                                                                                    <label class="form-check-label" for="rating1">
-                                                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <i class="bi bi-star text-warning"></i>
-                                                                                        <span class="ms-1">y más</span>
-                                                                                    </label>
-                                                                                </div>
-                                                                            </div>            
-                                            <hr>
-            
-                                            <!-- Stock -->
-                                            <div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="soloStock" name="inStockOnly"
-                                                        th:checked="${currentInStockOnly != null and currentInStockOnly}">
-                                                    <label class="form-check-label" for="soloStock">
-                                                        Solo productos en stock
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
+            <!-- Sidebar de Filtros -->
+            <div class="col-lg-3 mb-4">
+                <form id="filterForm" th:action="@{/categoria}" method="get">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold">Filtros</h5>
+                            <button type="button" class="btn btn-link text-danger text-decoration-none p-0"
+                                    onclick="limpiarFiltros()">
+                                <i class="bi bi-x-circle"></i> Limpiar
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Filtro de Precio -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Rango de Precio</h6>
+                                <div class="mb-3">
+                                    <label for="precioMin" class="form-label small">Mínimo</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">S/</span>
+                                        <input type="number" class="form-control" id="precioMin" name="minPrice"
+                                               th:value="${currentMinPrice != null ? currentMinPrice : 0}" min="0">
                                     </div>
-                                </form>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="precioMax" class="form-label small">Máximo</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">S/</span>
+                                        <input type="number" class="form-control" id="precioMax" name="maxPrice"
+                                               th:value="${currentMaxPrice != null ? currentMaxPrice : 5000}"
+                                               max="5000">
+                                    </div>
+                                </div>
+                                <input type="range" class="form-range" min="0" max="5000" step="50" id="rangePrice"
+                                       th:value="${currentMaxPrice != null ? currentMaxPrice : 5000}">
                             </div>
+
+                            <hr>
+                            <!-- Ordenamiento -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Ordenar por</h6>
+                                <select class="form-select" name="sortBy" id="sortBySelect"
+                                        th:attr="data-current-sort-by=${currentSortBy}">
+                                    <option value="relevancia" th:selected="${currentSortBy == 'relevancia'}">Más
+                                        Relevantes
+                                    </option>
+                                    <option value="precio-asc" th:selected="${currentSortBy == 'precio-asc'}">Precio:
+                                        Menor a Mayor
+                                    </option>
+                                    <option value="precio-desc" th:selected="${currentSortBy == 'precio-desc'}">Precio:
+                                        Mayor a Menor
+                                    </option>
+                                    <option value="nombre-asc" th:selected="${currentSortBy == 'nombre-asc'}">Nombre
+                                        A-Z
+                                    </option>
+                                    <option value="rating-desc" th:selected="${currentSortBy == 'rating-desc'}">Mejor
+                                        Calificados
+                                    </option>
+                                </select>
+                            </div>
+
+                            <hr>
+
+                            <!-- Categorías -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Categorías</h6>
+                                <div class="form-check mb-2" th:each="categoria : ${categorias}">
+                                    <input class="form-check-input" type="checkbox" name="categoryId"
+                                           th:value="${categoria.id}" th:id="'cat' + ${categoria.id}"
+                                           th:checked="${currentCategoryIds != null and currentCategoryIds.contains(categoria.id)}">
+                                    <label class="form-check-label d-flex justify-content-between"
+                                           th:for="'cat' + ${categoria.id}">
+                                        <span th:text="${categoria.nombre}"></span>
+                                        <span class="text-muted" th:text="'(' + ${categoria.cantidadProductos} + ')'">(0)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Vendedores -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Vendedores</h6>
+                                <div class="form-check mb-2" th:each="vendedor : ${vendedores}">
+                                    <input class="form-check-input" type="checkbox" name="sellerId"
+                                           th:value="${vendedor.id}" th:id="'vend' + ${vendedor.id}"
+                                           th:checked="${currentSellerId != null and currentSellerId == vendedor.id}">
+                                    <label class="form-check-label d-flex justify-content-between"
+                                           th:for="'vend' + ${vendedor.id}">
+                                        <span th:text="${vendedor.nombre}"></span>
+                                        <span class="text-muted"
+                                              th:text="'(' + ${vendedor.cantidadProductos} + ')'">(0)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Calificación -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Calificación</h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="minRating" id="rating5" value="5"
+                                           th:checked="${currentMinRating != null and currentMinRating == 5}">
+                                    <label class="form-check-label" for="rating5">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <span class="ms-1">y más</span>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="minRating" id="rating4" value="4"
+                                           th:checked="${currentMinRating != null and currentMinRating == 4}">
+                                    <label class="form-check-label" for="rating4">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <span class="ms-1">y más</span>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="minRating" id="rating3" value="3"
+                                           th:checked="${currentMinRating != null and currentMinRating == 3}">
+                                    <label class="form-check-label" for="rating3">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <span class="ms-1">y más</span>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="minRating" id="rating2" value="2"
+                                           th:checked="${currentMinRating != null and currentMinRating == 2}">
+                                    <label class="form-check-label" for="rating2">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <span class="ms-1">y más</span>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="minRating" id="rating1" value="1"
+                                           th:checked="${currentMinRating != null and currentMinRating == 1}">
+                                    <label class="form-check-label" for="rating1">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <span class="ms-1">y más</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <hr>
+
+                            <!-- Stock -->
+                            <div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="soloStock" name="inStockOnly"
+                                           th:checked="${currentInStockOnly != null and currentInStockOnly}">
+                                    <label class="form-check-label" for="soloStock">
+                                        Solo productos en stock
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
             <!-- Listado de Productos -->
             <div class="col-lg-9">
@@ -209,7 +227,8 @@
                                             <i class="bi bi-search"></i>
                                         </span>
                                     <input type="text" class="form-control border-start-0"
-                                           placeholder="Buscar productos..." name="searchTerm" th:value="${currentSearchTerm}">
+                                           placeholder="Buscar productos..." name="searchTerm"
+                                           th:value="${currentSearchTerm}">
                                 </div>
                             </div>
                             <div class="col-md-3 text-end">
@@ -314,8 +333,8 @@
                                         Ver Detalle
                                     </a>
                                     <form th:action="@{/carrito/agregar}" method="post">
-                                        <input type="hidden" name="productoId" th:value="${producto.id}" />
-                                        <input type="hidden" name="cantidad" value="1" />
+                                        <input type="hidden" name="productoId" th:value="${producto.id}"/>
+                                        <input type="hidden" name="cantidad" value="1"/>
                                         <button type="submit" class="btn btn-danger btn-sm w-100"
                                                 th:disabled="${producto.estadoNombre == 'Agotado'}">
                                             <i class="bi bi-cart-plus me-1"></i>
@@ -335,9 +354,9 @@
     </div>
 </main>
 
-    <footer th:replace="~{layout/_layout :: footer}"></footer>
+<footer th:replace="~{layout/_layout :: footer}"></footer>
 
-    <script th:src="@{/js/categoria.js}"></script>
-<div th:replace="~{chatbot :: chatbot}"></div>
+<script th:src="@{/js/categoria.js}"></script>
+
 </body>
 </html>

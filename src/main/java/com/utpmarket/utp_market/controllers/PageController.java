@@ -11,8 +11,8 @@ import com.utpmarket.utp_market.repository.UsuarioRepository;
 import com.utpmarket.utp_market.services.FavoritoService;
 import com.utpmarket.utp_market.services.PedidoService;
 import com.utpmarket.utp_market.services.ReviewService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -129,30 +130,16 @@ public class PageController {
     }
 
     @GetMapping("/perfil")
-    public String perfil(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Usuario> usuarioOpt = getAuthenticatedUser(session, redirectAttributes);
-        if (usuarioOpt.isEmpty()) {
-            return "redirect:/auth/login";
-        }
-        Usuario usuario = usuarioOpt.get();
-        session.setAttribute("usuario", usuario);
-
-        if (session.getAttribute("success") != null) {
-            model.addAttribute("success", session.getAttribute("success"));
-            session.removeAttribute("success");
-        }
-        if (session.getAttribute("error") != null) {
-            model.addAttribute("error", session.getAttribute("error"));
-            session.removeAttribute("error");
-        }
+    @PreAuthorize("isAuthenticated()")
+    public String perfil(Principal principal, Model model) {
+        Usuario usuario = usuarioRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new IllegalStateException("Usuario autenticado no encontrado en la base de datos"));
 
         List<Pedido> pedidos = pedidoService.obtenerHistorialPedidosPorUsuario(usuario.getId());
         model.addAttribute("pedidos", pedidos);
 
-
         model.addAttribute("user", usuario);
 
-        // Obtener las reseñas del usuario
         List<Reviews> reseñasUsuario = reviewService.obtenerReviewsPorUsuario(usuario.getId());
         model.addAttribute("reviews", reseñasUsuario);
 
@@ -163,12 +150,11 @@ public class PageController {
     }
 
     @PostMapping("/usuario/actualizar")
-    public String actualizarInformacionPersonal(@ModelAttribute Usuario usuarioActualizado, HttpSession session, RedirectAttributes redirectAttributes) {
-        Optional<Usuario> usuarioExistenteOpt = getAuthenticatedUser(session, redirectAttributes);
-        if (usuarioExistenteOpt.isEmpty()) {
-            return "redirect:/auth/login";
-        }
-        Usuario usuarioExistente = usuarioExistenteOpt.get();
+    @PreAuthorize("isAuthenticated()")
+    public String actualizarInformacionPersonal(@ModelAttribute Usuario usuarioActualizado, Principal principal, RedirectAttributes redirectAttributes) {
+        Usuario usuarioExistente = usuarioRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new IllegalStateException("Usuario autenticado no encontrado"));
+
         usuarioExistente.setNombre(usuarioActualizado.getNombre());
         usuarioExistente.setApellido(usuarioActualizado.getApellido());
 
@@ -182,19 +168,16 @@ public class PageController {
 
         usuarioRepository.save(usuarioExistente);
 
-        session.setAttribute("usuario", usuarioExistente);
-
         redirectAttributes.addFlashAttribute("success", "Información personal actualizada correctamente.");
         return "redirect:/perfil";
     }
 
     @PostMapping("/usuario/actualizar-utp")
-    public String actualizarInformacionUtp(@ModelAttribute Usuario usuarioActualizado, HttpSession session, RedirectAttributes redirectAttributes) {
-        Optional<Usuario> usuarioExistenteOpt = getAuthenticatedUser(session, redirectAttributes);
-        if (usuarioExistenteOpt.isEmpty()) {
-            return "redirect:/auth/login";
-        }
-        Usuario usuarioExistente = usuarioExistenteOpt.get();
+    @PreAuthorize("isAuthenticated()")
+    public String actualizarInformacionUtp(@ModelAttribute Usuario usuarioActualizado, Principal principal, RedirectAttributes redirectAttributes) {
+        Usuario usuarioExistente = usuarioRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new IllegalStateException("Usuario autenticado no encontrado"));
+
         EstudianteDetalles estudianteDetallesExistente = getOrCreateEstudianteDetalles(usuarioExistente);
 
         estudianteDetallesExistente.setCodigo_estudiante(usuarioActualizado.getEstudianteDetalles().getCodigo_estudiante());
@@ -202,25 +185,8 @@ public class PageController {
         estudianteDetallesExistente.setCarrera(usuarioActualizado.getEstudianteDetalles().getCarrera());
         estudianteDetallesRepository.save(estudianteDetallesExistente);
 
-        usuarioExistente.setEstudianteDetalles(estudianteDetallesExistente);
-        session.setAttribute("usuario", usuarioExistente);
-
         redirectAttributes.addFlashAttribute("success", "Información UTP actualizada correctamente.");
         return "redirect:/perfil";
-    }
-
-    private Optional<Usuario> getAuthenticatedUser(HttpSession session, RedirectAttributes redirectAttributes) {
-        Usuario usuarioEnSesion = (Usuario) session.getAttribute("usuario");
-        if (usuarioEnSesion == null) {
-            return Optional.empty();
-        }
-
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioEnSesion.getId());
-        if (optionalUsuario.isEmpty()) {
-            session.invalidate();
-            return Optional.empty();
-        }
-        return optionalUsuario;
     }
 
     private EstudianteDetalles getOrCreateEstudianteDetalles(Usuario usuario) {

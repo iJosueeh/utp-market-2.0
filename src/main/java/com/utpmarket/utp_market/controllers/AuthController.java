@@ -1,15 +1,16 @@
 package com.utpmarket.utp_market.controllers;
 
 import com.utpmarket.utp_market.models.entity.user.Usuario;
+import com.utpmarket.utp_market.repository.UsuarioRepository;
 import com.utpmarket.utp_market.services.AuthService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import com.utpmarket.utp_market.models.enums.RegistroResultado;
-import java.util.Optional;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/auth")
@@ -17,6 +18,9 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping("/login")
     public String login(Model model, String error, String logout) {
@@ -30,23 +34,6 @@ public class AuthController {
         }
 
         return "auth/login";
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestParam String email,
-                        @RequestParam String password,
-                        HttpSession session,
-                        Model model
-    ) {
-        Optional<Usuario> usuario = authService.login(email, password);
-
-        if (usuario.isPresent()) {
-            session.setAttribute("usuario", usuario.get());
-            return "redirect:/";
-        } else {
-            model.addAttribute("error", "Correo o contraseña incorrectos.");
-            return "auth/login";
-        }
     }
 
     @GetMapping("/register")
@@ -79,30 +66,27 @@ public class AuthController {
         return "auth/forgot-password";
     }
 
-    @PostMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/auth/login";
-    }
-
     @PostMapping("/change-password")
     public String changePassword(@RequestParam String currentPassword,
                                  @RequestParam String newPassword,
                                  @RequestParam String confirmPassword,
-                                 HttpSession session) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-        if (usuario == null) {
+                                 Principal principal,
+                                 RedirectAttributes redirectAttributes) {
+        if (principal == null) {
             return "redirect:/auth/login";
         }
 
+        String email = principal.getName();
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         try {
             authService.changePassword(usuario, currentPassword, newPassword, confirmPassword);
-            session.setAttribute("success", "Contraseña actualizada correctamente.");
+            redirectAttributes.addFlashAttribute("success", "Contraseña actualizada correctamente.");
         } catch (Exception e) {
-            session.setAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
         return "redirect:/perfil";
     }
-
 }

@@ -4,86 +4,86 @@
 <head th:replace="~{layout/_layout :: head('UTP Market | Ventas')}"></head>
 
 <body>
-    <header th:replace="~{layout/_layout :: header}"></header>
-    <main style="margin-top: 50px;">
-        <section class="position-relative"
-            style="background: linear-gradient(to bottom, #B50D30 0%, #B50D30 68%, #f8f9fa 68%, #f8f9fa 100%);">
-            <div class="container text-start py-5">
-                <div class="text-white py-3">
-                    <h1 class="display-5 mb-3">¡Hola! Antes que nada cuéntanos,</h1>
-                    <h2 class="mb-3">¿qué vas a publicar?</h2>
+<header th:replace="~{layout/_layout :: header}"></header>
+<main style="margin-top: 50px;">
+    <section class="position-relative"
+             style="background: linear-gradient(to bottom, #B50D30 0%, #B50D30 68%, #f8f9fa 68%, #f8f9fa 100%);">
+        <div class="container text-start py-5">
+            <div class="text-white py-3">
+                <h1 class="display-5 mb-3">¡Hola! Antes que nada cuéntanos,</h1>
+                <h2 class="mb-3">¿qué vas a publicar?</h2>
+            </div>
+
+            <div class="row g-4 justify-content-center mt-4 pb-5">
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/vender/tutorias}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm hover-card">
+                            <div class="card-body text-center py-4">
+                                <div class="mb-3">
+                                    <i class="bi bi-mortarboard-fill text-danger" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5 class="card-title text-bold text-dark mb-0">Tutorías</h5>
+                                <p class="text-muted small mb-0">universitarias</p>
+                            </div>
+                        </div>
+                    </a>
                 </div>
 
-                <div class="row g-4 justify-content-center mt-4 pb-5">
-                    <div class="col-6 col-md-3">
-                        <a th:href="@{/vender/tutorias}" class="text-decoration-none">
-                            <div class="card h-100 shadow-sm hover-card">
-                                <div class="card-body text-center py-4">
-                                    <div class="mb-3">
-                                        <i class="bi bi-mortarboard-fill text-danger" style="font-size: 3rem;"></i>
-                                    </div>
-                                    <h5 class="card-title text-bold text-dark mb-0">Tutorías</h5>
-                                    <p class="text-muted small mb-0">universitarias</p>
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/vender/guias}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm hover-card">
+                            <div class="card-body text-center py-4">
+                                <div class="mb-3">
+                                    <i class="bi bi-journal-text text-danger" style="font-size: 3rem;"></i>
                                 </div>
+                                <h5 class="card-title text-bold text-dark mb-0">Guía de</h5>
+                                <p class="text-muted small mb-0">estudio</p>
                             </div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
+                </div>
 
-                    <div class="col-6 col-md-3">
-                        <a th:href="@{/vender/guias}" class="text-decoration-none">
-                            <div class="card h-100 shadow-sm hover-card">
-                                <div class="card-body text-center py-4">
-                                    <div class="mb-3">
-                                        <i class="bi bi-journal-text text-danger" style="font-size: 3rem;"></i>
-                                    </div>
-                                    <h5 class="card-title text-bold text-dark mb-0">Guía de</h5>
-                                    <p class="text-muted small mb-0">estudio</p>
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/vender/snacks}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm hover-card">
+                            <div class="card-body text-center py-4">
+                                <div class="mb-3">
+                                    <i class="bi bi-cup-straw text-danger" style="font-size: 3rem;"></i>
                                 </div>
+                                <h5 class="card-title text-bold text-dark mb-0">Venta de</h5>
+                                <p class="text-muted small mb-0">snacks</p>
                             </div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
+                </div>
 
-                    <div class="col-6 col-md-3">
-                        <a th:href="@{/vender/snacks}" class="text-decoration-none">
-                            <div class="card h-100 shadow-sm hover-card">
-                                <div class="card-body text-center py-4">
-                                    <div class="mb-3">
-                                        <i class="bi bi-cup-straw text-danger" style="font-size: 3rem;"></i>
-                                    </div>
-                                    <h5 class="card-title text-bold text-dark mb-0">Venta de</h5>
-                                    <p class="text-muted small mb-0">snacks</p>
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/vender/materiales}" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm hover-card">
+                            <div class="card-body text-center py-4">
+                                <div class="mb-3">
+                                    <i class="bi bi-box-seam text-danger" style="font-size: 3rem;"></i>
                                 </div>
+                                <h5 class="card-title text-bold text-dark mb-0">Materiales</h5>
+                                <p class="text-muted small mb-0">&nbsp;</p>
                             </div>
-                        </a>
-                    </div>
-
-                    <div class="col-6 col-md-3">
-                        <a th:href="@{/vender/materiales}" class="text-decoration-none">
-                            <div class="card h-100 shadow-sm hover-card">
-                                <div class="card-body text-center py-4">
-                                    <div class="mb-3">
-                                        <i class="bi bi-box-seam text-danger" style="font-size: 3rem;"></i>
-                                    </div>
-                                    <h5 class="card-title text-bold text-dark mb-0">Materiales</h5>
-                                    <p class="text-muted small mb-0">&nbsp;</p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
                 </div>
             </div>
-        </section>
-
-        <div class="position-fixed bottom-0 end-0 mb-4 me-4" style="z-index: 1000;">
-            <a th:href="@{/help}"
-                class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center"
-                style="width: 60px; height: 60px; background-color: #0d6efd;" title="Ayuda">
-                <i class="bi bi-question-lg fs-3 text-white"></i>
-            </a>
         </div>
-    </main>
+    </section>
 
-    <footer th:replace="~{layout/_layout :: footer}"></footer>
-<div th:replace="~{chatbot :: chatbot}"></div>
+    <div class="position-fixed bottom-0 end-0 mb-4 me-4" style="z-index: 1000;">
+        <a th:href="@{/help}"
+           class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+           style="width: 60px; height: 60px; background-color: #0d6efd;" title="Ayuda">
+            <i class="bi bi-question-lg fs-3 text-white"></i>
+        </a>
+    </div>
+</main>
+
+<footer th:replace="~{layout/_layout :: footer}"></footer>
+
 </body>
 </html>

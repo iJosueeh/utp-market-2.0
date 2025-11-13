@@ -19,6 +19,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     List<Producto> findByStockGreaterThan(Integer stock);
 
+    List<Producto> findByNombreContainingIgnoreCase(String nombre); // Nuevo método de búsqueda
+
     @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.estudianteDetalles WHERE u.email = :email")
     Optional<Usuario> findByEmail(String email);
 
