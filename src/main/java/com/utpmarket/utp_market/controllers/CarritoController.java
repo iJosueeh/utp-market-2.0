@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
 import java.util.List;
 
 @Controller
@@ -63,30 +65,59 @@ public class CarritoController {
     }
 
     @PostMapping("/actualizar-cantidad")
-    public String actualizarCantidadItem(@RequestParam Long itemId,
-                                         @RequestParam int cantidad,
-                                         Principal principal,
-                                         RedirectAttributes redirectAttributes) {
+    @ResponseBody // Importante para devolver JSON
+    public ResponseEntity<?> actualizarCantidadItem(@RequestParam Long itemId,
+                                                    @RequestParam int cantidad,
+                                                    Principal principal) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
         try {
             carritoService.actualizarCantidadItem(usuario.getId(), itemId, cantidad);
-            redirectAttributes.addFlashAttribute("success", "Cantidad actualizada.");
+            // Devolver el carrito actualizado para que el frontend pueda renderizarlo
+            List<CarritoItemDTO> carritoItems = carritoService.obtenerItems(usuario.getId());
+            double subtotal = carritoService.calcularSubtotal(usuario.getId());
+            double total = carritoService.calcularTotal(usuario.getId());
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Cantidad actualizada.",
+                    "carritoItems", carritoItems,
+                    "subtotal", subtotal,
+                    "total", total
+            ));
         } catch (IllegalArgumentException | IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         } catch (SecurityException e) {
-            redirectAttributes.addFlashAttribute("error", "No tienes permiso para modificar este item.");
+            return ResponseEntity.status(403).body(Map.of("success", false, "message", "No tienes permiso para modificar este item."));
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al actualizar la cantidad.");
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", "Error interno al actualizar la cantidad."));
         }
-        return "redirect:/carrito";
     }
 
     @GetMapping("/eliminar/{itemId}")
-    public String eliminarDelCarrito(@PathVariable Long itemId, Principal principal, RedirectAttributes redirectAttributes) {
+    @ResponseBody // Importante para devolver JSON
+    public ResponseEntity<?> eliminarDelCarrito(@PathVariable Long itemId, Principal principal) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
-        carritoService.eliminarProducto(usuario.getId(), itemId);
-        redirectAttributes.addFlashAttribute("success", "Producto eliminado del carrito");
-        return "redirect:/carrito";
+        try {
+            carritoService.eliminarProducto(usuario.getId(), itemId);
+            // Devolver el carrito actualizado para que el frontend pueda renderizarlo
+            List<CarritoItemDTO> carritoItems = carritoService.obtenerItems(usuario.getId());
+            double subtotal = carritoService.calcularSubtotal(usuario.getId());
+            double total = carritoService.calcularTotal(usuario.getId());
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Producto eliminado correctamente.",
+                    "carritoItems", carritoItems,
+                    "subtotal", subtotal,
+                    "total", total
+            ));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).body(Map.of("success", false, "message", "No tienes permiso para eliminar este item."));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", "Error interno al eliminar el producto."));
+        }
     }
 
     @GetMapping("/checkout")
