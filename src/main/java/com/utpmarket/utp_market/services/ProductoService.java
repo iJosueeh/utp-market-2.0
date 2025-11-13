@@ -60,11 +60,17 @@ public class ProductoService {
             String searchTerm,
             Integer minRating,
             String sortBy) {
-        List<Producto> productos = obtenerProductosBase(inStockOnly);
+        List<Producto> productos;
+
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            productos = productoRepository.findByNombreContainingIgnoreCase(searchTerm);
+        } else {
+            productos = obtenerProductosBase(inStockOnly);
+        }
+
         productos = aplicarFiltroCategorias(productos, categoryIds);
         productos = aplicarFiltroVendedor(productos, sellerId);
         productos = aplicarFiltroPrecios(productos, minPrice, maxPrice);
-        productos = aplicarFiltroBusqueda(productos, searchTerm);
         productos = aplicarFiltroCalificacionMinima(productos, minRating);
         productos = aplicarOrdenacion(productos, sortBy);
 
@@ -161,17 +167,6 @@ public class ProductoService {
                                 .orElse(0.0);
                         return averageRating >= minRating;
                     })
-                    .collect(Collectors.toList());
-        }
-        return productos;
-    }
-
-    private List<Producto> aplicarFiltroBusqueda(List<Producto> productos, String searchTerm) {
-        if (searchTerm != null && !searchTerm.isEmpty()) {
-            String lowerCaseSearchTerm = searchTerm.toLowerCase();
-            return productos.stream()
-                    .filter(p -> p.getNombre().toLowerCase().contains(lowerCaseSearchTerm) ||
-                            p.getDescripcion().toLowerCase().contains(lowerCaseSearchTerm))
                     .collect(Collectors.toList());
         }
         return productos;

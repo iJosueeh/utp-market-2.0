@@ -1,0 +1,95 @@
+/* Estilos para el layout del admin dashboard */
+body {
+    background-color: #f8f9fa;
+}
+
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.admin-sidebar {
+    width: 260px;
+    background-color: #212529; /* Color oscuro como el navbar */
+    color: #adb5bd;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding-top: 60px; /* Altura del navbar */
+    z-index: 100;
+    transition: all 0.3s;
+}
+
+.admin-sidebar .sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #495057;
+}
+
+.admin-sidebar .sidebar-header h5 {
+    color: #fff;
+    font-weight: bold;
+}
+
+.admin-sidebar .nav-link {
+    color: #adb5bd;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.admin-sidebar .nav-link:hover {
+    background-color: #343a40;
+    color: #fff;
+    border-left-color: #0d6efd;
+}
+
+.admin-sidebar .nav-link.active {
+    color: #fff;
+    background-color: #0d6efd;
+    border-left-color: #fff;
+    font-weight: 600;
+}
+
+.admin-sidebar .nav-link i {
+    margin-right: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Contenido principal */
+.admin-content {
+    margin-left: 260px;
+    padding-top: 60px; /* Altura del navbar */
+    width: calc(100% - 260px);
+    padding: 20px;
+    padding-top: 80px; /* 60px del navbar + 20px de padding */
+    transition: all 0.3s;
+}
+
+/* Estilos para las tarjetas de estadísticas */
+.stat-card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card .card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-card .stat-icon {
+    font-size: 2.5rem;
+    opacity: 0.3;
+}

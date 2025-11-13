@@ -80,8 +80,14 @@ public class ReviewService {
      * Eliminar una review
      */
     @Transactional
-    public void eliminarReview(Long id) {
-        reviewsRepository.deleteById(id);
+    public void eliminarReview(Long reviewId, Long userId) {
+        Reviews review = reviewsRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("Reseña no encontrada"));
+
+        if (!review.getUsuario().getId().equals(userId)) {
+            throw new SecurityException("No tienes permiso para eliminar esta reseña");
+        }
+        reviewsRepository.deleteById(reviewId);
     }
 
     /**
