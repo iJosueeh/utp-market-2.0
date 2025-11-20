@@ -77,24 +77,27 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Form validation before submission
-    checkoutForm.addEventListener("submit", function (event) {
+    // Form validation and submission
+    checkoutForm.addEventListener("submit", async function (event) {
+        event.preventDefault(); // Prevent default form submission
+
         // Validar dirección de envío
         if (!selectedCalleInput.value || !selectedDistritoInput.value) {
             mostrarAlerta("Por favor, selecciona una dirección de envío", 'warning');
-            event.preventDefault();
             return;
         }
         
         // Validar método de pago
         if (!selectedMetodoPagoIdInput.value) {
             mostrarAlerta("Por favor, selecciona un método de pago", 'warning');
-            event.preventDefault();
             return;
         }
 
-        // Validación específica para tarjeta de crédito
-        if (selectedMetodoPagoIdInput.value === "2") {
+        // Collect payment details based on selected method
+        let paymentDetails = {};
+        const metodoPagoId = selectedMetodoPagoIdInput.value;
+
+        if (metodoPagoId === "2") { // Tarjeta de Crédito
             const cardName = document.getElementById("cardName")?.value;
             const cardNumber = document.getElementById("cardNumber")?.value;
             const expiryDate = document.getElementById("expiryDate")?.value;
@@ -102,26 +105,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!cardName || !cardNumber || !expiryDate || !cvv) {
                 mostrarAlerta("Por favor, completa todos los campos de la tarjeta de crédito", 'danger');
-                event.preventDefault();
                 return;
             }
-            
-            // Validación de número de tarjeta (básica)
             if (cardNumber && cardNumber.replace(/\s/g, '').length < 13) {
                 mostrarAlerta("Número de tarjeta inválido. Debe tener al menos 13 dígitos", 'danger');
-                event.preventDefault();
                 return;
             }
-            
-            // Validación de CVV
             if (cvv && (cvv.length < 3 || cvv.length > 4)) {
                 mostrarAlerta("CVV inválido. Debe tener 3 o 4 dígitos", 'danger');
-                event.preventDefault();
                 return;
             }
-        } 
-        // Validación específica para tarjeta de débito
-        else if (selectedMetodoPagoIdInput.value === "3") {
+            paymentDetails = { cardName, cardNumber, expiryDate, cvv };
+        } else if (metodoPagoId === "3") { // Tarjeta de Débito
             const debitCardName = document.getElementById("debitCardName")?.value;
             const debitCardNumber = document.getElementById("debitCardNumber")?.value;
             const debitExpiryDate = document.getElementById("debitExpiryDate")?.value;
@@ -129,26 +124,48 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!debitCardName || !debitCardNumber || !debitExpiryDate || !debitCvv) {
                 mostrarAlerta("Por favor, completa todos los campos de la tarjeta de débito", 'danger');
-                event.preventDefault();
                 return;
             }
-            
-            // Validación de número de tarjeta (básica)
             if (debitCardNumber && debitCardNumber.replace(/\s/g, '').length < 13) {
                 mostrarAlerta("Número de tarjeta inválido. Debe tener al menos 13 dígitos", 'danger');
-                event.preventDefault();
                 return;
             }
-            
-            // Validación de CVV
             if (debitCvv && (debitCvv.length < 3 || debitCvv.length > 4)) {
                 mostrarAlerta("CVV inválido. Debe tener 3 o 4 dígitos", 'danger');
-                event.preventDefault();
                 return;
             }
+            paymentDetails = { debitCardName, debitCardNumber, debitExpiryDate, debitCvv };
         }
         
-        // Si todo es válido, mostrar mensaje de procesamiento
-        mostrarAlerta("Procesando tu pedido... Por favor espera", 'success');
+        mostrarAlerta("Procesando tu pedido... Por favor espera", 'info');
+
+        try {
+            const response = await fetchAuth('/carrito/realizar-pago', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    calle: selectedCalleInput.value,
+                    distrito: selectedDistritoInput.value,
+                    metodoPagoId: parseInt(metodoPagoId),
+                    ...paymentDetails // Spread payment details if any
+                }),
+            });
+
+            if (response.ok) {
+                const result = await response.json(); // Assuming backend returns JSON on success
+                mostrarAlerta(result.message || "¡Pedido realizado con éxito!", 'success');
+                window.location.href = result.redirectUrl || '/pedidos/confirmacion'; // Redirect to confirmation page
+            } else {
+                const errorData = await response.json(); // Assuming backend returns JSON on error
+                mostrarAlerta(errorData.message || "Error al procesar el pedido.", 'danger');
+            }
+        } catch (error) {
+            if (error.message !== 'Sesión expirada') { // fetchAuth handles session expiry
+                console.error('Error al finalizar la compra:', error);
+                mostrarAlerta('Error de conexión al procesar el pedido. Intenta de nuevo.', 'danger');
+            }
+        }
     });
 });

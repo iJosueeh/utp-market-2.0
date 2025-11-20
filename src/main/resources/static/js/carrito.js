@@ -168,33 +168,36 @@ function handleDeleteButtonClick(e) {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    function updateCartItemQuantity(itemId, newQuantity) {
+    async function updateCartItemQuantity(itemId, newQuantity) {
         mostrarAlerta('Actualizando cantidad...', 'info');
         
-        fetch('/carrito/actualizar-cantidad', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `itemId=${itemId}&cantidad=${newQuantity}`
-        })
-        .then(response => parseJsonResponse(response))
-        .then(data => {
+        try {
+            const response = await fetchAuth('/carrito/actualizar-cantidad', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `itemId=${itemId}&cantidad=${newQuantity}`
+            });
+
+            const data = await parseJsonResponse(response);
+
             if (data.success) {
                 // mostrarAlerta(data.message, 'success'); // Eliminado
                 updateCartUI(data.carritoItems, data.subtotal, data.total);
             } else {
                 mostrarAlerta(data.message, 'danger');
             }
-        })
-        .catch(error => {
-            console.error('Error en la petición AJAX:', error);
-            mostrarAlerta('Error de conexión. Intenta de nuevo', 'danger');
-            // En caso de error de red, recargar para asegurar consistencia
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
-        });
+        } catch (error) {
+            if (error.message !== 'Sesión expirada') {
+                console.error('Error en la petición AJAX:', error);
+                mostrarAlerta('Error de conexión. Intenta de nuevo', 'danger');
+                // En caso de error de red, recargar para asegurar consistencia
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        }
     }
 
     window.aumentar = function(btn) {
@@ -236,32 +239,35 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Función global para eliminar item (ahora con AJAX)
-    window.eliminarItem = function(itemId, productoNombre) {
+    window.eliminarItem = async function(itemId, productoNombre) {
         document.getElementById('confirmDelete')?.remove();
         mostrarAlerta('Eliminando producto...', 'info');
         
-        fetch(`/carrito/eliminar/${itemId}`, {
-            method: 'GET', // O POST si el backend lo espera así
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => parseJsonResponse(response))
-        .then(data => {
+        try {
+            const response = await fetchAuth(`/carrito/eliminar/${itemId}`, {
+                method: 'GET', // O POST si el backend lo espera así
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await parseJsonResponse(response);
+
             if (data.success) {
                 // mostrarAlerta(data.message || 'Producto eliminado correctamente', 'success'); // Eliminado
                 updateCartUI(data.carritoItems, data.subtotal, data.total);
             } else {
                 mostrarAlerta(data.message || 'Error desconocido al eliminar', 'danger');
             }
-        })
-        .catch(error => {
-            console.error('Error en la petición AJAX de eliminación:', error);
-            mostrarAlerta(error.message || 'Error de conexión al eliminar. Intenta de nuevo', 'danger');
-            setTimeout(() => {
-                window.location.reload(); // Recargar en caso de error grave
-            }, 2000);
-        });
+        } catch (error) {
+            if (error.message !== 'Sesión expirada') {
+                console.error('Error en la petición AJAX de eliminación:', error);
+                mostrarAlerta(error.message || 'Error de conexión al eliminar. Intenta de nuevo', 'danger');
+                setTimeout(() => {
+                    window.location.reload(); // Recargar en caso de error grave
+                }, 2000);
+            }
+        }
     };
 
     // Adjuntar listeners iniciales

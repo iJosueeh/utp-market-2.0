@@ -125,8 +125,19 @@ public class PageController {
     }
 
     @GetMapping("/ventas")
-    public String ventas(){
+    public String ventas() {
         return "pages/shop";
+    }
+
+    @GetMapping("/auth/login")
+    public String loginPage() {
+        return "auth/login";
+    }
+
+    @GetMapping("/auth/register")
+    public String registerPage(Model model) {
+        model.addAttribute("usuario", new Usuario()); // Add an empty User object to the model
+        return "auth/register";
     }
 
     @GetMapping("/perfil")

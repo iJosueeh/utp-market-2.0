@@ -93,183 +93,183 @@ function mostrarAlertaCategoria(mensaje, tipo = 'success') {
     }, 5000);
 }
 
-function agregarAlCarrito(button) {
+async function agregarAlCarrito(button) {
     const productoId = button.dataset.productoId;
     
     const formData = new URLSearchParams();
     formData.append('productoId', productoId);
     formData.append('cantidad', 1);
 
-    fetch('/carrito/agregar', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData
-    })
-    .then(response => {
+    try {
+        const response = await fetchAuth('/carrito/agregar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData
+        });
+
         if (response.ok) {
             mostrarAlertaCategoria('¡Producto agregado al carrito exitosamente!', 'success');
         } else {
-            return response.text().then(text => {
-                mostrarAlertaCategoria('Error al agregar al carrito: ' + text, 'danger');
-            });
+            const text = await response.text();
+            mostrarAlertaCategoria('Error al agregar al carrito: ' + text, 'danger');
         }
-    })
-    .catch(error => {
-        console.error('Error en la petición AJAX:', error);
-        mostrarAlertaCategoria('Error de conexión al agregar al carrito.', 'danger');
-    });
+    } catch (error) {
+        if (error.message !== 'Sesión expirada') {
+            console.error('Error en la petición de agregar al carrito:', error);
+            mostrarAlertaCategoria('Error de conexión al agregar al carrito.', 'danger');
+        }
+    }
 }
 
-function agregarAFavoritos(button) {
+async function agregarAFavoritos(button) {
     const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
     const loginAlert = document.getElementById('loginAlert');
     const favoriteNotificationAlert = document.getElementById('favoriteNotificationAlert');
     const favoriteNotificationMessage = document.getElementById('favoriteNotificationMessage');
 
-    // Hide any previous alerts with animation
-    if (!loginAlert.classList.contains('d-none')) {
-        loginAlert.classList.add('animate__fadeOutUp');
-        setTimeout(() => {
-            loginAlert.classList.add('d-none');
-            loginAlert.classList.remove('animate__fadeOutUp');
-        }, 500);
-    }
-    if (!favoriteNotificationAlert.classList.contains('d-none')) {
-        favoriteNotificationAlert.classList.add('animate__fadeOutUp');
-        setTimeout(() => {
-            favoriteNotificationAlert.classList.add('d-none');
-            favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
-        }, 500);
-    }
+    // Hide any previous alerts without animation for immediate state change
+    if (loginAlert) loginAlert.classList.add('d-none');
+    if (favoriteNotificationAlert) favoriteNotificationAlert.classList.add('d-none');
 
     if (!isLoggedIn) {
-        loginAlert.classList.remove('d-none', 'animate__fadeOutUp');
-        loginAlert.classList.add('animate__fadeInDown');
-        loginAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        setTimeout(() => {
-            loginAlert.classList.remove('animate__fadeInDown');
-            loginAlert.classList.add('animate__fadeOutUp');
+        if (loginAlert) {
+            loginAlert.classList.remove('d-none');
+            loginAlert.classList.add('animate__fadeInDown');
+            loginAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
             setTimeout(() => {
-                loginAlert.classList.add('d-none');
-                loginAlert.classList.remove('animate__fadeOutUp');
-            }, 500);
-        }, 5000);
+                loginAlert.classList.remove('animate__fadeInDown');
+                loginAlert.classList.add('animate__fadeOutUp');
+                setTimeout(() => {
+                    loginAlert.classList.add('d-none');
+                    loginAlert.classList.remove('animate__fadeOutUp');
+                }, 500);
+            }, 5000);
+        }
         return;
     }
 
     const productoId = button.dataset.productoId;
     const icon = button.querySelector('i');
 
-    fetch(`/api/favoritos/toggle/${productoId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(errorData => {
-                throw new Error(errorData.message || 'Error desconocido');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
+    try {
+        const response = await fetchAuth(`/api/favoritos/toggle/${productoId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        const data = await response.json();
+
+        if (response.ok && data.success) {
             const iconClass = data.added ? 'bi-check-circle-fill' : 'bi-info-circle-fill';
             
             if (data.added) {
                 icon.classList.remove('bi-heart');
                 icon.classList.add('bi-heart-fill', 'text-danger');
-                favoriteNotificationAlert.classList.remove('alert-danger', 'alert-info');
-                favoriteNotificationAlert.classList.add('alert-success');
+                if (favoriteNotificationAlert) {
+                    favoriteNotificationAlert.classList.remove('alert-danger', 'alert-info');
+                    favoriteNotificationAlert.classList.add('alert-success');
+                }
             } else {
                 icon.classList.remove('bi-heart-fill', 'text-danger');
                 icon.classList.add('bi-heart');
-                favoriteNotificationAlert.classList.remove('alert-success', 'alert-danger');
-                favoriteNotificationAlert.classList.add('alert-info');
+                if (favoriteNotificationAlert) {
+                    favoriteNotificationAlert.classList.remove('alert-success', 'alert-danger');
+                    favoriteNotificationAlert.classList.add('alert-info');
+                }
             }
             
-            favoriteNotificationMessage.innerHTML = `<i class="bi ${iconClass} me-2"></i>${data.message}`;
-            favoriteNotificationAlert.classList.remove('d-none', 'animate__fadeOutUp');
-            favoriteNotificationAlert.classList.add('animate__fadeInDown');
-            favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (favoriteNotificationMessage) favoriteNotificationMessage.innerHTML = `<i class="bi ${iconClass} me-2"></i>${data.message}`;
+            if (favoriteNotificationAlert) {
+                favoriteNotificationAlert.classList.remove('d-none', 'animate__fadeOutUp');
+                favoriteNotificationAlert.classList.add('animate__fadeInDown');
+                favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            setTimeout(() => {
-                favoriteNotificationAlert.classList.remove('animate__fadeInDown');
-                favoriteNotificationAlert.classList.add('animate__fadeOutUp');
                 setTimeout(() => {
-                    favoriteNotificationAlert.classList.add('d-none');
-                    favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
-                }, 500);
-            }, 3000);
+                    favoriteNotificationAlert.classList.remove('animate__fadeInDown');
+                    favoriteNotificationAlert.classList.add('animate__fadeOutUp');
+                    setTimeout(() => {
+                        favoriteNotificationAlert.classList.add('d-none');
+                        favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
+                    }, 500);
+                }, 3000);
+            }
 
             console.log(data.message);
         } else {
             console.error('Error al actualizar favoritos:', data.message);
-            favoriteNotificationAlert.classList.remove('alert-success', 'alert-info');
-            favoriteNotificationAlert.classList.add('alert-danger');
-            favoriteNotificationMessage.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>${data.message}`;
-            favoriteNotificationAlert.classList.remove('d-none', 'animate__fadeOutUp');
-            favoriteNotificationAlert.classList.add('animate__fadeInDown');
-            favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            setTimeout(() => {
-                favoriteNotificationAlert.classList.remove('animate__fadeInDown');
-                favoriteNotificationAlert.classList.add('animate__fadeOutUp');
+            if (favoriteNotificationAlert) {
+                favoriteNotificationAlert.classList.remove('alert-success', 'alert-info');
+                favoriteNotificationAlert.classList.add('alert-danger');
+            }
+            if (favoriteNotificationMessage) favoriteNotificationMessage.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>${data.message}`;
+            if (favoriteNotificationAlert) {
+                favoriteNotificationAlert.classList.remove('d-none', 'animate__fadeOutUp');
+                favoriteNotificationAlert.classList.add('animate__fadeInDown');
+                favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
                 setTimeout(() => {
-                    favoriteNotificationAlert.classList.add('d-none');
-                    favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
-                }, 500);
-            }, 5000);
+                    favoriteNotificationAlert.classList.remove('animate__fadeInDown');
+                    favoriteNotificationAlert.classList.add('animate__fadeOutUp');
+                    setTimeout(() => {
+                        favoriteNotificationAlert.classList.add('d-none');
+                        favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
+                    }, 500);
+                }, 5000);
+            }
         }
-    })
-    .catch(error => {
-        console.error('Error en la petición AJAX de favoritos:', error);
-        favoriteNotificationAlert.classList.remove('alert-success', 'alert-info');
-        favoriteNotificationAlert.classList.add('alert-danger');
-        favoriteNotificationMessage.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>Error de conexión: ${error.message}`;
-        favoriteNotificationAlert.classList.remove('d-none', 'animate__fadeOutUp');
-        favoriteNotificationAlert.classList.add('animate__fadeInDown');
-        favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        setTimeout(() => {
-            favoriteNotificationAlert.classList.remove('animate__fadeInDown');
-            favoriteNotificationAlert.classList.add('animate__fadeOutUp');
-            setTimeout(() => {
-                favoriteNotificationAlert.classList.add('d-none');
-                favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
-            }, 500);
-        }, 5000);
-    });
+    } catch (error) {
+        if (error.message !== 'Sesión expirada') {
+            console.error('Error en la petición AJAX de favoritos:', error);
+            if (favoriteNotificationAlert) {
+                favoriteNotificationAlert.classList.remove('alert-success', 'alert-info');
+                favoriteNotificationAlert.classList.add('alert-danger');
+            }
+            if (favoriteNotificationMessage) favoriteNotificationMessage.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>Error de conexión: ${error.message}`;
+            if (favoriteNotificationAlert) {
+                favoriteNotificationAlert.classList.remove('d-none', 'animate__fadeOutUp');
+                favoriteNotificationAlert.classList.add('animate__fadeInDown');
+                favoriteNotificationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                setTimeout(() => {
+                    favoriteNotificationAlert.classList.remove('animate__fadeInDown');
+                    favoriteNotificationAlert.classList.add('animate__fadeOutUp');
+                    setTimeout(() => {
+                        favoriteNotificationAlert.classList.add('d-none');
+                        favoriteNotificationAlert.classList.remove('animate__fadeOutUp');
+                    }, 500);
+                }, 5000);
+            }
+        }
+    }
 }
 
 // Function to check favorite status for a product
-function checkFavoriteStatus(productId, iconElement) {
+async function checkFavoriteStatus(productId, iconElement) {
     const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
     console.log(`checkFavoriteStatus: Checking productId ${productId}, isLoggedIn: ${isLoggedIn}`);
     if (!isLoggedIn) return; // No need to check if not logged in
 
-    fetch(`/api/favoritos/isFavorito/${productId}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log(`checkFavoriteStatus: Response for productId ${productId}:`, data);
-            if (data.success && data.isFavorito) {
-                iconElement.classList.remove('bi-heart');
-                iconElement.classList.add('bi-heart-fill');
-                iconElement.classList.add('text-danger');
-            } else {
-                iconElement.classList.remove('bi-heart-fill');
-                iconElement.classList.remove('text-danger');
-                iconElement.classList.add('bi-heart');
-            }
-        })
-        .catch(error => {
+    try {
+        const response = await fetchAuth(`/api/favoritos/isFavorito/${productId}`);
+        const data = await response.json();
+        
+        if (response.ok && data.success && data.isFavorito) {
+            iconElement.classList.remove('bi-heart');
+            iconElement.classList.add('bi-heart-fill');
+            iconElement.classList.add('text-danger');
+        } else {
+            iconElement.classList.remove('bi-heart-fill');
+            iconElement.classList.remove('text-danger');
+            iconElement.classList.add('bi-heart');
+        }
+    } catch (error) {
+        if (error.message !== 'Sesión expirada') {
             console.error('Error al verificar estado de favoritos:', error);
-        });
+        }
+    }
 }
 
 // --- Frontend Pagination Logic ---

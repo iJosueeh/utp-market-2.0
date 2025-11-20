@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<div th:fragment="asideLogout">
+    <div class="mt-auto p-3"> <!-- Adjust styling as needed -->
+        <!-- Other aside content can go here -->
+
+        <!-- Logout Form (copied from auth-status.html and modified) -->
+        <form th:action="@{/logout}" method="post" class="d-grid mt-4">
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+            </button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

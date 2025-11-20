@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{layout/_layout :: head('Admin - Productos')}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+
+<body>
+    <header th:replace="~{layout/_layout :: header}"></header>
+
+    <div class="admin-wrapper">
+        <nav class="admin-sidebar" th:replace="~{admin/dashboard :: .admin-sidebar}"></nav>
+
+        <main class="admin-content">
+            <div class="container-fluid">
+                <h1 class="h3 mb-4 text-gray-800">Gestión de Productos</h1>
+                <!-- Contenido para el Desarrollador 3 -->
+                <p>Esta página contendrá la lista y gestión de todos los productos.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"></script>
+</body>
+</html>

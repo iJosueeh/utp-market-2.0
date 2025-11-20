@@ -51,7 +51,7 @@ function mostrarAlerta(mensaje, tipo = 'success') {
     }, 5000);
 }
 
-function agregarAFavoritos(button) {
+async function agregarAFavoritos(button) {
     const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
     if (!isLoggedIn) {
         mostrarAlerta('Debes iniciar sesión para añadir a favoritos', 'warning');
@@ -61,15 +61,16 @@ function agregarAFavoritos(button) {
     const productoId = button.dataset.productoId;
     const icon = button.querySelector('i');
 
-    fetch(`/api/favoritos/toggle/${productoId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+    try {
+        const response = await fetchAuth(`/api/favoritos/toggle/${productoId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        const data = await response.json();
+
+        if (response.ok && data.success) {
             if (data.added) {
                 icon.classList.remove('bi-heart');
                 icon.classList.add('bi-heart-fill', 'text-danger');
@@ -82,30 +83,33 @@ function agregarAFavoritos(button) {
             console.log(data.message);
         } else {
             console.error('Error al actualizar favoritos:', data.message);
-            mostrarAlerta('Error: ' + data.message, 'danger');
+            mostrarAlerta('Error: ' + (data.message || 'Error desconocido'), 'danger');
         }
-    })
-    .catch(error => {
-        console.error('Error en la petición AJAX de favoritos:', error);
-        mostrarAlerta('Error de conexión. Intenta de nuevo', 'danger');
-    });
+    } catch (error) {
+        if (error.message !== 'Sesión expirada') {
+            console.error('Error en la petición AJAX de favoritos:', error);
+            mostrarAlerta('Error de conexión. Intenta de nuevo', 'danger');
+        }
+    }
 }
 
-function checkFavoriteStatus(productId, iconElement) {
+async function checkFavoriteStatus(productId, iconElement) {
     const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
     if (!isLoggedIn) return;
 
-    fetch(`/api/favoritos/isFavorito/${productId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.isFavorito) {
-                iconElement.classList.remove('bi-heart');
-                iconElement.classList.add('bi-heart-fill', 'text-danger');
-            }
-        })
-        .catch(error => {
+    try {
+        const response = await fetchAuth(`/api/favoritos/isFavorito/${productId}`);
+        const data = await response.json();
+        
+        if (response.ok && data.success && data.isFavorito) {
+            iconElement.classList.remove('bi-heart');
+            iconElement.classList.add('bi-heart-fill', 'text-danger');
+        }
+    } catch (error) {
+        if (error.message !== 'Sesión expirada') {
             console.error('Error al verificar estado de favoritos:', error);
-        });
+        }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -116,39 +120,73 @@ document.addEventListener('DOMContentLoaded', function() {
         checkFavoriteStatus(productId, iconElement);
     }
 
-    // Validación del formulario de agregar al carrito
+    // Validación y envío del formulario de agregar al carrito
     const addToCartForm = document.querySelector('form[action*="/carrito/agregar"]');
     if (addToCartForm) {
-        addToCartForm.addEventListener('submit', function(event) {
-            const cantidadInput = document.getElementById('cantidad');
-            const cantidad = parseInt(cantidadInput.value);
-            const max = parseInt(cantidadInput.getAttribute('max'));
-            const stock = max;
+        addToCartForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevenir el envío tradicional del formulario
 
-            // Validar cantidad
+            const cantidadInput = document.getElementById('cantidad');
+            const productoIdInput = document.getElementById('productoId'); // Assuming there's a hidden input for productoId
+            const cantidad = parseInt(cantidadInput.value);
+            const productoId = productoIdInput ? productoIdInput.value : null;
+
+            // Realizar validaciones existentes
+            const max = parseInt(cantidadInput.getAttribute('max'));
+            const stock = max; // En este contexto, 'max' es el stock disponible
+
+            if (!productoId) {
+                mostrarAlerta('ID de producto no encontrado.', 'danger');
+                return;
+            }
+
             if (isNaN(cantidad) || cantidad < 1) {
-                event.preventDefault();
                 mostrarAlerta('La cantidad debe ser mayor a 0', 'warning');
                 cantidadInput.focus();
-                return false;
+                return;
             }
 
             if (cantidad > stock) {
-                event.preventDefault();
                 mostrarAlerta(`Stock insuficiente. Solo hay ${stock} unidades disponibles`, 'warning');
                 cantidadInput.value = stock;
                 cantidadInput.focus();
-                return false;
+                return;
             }
 
             if (stock === 0) {
-                event.preventDefault();
                 mostrarAlerta('Producto agotado. No hay unidades disponibles', 'danger');
-                return false;
+                return;
             }
 
-            // Si todo está bien, mostrar mensaje de procesamiento
+            // Si las validaciones pasan, enviar la petición con fetchAuth
             mostrarAlerta('Agregando producto al carrito...', 'info');
+            try {
+                const formData = new URLSearchParams();
+                formData.append('productoId', productoId);
+                formData.append('cantidad', cantidad);
+
+                const response = await fetchAuth('/carrito/agregar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    // Asumimos que el backend envía un mensaje o redirige
+                    mostrarAlerta('¡Producto agregado al carrito exitosamente!', 'success');
+                    // Opcional: Actualizar algún contador del carrito en el header
+                } else {
+                    const errorText = await response.text();
+                    mostrarAlerta(`Error al agregar al carrito: ${errorText}`, 'danger');
+                }
+            } catch (error) {
+                if (error.message !== 'Sesión expirada') {
+                    console.error('Error en la petición de agregar al carrito:', error);
+                    mostrarAlerta('Error de conexión al agregar al carrito.', 'danger');
+                }
+            }
         });
 
         // Validación en tiempo real del input de cantidad
