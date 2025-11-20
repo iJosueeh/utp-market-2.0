@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model;
 
 @Controller
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/admin/usuarios")
+public class AdminUsuarioController {
 
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        model.addAttribute("activePage", "dashboard");
-        return "admin/dashboard";
+    @GetMapping
+    public String viewUsuarios(Model model) {
+        model.addAttribute("activePage", "usuarios");
+        // Lógica para Desarrollador 4
+        return "admin/usuarios";
     }
 }
