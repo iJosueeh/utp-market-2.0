@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
@@ -45,9 +45,33 @@
                             </a>
                         </span>
 
-                        <!-- Auth Section - Desktop -->
-                        <div class="d-none d-lg-block">
-                            <div th:replace="~{layout/auth-status :: authStatus}"></div>
+                        <!-- Auth Section - Desktop (Conditional) -->
+                        <div class="d-none d-lg-block ms-2">
+                            <div sec:authorize="!isAuthenticated()">
+                                <a th:href="@{/auth/login}" class="btn btn-icon btn-dark rounded-circle bg-dark">
+                                    <i class="bi bi-person-circle align-middle"></i>
+                                </a>
+                            </div>
+                            <div sec:authorize="isAuthenticated()">
+                                <div class="dropdown">
+                                    <a class="btn btn-icon btn-dark rounded-circle bg-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-person-circle align-middle"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+                                        <li><a class="dropdown-item" th:href="@{/perfil}">Mi Perfil</a></li>
+                                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" th:href="@{/admin/dashboard}">Admin Dashboard</a></li>
+                                        <li sec:authorize="hasRole('PROFESSIONAL')"><a class="dropdown-item" th:href="@{/profesional/dashboard}">Professional Dashboard</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form th:action="@{/logout}" method="post" class="d-inline">
+                                                <button type="submit" class="dropdown-item dropdown-item-logout">
+                                                    Cerrar Sesión
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Toggle button para móvil -->
@@ -106,8 +130,18 @@
                                     <i class="bi bi-bell align-middle"></i>
                                 </a>
 
-                                <!-- Auth Section - Mobile -->
-                                <div th:replace="~{layout/auth-status :: authStatus}"></div>
+                                <!-- For mobile, simply add a login icon if not authenticated -->
+                                <div sec:authorize="!isAuthenticated()" class="ms-2">
+                                    <a th:href="@{/auth/login}" class="btn btn-icon btn-dark rounded-circle bg-dark">
+                                        <i class="bi bi-person-circle align-middle"></i>
+                                    </a>
+                                </div>
+                                <!-- For mobile, a simplified profile link if authenticated -->
+                                <div sec:authorize="isAuthenticated()" class="ms-2">
+                                    <a th:href="@{/perfil}" class="btn btn-icon btn-dark rounded-circle bg-dark">
+                                        <i class="bi bi-person-circle align-middle"></i>
+                                    </a>
+                                </div>
                             </div>
                         </li>
                     </ul>
@@ -119,6 +153,11 @@
     <main>
 
     </main>
+
+    <!-- Aside Logout Fragment -->
+    <aside>
+        <div th:replace="~{fragments/aside-logout :: asideLogout}"></div>
+    </aside>
 
     <footer th:fragment="footer" class="py-lg-8 py-5 bg-dark text-white">
         <div class="container">

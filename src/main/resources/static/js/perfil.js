@@ -29,55 +29,53 @@ function mostrarAlerta(mensaje, tipo = 'success') {
 }
 
 // Función para agregar productos al carrito
-function agregarAlCarrito(button) {
+async function agregarAlCarrito(button) {
     const productoId = button.dataset.productoId;
     
     const formData = new URLSearchParams();
     formData.append('productoId', productoId);
     formData.append('cantidad', 1);
 
-    fetch('/carrito/agregar', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData
-    })
-    .then(response => {
+    try {
+        const response = await fetchAuth('/carrito/agregar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData
+        });
+
         if (response.ok) {
             mostrarAlerta('¡Producto agregado al carrito exitosamente!', 'success');
         } else {
-            return response.text().then(text => {
-                mostrarAlerta('Error al agregar al carrito: ' + text, 'danger');
-            });
+            const text = await response.text();
+            mostrarAlerta('Error al agregar al carrito: ' + text, 'danger');
         }
-    })
-    .catch(error => {
-        console.error('Error en la petición AJAX:', error);
-        mostrarAlerta('Error de conexión al agregar al carrito.', 'danger');
-    });
+    } catch (error) {
+        // El error de sesión expirada ya es manejado en fetchAuth, solo logueamos otros errores
+        if (error.message !== 'Sesión expirada') {
+            console.error('Error en la petición de agregar al carrito:', error);
+            mostrarAlerta('Error de conexión al agregar al carrito.', 'danger');
+        }
+    }
 }
 
 // Función para agregar/quitar de favoritos
-function agregarAFavoritos(button) {
-    const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'true';
-    if (!isLoggedIn) {
-        mostrarAlerta('Debes iniciar sesión para añadir a favoritos.', 'warning');
-        return;
-    }
-
+async function agregarAFavoritos(button) {
     const productoId = button.dataset.productoId;
     const icon = button.querySelector('i');
 
-    fetch(`/api/favoritos/toggle/${productoId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+    try {
+        const response = await fetchAuth(`/api/favoritos/toggle/${productoId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
             if (data.added) {
                 icon.classList.remove('bi-heart');
                 icon.classList.add('bi-heart-fill', 'text-danger');
@@ -95,14 +93,16 @@ function agregarAFavoritos(button) {
             console.log(data.message);
         } else {
             console.error('Error al actualizar favoritos:', data.message);
-            mostrarAlerta('Error al actualizar favoritos: ' + data.message, 'danger');
+            mostrarAlerta('Error al actualizar favoritos: ' + (data.message || 'Error desconocido'), 'danger');
         }
-    })
-    .catch(error => {
-        console.error('Error en la petición AJAX de favoritos:', error);
-        mostrarAlerta('Error de conexión al actualizar favoritos.', 'danger');
-    });
+    } catch (error) {
+        if (error.message !== 'Sesión expirada') {
+            console.error('Error en la petición de favoritos:', error);
+            mostrarAlerta('Error de conexión al actualizar favoritos.', 'danger');
+        }
+    }
 }
+
 
 document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
