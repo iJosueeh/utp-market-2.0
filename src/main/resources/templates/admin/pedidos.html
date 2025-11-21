@@ -1,28 +1,13 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/_admin_layout :: layout(title='Admin - Pedidos', pageContent=~{::pageContent}, includeChartJS_=false)}">
 
-<head>
-    <th:block th:replace="~{layout/_layout :: head('Admin - Pedidos')}"></th:block>
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
-</head>
-
-<body>
-    <header th:replace="~{layout/_layout :: header}"></header>
-
-    <div class="admin-wrapper">
-        <nav class="admin-sidebar" th:replace="~{admin/dashboard :: .admin-sidebar}"></nav>
-
-        <main class="admin-content">
-            <div class="container-fluid">
-                <h1 class="h3 mb-4 text-gray-800">Gestión de Pedidos</h1>
-                <!-- Contenido para el Desarrollador 2 -->
-                <p>Esta página contendrá la lista y gestión de todos los pedidos.</p>
-            </div>
-        </main>
+<th:block th:fragment="pageContent">
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Gestión de Pedidos</h1>
+        <!-- Contenido para el Desarrollador 2 -->
+        <p>Esta página contendrá la lista y gestión de todos los pedidos.</p>
     </div>
+</th:block>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-            crossorigin="anonymous"></script>
-</body>
 </html>

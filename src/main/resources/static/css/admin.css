@@ -93,3 +93,43 @@ body {
     font-size: 2.5rem;
     opacity: 0.3;
 }
+
+/* Nuevos colores para las tarjetas del dashboard */
+.bg-utp-red { background-color: #B50D30; }
+.bg-utp-dark-red { background-color: #8a0a24; }
+.bg-utp-accent-orange { background-color: #fd7e14; }
+.bg-utp-accent-blue { background-color: #0d6efd; } /* Re-usando el azul primario de BS para contraste */
+
+
+/* Sobrescribir el fondo blanco del card-body que viene de styles.css */
+.admin-wrapper .stat-card .card-body {
+    background-color: transparent;
+}
+
+.sidebar-toggler-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    font-size: 1.5rem;
+    color: #212529;
+}
+
+
+/* --- Media Queries para Responsividad --- */
+@media (max-width: 991.98px) {
+    .admin-sidebar {
+        left: -260px; /* Oculto por defecto en móvil */
+        z-index: 1040; /* Por encima del contenido */
+    }
+
+    .admin-sidebar.is-open {
+        left: 0; /* Se muestra */
+    }
+
+    .admin-content {
+        margin-left: 0;
+        width: 100%;
+        padding-top: 4rem; /* Más espacio para el botón de hamburguesa */
+    }
+}

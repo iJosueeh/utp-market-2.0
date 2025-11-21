@@ -21,7 +21,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/carrito")
-@PreAuthorize("isAuthenticated()") // Asegura que solo usuarios autenticados puedan acceder a cualquier método de este controlador
+@PreAuthorize("isAuthenticated()")
 public class CarritoController {
 
     @Autowired
