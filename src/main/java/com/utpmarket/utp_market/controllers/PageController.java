@@ -130,7 +130,10 @@ public class PageController {
     }
 
     @GetMapping("/auth/login")
-    public String loginPage() {
+    public String loginPage(Principal principal) {
+        if (principal != null) {
+            return "redirect:/"; // Si el usuario ya está autenticado, redirigir a la página de inicio
+        }
         return "auth/login";
     }
 
