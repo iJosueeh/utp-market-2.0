@@ -1,188 +1,120 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/_admin_layout :: layout(title='Admin Dashboard', pageContent=~{::pageContent}, includeChartJS_=true)}">
 
-<head>
-    <!-- Usamos el fragmento head, pero añadimos nuestra hoja de estilos específica -->
-    <th:block th:replace="~{layout/_layout :: head('Admin Dashboard')}"></th:block>
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
-</head>
-
-<body>
-
-<!-- El header de la aplicación se mantiene, pero el contenido principal cambia -->
-<header th:replace="~{layout/_layout :: header}"></header>
-
-<div class="admin-wrapper">
-    <!-- Sidebar de Navegación del Admin -->
-    <nav class="admin-sidebar">
-        <div class="sidebar-header">
-            <h5>Admin Panel</h5>
+<th:block th:fragment="pageContent">
+    <!-- Contenido específico del Dashboard -->
+    <div class="container-fluid">
+        <!-- Título de la página -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 fw-bold">Dashboard</h1>
+            <a th:href="@{/admin/reportes}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Crear Reporte
+            </a>
         </div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/dashboard}" th:classappend="${activePage == 'dashboard'} ? 'active'">
-                    <i class="bi bi-grid-1x2-fill"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/usuarios}" th:classappend="${activePage == 'usuarios'} ? 'active'">
-                    <i class="bi bi-people-fill"></i>
-                    <span>Usuarios</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/productos}" th:classappend="${activePage == 'productos'} ? 'active'">
-                    <i class="bi bi-box-seam-fill"></i>
-                    <span>Productos</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/pedidos}" th:classappend="${activePage == 'pedidos'} ? 'active'">
-                    <i class="bi bi-receipt"></i>
-                    <span>Pedidos</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/reportes}" th:classappend="${activePage == 'reportes'} ? 'active'">
-                    <i class="bi bi-graph-up"></i>
-                    <span>Reportes</span>
-                </a>
-            </li>
-            <li class="nav-item mt-auto">
-                <a class="nav-link" th:href="@{/}">
-                    <i class="bi bi-arrow-left-circle-fill"></i>
-                    <span>Volver a la tienda</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 
-    <!-- Contenido Principal del Dashboard -->
-    <main class="admin-content">
-        <div class="container-fluid">
-            <!-- Título de la página -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 fw-bold">Dashboard</h1>
-                <button class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-2"></i>Crear Reporte
-                </button>
-            </div>
-
-            <!-- Tarjetas de Estadísticas -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="card stat-card bg-primary text-white">
-                        <div class="card-body">
-                            <div>
-                                <h5 class="card-title">Usuarios Totales</h5>
-                                <p class="card-text fs-4 fw-bold">1,250</p>
-                            </div>
-                            <div class="stat-icon">
-                                <i class="bi bi-people-fill"></i>
-                            </div>
+        <!-- Tarjetas de Estadísticas -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card stat-card bg-utp-red text-white">
+                    <div class="card-body">
+                        <div>
+                            <h5 class="card-title">Usuarios Totales</h5>
+                            <p class="card-text fs-4 fw-bold" th:text="${totalUsuarios}">1,250</p>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card stat-card bg-success text-white">
-                        <div class="card-body">
-                            <div>
-                                <h5 class="card-title">Ventas del Mes</h5>
-                                <p class="card-text fs-4 fw-bold">S/ 12,840</p>
-                            </div>
-                            <div class="stat-icon">
-                                <i class="bi bi-cash-coin"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card stat-card bg-warning text-dark">
-                        <div class="card-body">
-                            <div>
-                                <h5 class="card-title">Pedidos Pendientes</h5>
-                                <p class="card-text fs-4 fw-bold">72</p>
-                            </div>
-                            <div class="stat-icon">
-                                <i class="bi bi-clock-history"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card stat-card bg-danger text-white">
-                        <div class="card-body">
-                            <div>
-                                <h5 class="card-title">Tickets de Soporte</h5>
-                                <p class="card-text fs-4 fw-bold">15</p>
-                            </div>
-                            <div class="stat-icon">
-                                <i class="bi bi-exclamation-triangle-fill"></i>
-                            </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-people-fill"></i>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Tabla de Actividad Reciente -->
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="card-title mb-0 fw-bold">Actividad Reciente</h5>
+            <div class="col-md-6 col-lg-3">
+                <div class="card stat-card bg-utp-dark-red text-white">
+                    <div class="card-body">
+                        <div>
+                            <h5 class="card-title">Ventas Totales</h5>
+                            <p class="card-text fs-4 fw-bold" th:text="'S/ ' + ${#numbers.formatDecimal(totalVentas, 1, 'COMMA', 2, 'POINT')}">S/ 12,840</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Tipo</th>
-                                    <th scope="col">Descripción</th>
-                                    <th scope="col">Usuario</th>
-                                    <th scope="col">Fecha</th>
-                                    <th scope="col">Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="badge bg-success-soft text-success">Pedido</span></td>
-                                    <td>Nuevo pedido #PED-A4S3D</td>
-                                    <td>Juan Pérez</td>
-                                    <td>Hace 5 minutos</td>
-                                    <td><span class="badge bg-success">Completado</span></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-info-soft text-info">Usuario</span></td>
-                                    <td>Nuevo registro de usuario</td>
-                                    <td>maria.gomez@utp.edu.pe</td>
-                                    <td>Hace 22 minutos</td>
-                                    <td><span class="badge bg-primary">Activo</span></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-warning-soft text-warning">Producto</span></td>
-                                    <td>Stock bajo para "Laptop Gamer XYZ"</td>
-                                    <td>Sistema</td>
-                                    <td>Hace 1 hora</td>
-                                    <td><span class="badge bg-warning text-dark">Advertencia</span></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-danger-soft text-danger">Soporte</span></td>
-                                    <td>Nuevo ticket de soporte</td>
-                                    <td>Carlos Ruiz</td>
-                                    <td>Hace 3 horas</td>
-                                    <td><span class="badge bg-danger">Urgente</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card stat-card bg-utp-accent-orange text-white">
+                    <div class="card-body">
+                        <div>
+                            <h5 class="card-title">Pedidos Pendientes</h5>
+                            <p class="card-text fs-4 fw-bold" th:text="${pedidosPendientes}">72</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card stat-card bg-utp-accent-blue text-white">
+                    <div class="card-body">
+                        <div>
+                            <h5 class="card-title">Productos Totales</h5>
+                            <p class="card-text fs-4 fw-bold" th:text="${totalProductos}">15</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-box-seam-fill"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
-</div>
 
-<!-- El footer no es necesario en el layout del admin, así que no lo incluimos -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
-</body>
+        <!-- Gráfico de Ventas -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0 fw-bold">Ventas de los Últimos 30 Días</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="ventasChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Actividad Reciente -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0 fw-bold">Pedidos Recientes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                        <tr>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Número Pedido</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="pedido : ${pedidosRecientes}">
+                            <td><span class="badge bg-success-soft text-success">Pedido</span></td>
+                            <td th:text="${pedido.numero_pedido}">#PED-A4S3D</td>
+                            <td th:text="${pedido.usuario.nombreCompleto}">Juan Pérez</td>
+                            <td th:text="${#dates.format(pedido.fecha_pedido, 'dd/MM/yyyy HH:mm')}">Hace 5 minutos</td>
+                            <td>
+                                <span class="badge" th:classappend="${#strings.equals(pedido.estado.nombre, 'COMPLETADO')} ? 'bg-success' : (${#strings.equals(pedido.estado.nombre, 'PENDIENTE')} ? 'bg-warning text-dark' : 'bg-secondary')" th:text="${pedido.estado.nombre}">Completado</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
 </html>
