@@ -2,6 +2,9 @@ package com.utpmarket.utp_market.services;
 
 import com.utpmarket.utp_market.models.entity.product.ProductoDetalleView;
 import com.utpmarket.utp_market.repository.ProductoDetalleViewRepository;
+
+import lombok.NonNull;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,7 +24,7 @@ public class ProductoDetalleService {
         return repository.findAll();
     }
 
-    public ProductoDetalleView obtenerPorId(Long id) {
+    public ProductoDetalleView obtenerPorId(@NonNull Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Detalle de producto no encontrado"));
     }

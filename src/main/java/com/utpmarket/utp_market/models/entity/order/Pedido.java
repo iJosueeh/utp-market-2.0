@@ -3,12 +3,22 @@ package com.utpmarket.utp_market.models.entity.order;
 import com.utpmarket.utp_market.models.embeddable.Direccion;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
 @Table(name = "pedidos")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = { "usuario", "metodoPago", "estado", "itemsPedido", "historialEstadoPedidos" })
+@EqualsAndHashCode(of = "id")
 public class Pedido {
 
     @Id
@@ -24,7 +34,6 @@ public class Pedido {
     private MetodoPago metodoPago;
 
     private Timestamp fecha_pedido;
-
     private String numero_pedido;
 
     @Embedded
@@ -34,6 +43,7 @@ public class Pedido {
     @JoinColumn(name = "estado_id")
     private EstadoPedido estado;
 
+    private String transactionId;
     private Double total;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -41,97 +51,4 @@ public class Pedido {
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<HistorialEstadoPedido> historialEstadoPedidos;
-
-    public Pedido() {}
-
-    public Pedido(Long id, Usuario usuario, MetodoPago metodoPago, Timestamp fecha_pedido, String numero_pedido, Direccion direccion, EstadoPedido estado, Double total) {
-        this.id = id;
-        this.usuario = usuario;
-        this.metodoPago = metodoPago;
-        this.fecha_pedido = fecha_pedido;
-        this.numero_pedido = numero_pedido;
-        this.direccion = direccion;
-        this.estado = estado;
-        this.total = total;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public MetodoPago getMetodoPago() {
-        return metodoPago;
-    }
-
-    public void setMetodoPago(MetodoPago metodoPago) {
-        this.metodoPago = metodoPago;
-    }
-
-    public Timestamp getFecha_pedido() {
-        return fecha_pedido;
-    }
-
-    public void setFecha_pedido(Timestamp fecha_pedido) {
-        this.fecha_pedido = fecha_pedido;
-    }
-
-    public String getNumero_pedido() {
-        return numero_pedido;
-    }
-
-    public void setNumero_pedido(String numero_pedido) {
-        this.numero_pedido = numero_pedido;
-    }
-
-    public Direccion getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
-    }
-
-    public EstadoPedido getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoPedido estado) {
-        this.estado = estado;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
-    }
-
-    public Set<ItemPedido> getItemsPedido() {
-        return itemsPedido;
-    }
-
-    public void setItemsPedido(Set<ItemPedido> itemsPedido) {
-        this.itemsPedido = itemsPedido;
-    }
-
-    public Set<HistorialEstadoPedido> getHistorialEstadoPedidos() {
-        return historialEstadoPedidos;
-    }
-
-    public void setHistorialEstadoPedidos(Set<HistorialEstadoPedido> historialEstadoPedidos) {
-        this.historialEstadoPedidos = historialEstadoPedidos;
-    }
 }

@@ -7,6 +7,9 @@ import com.utpmarket.utp_market.models.entity.product.Producto;
 import com.utpmarket.utp_market.repository.FavoritoRepository;
 import com.utpmarket.utp_market.repository.ProductoRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
+
+import lombok.NonNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +70,7 @@ public class FavoritoService {
         return favoritoRepository.findByUsuarioAndProducto(pair.usuario, pair.producto).isPresent();
     }
 
-    public List<Producto> getFavoritosByUsuario(Long userId) {
+    public List<Producto> getFavoritosByUsuario(@NonNull Long userId) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(userId);
         if (usuarioOpt.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado.");
@@ -78,14 +81,14 @@ public class FavoritoService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductoDTO> getFavoritosByUsuarioDTO(Long userId) {
+    public List<ProductoDTO> getFavoritosByUsuarioDTO(@NonNull Long userId) {
         List<Producto> productos = getFavoritosByUsuario(userId);
         return productos.stream()
                 .map(productoService::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    private Optional<UsuarioProductoPair> obtenerUsuarioYProducto(Long userId, Long productId) {
+    private Optional<UsuarioProductoPair> obtenerUsuarioYProducto(@NonNull Long userId, @NonNull Long productId) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(userId);
         Optional<Producto> productoOpt = productoRepository.findById(productId);
 
