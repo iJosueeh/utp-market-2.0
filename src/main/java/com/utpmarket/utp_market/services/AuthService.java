@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class AuthService implements UserDetailsService {
+public class AuthService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -67,18 +67,6 @@ public class AuthService implements UserDetailsService {
             }
             return RegistroResultado.ERROR_DESCONOCIDO;
         }
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    return new UsernameNotFoundException("No se encontró un usuario con el correo: " + email);
-                });
-
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getNombre().toUpperCase()));
-
-        return new User(usuario.getEmail(), usuario.getPassword(), authorities);
     }
 
     public void changePassword(Usuario usuario, String currentPassword, String newPassword, String confirmPassword) throws Exception {

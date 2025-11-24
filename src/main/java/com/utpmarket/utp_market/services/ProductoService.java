@@ -5,11 +5,11 @@ import com.utpmarket.utp_market.models.entity.product.ImageneProducto;
 import com.utpmarket.utp_market.models.entity.product.Producto;
 import com.utpmarket.utp_market.models.entity.product.Reviews;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
-import com.utpmarket.utp_market.repository.CategoriaRepository;
 import com.utpmarket.utp_market.repository.ProductoRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,12 +27,9 @@ public class ProductoService {
     private ProductoRepository productoRepository;
 
     @Autowired
-    private CategoriaRepository categoriaRepository;
-
-    @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public List<Producto> getProductosRelacionados(Long productoId) {
+    public List<Producto> getProductosRelacionados(@NonNull Long productoId) {
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
@@ -79,7 +76,7 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
 
-    public ProductoDTO convertToDto(Producto producto) {
+    public ProductoDTO convertToDto(@NonNull Producto producto) {
         String imagenUrlPrincipal = producto.getImagenes().stream()
                 .filter(ImageneProducto::isPrincipal)
                 .map(ImageneProducto::getUrl)
@@ -127,8 +124,7 @@ public class ProductoService {
                 numReviews,
                 descuento,
                 isNuevo,
-                precioAnterior
-        );
+                precioAnterior);
     }
 
     private List<Producto> aplicarOrdenacion(List<Producto> productos, String sortBy) {
@@ -218,12 +214,12 @@ public class ProductoService {
         }
     }
 
-    public Producto findById(Long id) {
+    public Producto findById(@NonNull Long id) {
         return productoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
     }
 
-    public void reducirStock(Long productoId, int cantidad) {
+    public void reducirStock(@NonNull Long productoId, int cantidad) {
         Producto producto = findById(productoId);
         int nuevoStock = producto.getStock() - cantidad;
         if (nuevoStock < 0) {

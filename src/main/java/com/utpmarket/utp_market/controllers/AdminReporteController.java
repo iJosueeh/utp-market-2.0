@@ -1,6 +1,5 @@
 package com.utpmarket.utp_market.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.utpmarket.utp_market.repository.PedidoRepository;
 import com.utpmarket.utp_market.repository.VentasDiarias;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,6 @@ public class AdminReporteController {
 
     @Autowired
     private PedidoRepository pedidoRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @GetMapping
     public String viewReportes(Model model) {

@@ -1,7 +1,9 @@
 package com.utpmarket.utp_market.services;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -54,7 +56,7 @@ public class GeminiService {
             - Tu propósito es optimizar la experiencia del usuario dentro de UTP Market.
             """;
 
-    public String generarRespuesta(String userPrompt) {
+    public String generarRespuesta(@NonNull String userPrompt) {
         if (apiKey == null || apiKey.isBlank()) {
             return "La API key no está configurada en el servidor.";
         }
@@ -72,7 +74,10 @@ public class GeminiService {
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
-            ResponseEntity<Map> resp = restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class);
+            ParameterizedTypeReference<Map<String, Object>> responseType = new ParameterizedTypeReference<>() {
+            };
+            ResponseEntity<Map<String, Object>> resp = restTemplate.exchange(apiUrl, HttpMethod.POST, request,
+                    responseType);
             return parseGeminiResponse(resp.getBody());
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,16 +91,35 @@ public class GeminiService {
             return "No se obtuvo respuesta del asistente.";
         }
 
-        if (respBody.containsKey("candidates")) {
-            var candidates = (List<Map<String, Object>>) respBody.get("candidates");
-            if (!candidates.isEmpty()) {
-                var contentMap = (Map<String, Object>) candidates.get(0).get("content");
-                var parts = (List<Map<String, Object>>) contentMap.get("parts");
-                if (!parts.isEmpty()) {
-                    return parts.get(0).get("text").toString();
-                }
-            }
+        try {
+            List<?> candidates = getList(respBody, "candidates");
+            if (candidates.isEmpty())
+                return respBody.toString();
+
+            Map<?, ?> firstCandidate = getMap(candidates.get(0));
+            Map<?, ?> content = getMap(firstCandidate.get("content"));
+
+            List<?> parts = getList(content, "parts");
+            if (parts.isEmpty())
+                return respBody.toString();
+
+            Map<?, ?> firstPart = getMap(parts.get(0));
+            Object text = firstPart.get("text");
+
+            return text != null ? text.toString() : respBody.toString();
+        } catch (Exception e) {
+            return respBody.toString();
         }
-        return respBody.toString();
+    }
+
+    private List<?> getList(Map<?, ?> map, String key) {
+        if (map == null)
+            return List.of();
+        Object value = map.get(key);
+        return (value instanceof List<?>) ? (List<?>) value : List.of();
+    }
+
+    private Map<?, ?> getMap(Object object) {
+        return (object instanceof Map<?, ?>) ? (Map<?, ?>) object : Map.of();
     }
 }

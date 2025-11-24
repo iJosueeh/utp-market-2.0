@@ -7,6 +7,7 @@ import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
 import com.utpmarket.utp_market.services.CarritoService;
 import com.utpmarket.utp_market.services.PedidoService;
+import com.utpmarket.utp_market.services.StripeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,9 @@ public class CarritoController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private StripeService stripeService;
+
     private Usuario getUsuarioFromPrincipal(Principal principal) {
         return usuarioRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new IllegalStateException("Usuario autenticado no encontrado en la base de datos"));
@@ -53,7 +57,8 @@ public class CarritoController {
     }
 
     @PostMapping("/agregar")
-    public String agregarAlCarrito(@RequestParam Long productoId, @RequestParam int cantidad, Principal principal, RedirectAttributes redirectAttributes) {
+    public String agregarAlCarrito(@RequestParam Long productoId, @RequestParam int cantidad, Principal principal,
+            RedirectAttributes redirectAttributes) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
         try {
             carritoService.agregarProducto(usuario.getId(), productoId, cantidad);
@@ -67,8 +72,8 @@ public class CarritoController {
     @PostMapping("/actualizar-cantidad")
     @ResponseBody // Importante para devolver JSON
     public ResponseEntity<?> actualizarCantidadItem(@RequestParam Long itemId,
-                                                    @RequestParam int cantidad,
-                                                    Principal principal) {
+            @RequestParam int cantidad,
+            Principal principal) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
         try {
             carritoService.actualizarCantidadItem(usuario.getId(), itemId, cantidad);
@@ -82,14 +87,15 @@ public class CarritoController {
                     "message", "Cantidad actualizada.",
                     "carritoItems", carritoItems,
                     "subtotal", subtotal,
-                    "total", total
-            ));
+                    "total", total));
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         } catch (SecurityException e) {
-            return ResponseEntity.status(403).body(Map.of("success", false, "message", "No tienes permiso para modificar este item."));
+            return ResponseEntity.status(403)
+                    .body(Map.of("success", false, "message", "No tienes permiso para modificar este item."));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "message", "Error interno al actualizar la cantidad."));
+            return ResponseEntity.status(500)
+                    .body(Map.of("success", false, "message", "Error interno al actualizar la cantidad."));
         }
     }
 
@@ -109,14 +115,15 @@ public class CarritoController {
                     "message", "Producto eliminado correctamente.",
                     "carritoItems", carritoItems,
                     "subtotal", subtotal,
-                    "total", total
-            ));
+                    "total", total));
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         } catch (SecurityException e) {
-            return ResponseEntity.status(403).body(Map.of("success", false, "message", "No tienes permiso para eliminar este item."));
+            return ResponseEntity.status(403)
+                    .body(Map.of("success", false, "message", "No tienes permiso para eliminar este item."));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "message", "Error interno al eliminar el producto."));
+            return ResponseEntity.status(500)
+                    .body(Map.of("success", false, "message", "Error interno al eliminar el producto."));
         }
     }
 
@@ -141,14 +148,29 @@ public class CarritoController {
 
     @PostMapping("/realizar-pago")
     public String realizarPago(@RequestParam Long metodoPagoId,
-                               @RequestParam String calle,
-                               @RequestParam String distrito,
-                               Principal principal,
-                               RedirectAttributes redirectAttributes) {
+            @RequestParam String calle,
+            @RequestParam String distrito,
+            @RequestParam(required = false) String stripeToken,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
         try {
             Direccion direccionEnvio = new Direccion(calle, distrito);
-            Pedido pedido = pedidoService.crearPedido(usuario.getId(), metodoPagoId, direccionEnvio);
+            String transactionId = null;
+
+            // Si es tarjeta (ID 2 o 3, asumiendo que estos son los IDs para tarjeta)
+            // Deberías verificar esto contra tu base de datos o constantes
+            if (metodoPagoId == 2 || metodoPagoId == 3) {
+                if (stripeToken == null || stripeToken.isEmpty()) {
+                    throw new IllegalArgumentException("Token de pago no recibido.");
+                }
+                double total = carritoService.calcularTotal(usuario.getId());
+                // Use createAndConfirmPayment which returns a PaymentIntent
+                transactionId = stripeService.createAndConfirmPayment(stripeToken, total, "PEN", usuario.getEmail())
+                        .getId();
+            }
+
+            Pedido pedido = pedidoService.crearPedido(usuario.getId(), metodoPagoId, direccionEnvio, transactionId);
 
             redirectAttributes.addFlashAttribute("userEmail", usuario.getEmail());
             redirectAttributes.addFlashAttribute("orderNumber", pedido.getNumero_pedido());
@@ -158,7 +180,8 @@ public class CarritoController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/carrito/checkout";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al procesar el pago. Intenta nuevamente.");
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Error al procesar el pago: " + e.getMessage());
             return "redirect:/carrito/checkout";
         }
     }

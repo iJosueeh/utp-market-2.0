@@ -1,4 +1,3 @@
-// src/main/java/com/utpmarket/utp_market/models/services/ReviewService.java
 package com.utpmarket.utp_market.services;
 
 import com.utpmarket.utp_market.models.entity.product.Reviews;
@@ -6,6 +5,7 @@ import com.utpmarket.utp_market.models.entity.product.Producto;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.repository.ReviewsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +39,7 @@ public class ReviewService {
      * Guardar una nueva review
      */
     @Transactional
-    public Reviews guardarReview(Reviews review) {
+    public Reviews guardarReview(@NonNull Reviews review) {
         return reviewsRepository.save(review);
     }
 
@@ -72,7 +72,7 @@ public class ReviewService {
      * Obtener una review por ID
      */
     @Transactional(readOnly = true)
-    public Optional<Reviews> obtenerReviewPorId(Long id) {
+    public Optional<Reviews> obtenerReviewPorId(@NonNull Long id) {
         return reviewsRepository.findById(id);
     }
 
@@ -80,7 +80,7 @@ public class ReviewService {
      * Eliminar una review
      */
     @Transactional
-    public void eliminarReview(Long reviewId, Long userId) {
+    public void eliminarReview(@NonNull Long reviewId, @NonNull Long userId) {
         Reviews review = reviewsRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Reseña no encontrada"));
 
@@ -94,7 +94,7 @@ public class ReviewService {
      * Crear una nueva review con validación
      */
     @Transactional
-    public Reviews actualizarReview(Long reviewId, Long usuarioId, Integer nuevoPuntaje, String nuevoComentario) {
+    public Reviews actualizarReview(@NonNull Long reviewId, @NonNull Long usuarioId, @NonNull Integer nuevoPuntaje, String nuevoComentario) {
         Reviews review = reviewsRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Reseña no encontrada"));
 
@@ -114,7 +114,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public Reviews crearReview(Usuario usuario, Producto producto, Integer puntaje, String comentario) {
+    public Reviews crearReview(@NonNull Usuario usuario, @NonNull Producto producto, @NonNull Integer puntaje,
+            String comentario) {
         // Verificar que no exista una review previa
         if (usuarioYaHizoReview(usuario.getId(), producto.getId())) {
             throw new IllegalStateException("Ya has dejado una reseña para este producto");
