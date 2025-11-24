@@ -5,6 +5,9 @@ import com.utpmarket.utp_market.models.entity.product.Reviews;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
 import com.utpmarket.utp_market.services.ReviewService;
+
+import lombok.NonNull;
+
 import com.utpmarket.utp_market.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,9 +38,9 @@ public class ReviewController {
     @PostMapping("/crear")
     @PreAuthorize("isAuthenticated()")
     public String crearReview(
-            @RequestParam Long productoId,
-            @RequestParam Integer puntaje,
-            @RequestParam String comentario,
+            @RequestParam @NonNull Long productoId,
+            @RequestParam @NonNull Integer puntaje,
+            @RequestParam @NonNull String comentario,
             Principal principal,
             RedirectAttributes redirectAttributes) {
 
@@ -48,11 +51,25 @@ public class ReviewController {
             Producto producto = productoRepository.findById(productoId)
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
-            reviewService.crearReview(usuario, producto, puntaje, comentario);
+            if (puntaje < 1 || puntaje > 5) {
+                throw new IllegalArgumentException("Puntaje debe estar entre 1 y 5");
+            }
 
+            if (comentario.trim().isEmpty()) {
+                throw new IllegalArgumentException("Comentario no puede estar vacío");
+            }
+
+            if (usuario.getReviews().stream().anyMatch(r -> r.getProducto().getId().equals(productoId))) {
+                throw new IllegalArgumentException("Ya has enviado una reseña para este producto");
+            }
+
+            if (producto.getReviews().stream().anyMatch(r -> r.getUsuario().getId().equals(usuario.getId()))) {
+                throw new IllegalArgumentException("Ya has enviado una reseña para este producto");
+            }
+
+            reviewService.crearReview(usuario, producto, puntaje, comentario);
             redirectAttributes.addFlashAttribute("success", "¡Reseña enviada exitosamente!");
             return "redirect:/producto/" + productoId;
-
         } catch (IllegalStateException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/producto/" + productoId;
@@ -69,9 +86,9 @@ public class ReviewController {
     @PostMapping("/actualizar")
     @PreAuthorize("isAuthenticated()")
     public String actualizarReview(
-            @RequestParam Long reviewId,
-            @RequestParam Integer puntaje,
-            @RequestParam String comentario,
+            @RequestParam @NonNull Long reviewId,
+            @RequestParam @NonNull Integer puntaje,
+            @RequestParam @NonNull String comentario,
             Principal principal,
             RedirectAttributes redirectAttributes) {
 
@@ -81,12 +98,10 @@ public class ReviewController {
 
             reviewService.actualizarReview(reviewId, usuario.getId(), puntaje, comentario);
             redirectAttributes.addFlashAttribute("success", "Reseña actualizada exitosamente!");
-            
-            // Redirigir de vuelta a la página del producto
+
             return reviewService.obtenerReviewPorId(reviewId)
                     .map(review -> "redirect:/producto/" + review.getProducto().getId())
                     .orElse("redirect:/perfil");
-
         } catch (SecurityException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/perfil";
@@ -103,7 +118,7 @@ public class ReviewController {
     @PostMapping("/eliminar/{id}")
     @PreAuthorize("isAuthenticated()")
     public String eliminarReview(
-            @PathVariable Long id,
+            @PathVariable @NonNull Long id,
             Principal principal,
             RedirectAttributes redirectAttributes) {
 

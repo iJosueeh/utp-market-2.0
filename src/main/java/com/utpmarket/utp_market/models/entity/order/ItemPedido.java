@@ -2,9 +2,19 @@ package com.utpmarket.utp_market.models.entity.order;
 
 import com.utpmarket.utp_market.models.entity.product.Producto;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "items_pedidos")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = { "pedido", "producto" })
+@EqualsAndHashCode(of = "id")
 public class ItemPedido {
 
     @Id
@@ -20,65 +30,6 @@ public class ItemPedido {
     private Producto producto;
 
     private Integer cantidad;
-    private Double precioUnitario; // Add this field
+    private Double precioUnitario;
     private Double subtotal;
-
-    public ItemPedido() {}
-
-    public ItemPedido(Long id, Pedido pedido, Producto producto, Integer cantidad, Double precioUnitario, Double subtotal) {
-        this.id = id;
-        this.pedido = pedido;
-        this.producto = producto;
-        this.cantidad = cantidad;
-        this.precioUnitario = precioUnitario; // Initialize in constructor
-        this.subtotal = subtotal;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public Double getSubtotal() {
-        return subtotal;
-    }
-
-    public void setSubtotal(Double subtotal) {
-        this.subtotal = subtotal;
-    }
-
-    public Double getPrecioUnitario() {
-        return precioUnitario;
-    }
-
-    public void setPrecioUnitario(Double precioUnitario) {
-        this.precioUnitario = precioUnitario;
-    }
 }

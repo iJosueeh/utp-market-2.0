@@ -2,9 +2,19 @@ package com.utpmarket.utp_market.models.entity.cart;
 
 import com.utpmarket.utp_market.models.entity.product.Producto;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "items_carritos")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = { "carrito", "producto" })
+@EqualsAndHashCode(of = "id")
 public class ItemsCarrito {
 
     @Id
@@ -21,55 +31,4 @@ public class ItemsCarrito {
 
     private Integer cantidad;
     private Double precio_unitario;
-
-    public ItemsCarrito() {}
-
-    public ItemsCarrito(Long id, Carrito carrito, Producto producto, Integer cantidad, Double precio_unitario) {
-        this.id = id;
-        this.carrito = carrito;
-        this.producto = producto;
-        this.cantidad = cantidad;
-        this.precio_unitario = precio_unitario;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Carrito getCarrito() {
-        return carrito;
-    }
-
-    public void setCarrito(Carrito carrito) {
-        this.carrito = carrito;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public Double getPrecio_unitario() {
-        return precio_unitario;
-    }
-
-    public void setPrecio_unitario(Double precio_unitario) {
-        this.precio_unitario = precio_unitario;
-    }
-
 }

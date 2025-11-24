@@ -3,6 +3,7 @@ package com.utpmarket.utp_market.services;
 import com.utpmarket.utp_market.models.entity.order.Pedido;
 import com.utpmarket.utp_market.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -58,7 +60,7 @@ public class PedidoService {
 
     // Obtiene un pedido por su ID
     @Transactional(readOnly = true)
-    public Pedido obtenerPedidoPorId(Long id) {
+    public Pedido obtenerPedidoPorId(@NonNull Long id) {
         Optional<Pedido> pedido = pedidoRepository.findById(id);
         return pedido.orElse(null);
     }
@@ -77,12 +79,18 @@ public class PedidoService {
 
     // Guarda y Actualiza
     @Transactional
-    public Pedido guardarPedido(Pedido pedido) {
+    public Pedido guardarPedido(@NonNull Pedido pedido) {
+        Objects.requireNonNull(pedido, "El pedido no puede ser nulo");
         return pedidoRepository.save(pedido);
     }
 
     @Transactional
-    public Pedido crearPedido(Long usuarioId, Long metodoPagoId, Direccion direccionEnvio) {
+    public Pedido crearPedido(@NonNull Long usuarioId, @NonNull Long metodoPagoId, @NonNull Direccion direccionEnvio,
+            String transactionId) {
+        Objects.requireNonNull(usuarioId, "El ID de usuario no puede ser nulo");
+        Objects.requireNonNull(metodoPagoId, "El ID de método de pago no puede ser nulo");
+        Objects.requireNonNull(direccionEnvio, "La dirección de envío no puede ser nula");
+
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
@@ -96,11 +104,13 @@ public class PedidoService {
 
         // Verificar stock y reducirlo
         for (CarritoItemDTO item : carritoItems) {
-            Producto producto = productoService.findById(item.getProducto().getId());
+            Long productoId = Objects.requireNonNull(item.getProducto().getId(),
+                    "El ID del producto no puede ser nulo");
+            Producto producto = productoService.findById(productoId);
             if (producto.getStock() < item.getCantidad()) {
                 throw new IllegalStateException("Stock insuficiente para el producto: " + producto.getNombre());
             }
-            productoService.reducirStock(producto.getId(), item.getCantidad());
+            productoService.reducirStock(productoId, item.getCantidad());
         }
 
         Pedido pedido = new Pedido();
@@ -109,8 +119,8 @@ public class PedidoService {
         pedido.setFecha_pedido(Timestamp.valueOf(LocalDateTime.now()));
         pedido.setNumero_pedido(generarNumeroPedido());
         pedido.setDireccion(direccionEnvio);
+        pedido.setTransactionId(transactionId);
 
-        // Estado inicial del pedido (por ejemplo, "Pendiente")
         Optional<EstadoPedido> estadoInicialOptional = estadoPedidoRepository.findByNombre("Pendiente");
         if (estadoInicialOptional.isEmpty()) {
             throw new IllegalStateException("Estado 'Pendiente' no encontrado.");
@@ -121,22 +131,27 @@ public class PedidoService {
         double totalPedido = carritoService.calcularTotal(usuarioId);
         pedido.setTotal(totalPedido);
 
+        // Guardar el pedido primero para tener el ID
         Pedido pedidoGuardado = pedidoRepository.save(pedido);
 
         Set<ItemPedido> itemsPedido = new HashSet<>();
         for (CarritoItemDTO itemDTO : carritoItems) {
             ItemPedido itemPedido = new ItemPedido();
             itemPedido.setPedido(pedidoGuardado);
-            itemPedido.setProducto(productoService.findById(itemDTO.getProducto().getId()));
+
+            Long productoId = Objects.requireNonNull(itemDTO.getProducto().getId(),
+                    "El ID del producto no puede ser nulo");
+            itemPedido.setProducto(productoService.findById(productoId));
+
             itemPedido.setCantidad(itemDTO.getCantidad());
             itemPedido.setPrecioUnitario(itemDTO.getProducto().getPrecio());
-            itemPedido.setSubtotal(itemDTO.getSubtotal()); // Set the subtotal
+            itemPedido.setSubtotal(itemDTO.getSubtotal());
             itemsPedido.add(itemPedido);
         }
         itemPedidoRepository.saveAll(itemsPedido);
         pedidoGuardado.setItemsPedido(itemsPedido);
 
-        carritoService.limpiarCarrito(usuarioId); // Limpiar carrito después de crear el pedido
+        carritoService.limpiarCarrito(usuarioId);
 
         return pedidoGuardado;
     }

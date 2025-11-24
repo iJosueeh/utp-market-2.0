@@ -1,6 +1,7 @@
 package com.utpmarket.utp_market.controllers;
 
 import com.utpmarket.utp_market.services.GeminiService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -10,6 +10,9 @@ import com.utpmarket.utp_market.repository.CarritoRepository;
 import com.utpmarket.utp_market.repository.ItemsCarritoRepository;
 import com.utpmarket.utp_market.repository.ProductoRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
+
+import lombok.NonNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +42,7 @@ public class CarritoService {
     @Autowired
     private ProductoService productoService;
 
-    public List<CarritoItemDTO> obtenerItems(Long userId) {
+    public List<CarritoItemDTO> obtenerItems(@NonNull Long userId) {
         Carrito carrito = getOrCreateCarrito(userId);
         return carrito.getItemsCarrito().stream()
                 .map(item -> {
@@ -49,7 +52,7 @@ public class CarritoService {
                 .collect(Collectors.toList());
     }
 
-    public void agregarProducto(Long userId, Long productoId, int cantidad) {
+    public void agregarProducto(@NonNull Long userId, @NonNull Long productoId, int cantidad) {
         Carrito carrito = getOrCreateCarrito(userId);
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
@@ -73,32 +76,32 @@ public class CarritoService {
         }
     }
 
-    public void eliminarProducto(Long userId, Long itemId) {
+    public void eliminarProducto(@NonNull Long userId, @NonNull Long itemId) {
         Carrito carrito = getOrCreateCarrito(userId);
         itemsCarritoRepository.deleteByIdAndCarrito(itemId, carrito);
     }
 
-    public double calcularSubtotal(Long userId) {
+    public double calcularSubtotal(@NonNull Long userId) {
         List<CarritoItemDTO> items = obtenerItems(userId);
         return items.stream()
                 .mapToDouble(CarritoItemDTO::getSubtotal)
                 .sum();
     }
 
-    public double calcularTotal(Long userId) {
+    public double calcularTotal(@NonNull Long userId) {
         double subtotal = calcularSubtotal(userId);
         double envio = (subtotal > 100) ? 0 : 10;
         return subtotal + envio;
     }
 
-    public void limpiarCarrito(Long userId) {
+    public void limpiarCarrito(@NonNull Long userId) {
         Carrito carrito = getOrCreateCarrito(userId);
         itemsCarritoRepository.deleteAllByCarrito(carrito);
     }
 
-    public void actualizarCantidadItem(Long userId, Long itemId, int nuevaCantidad) {
+    public void actualizarCantidadItem(@NonNull Long userId, @NonNull Long itemId, int nuevaCantidad) {
         if (nuevaCantidad <= 0) {
-            eliminarProducto(userId, itemId); // If quantity is 0 or less, remove the item
+            eliminarProducto(userId, itemId);
             return;
         }
 
@@ -119,7 +122,7 @@ public class CarritoService {
         itemsCarritoRepository.save(item);
     }
 
-    private Carrito getOrCreateCarrito(Long userId) {
+    private Carrito getOrCreateCarrito(@NonNull Long userId) {
         Usuario usuario = usuarioRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 

@@ -11,11 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.ui.Model;
 
-import java.time.Month;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -36,7 +31,7 @@ public class AdminController {
         long totalUsuarios = usuarioRepository.count();
         double totalVentas = pedidoRepository.sumTotalVentas();
         long pedidosPendientes = pedidoRepository.countByEstadoNombre("PENDIENTE");
-        long totalProductos = productoRepository.count(); // Necesitarás el ProductoRepository
+        long totalProductos = productoRepository.count();
 
         model.addAttribute("totalUsuarios", totalUsuarios);
         model.addAttribute("totalVentas", totalVentas);
