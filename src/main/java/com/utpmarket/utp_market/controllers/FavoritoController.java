@@ -1,12 +1,13 @@
 package com.utpmarket.utp_market.controllers;
 
 import com.utpmarket.utp_market.models.entity.user.Usuario;
+import com.utpmarket.utp_market.repository.UsuarioRepository;
 import com.utpmarket.utp_market.services.FavoritoService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +18,14 @@ public class FavoritoController {
     @Autowired
     private FavoritoService favoritoService;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @PostMapping("/toggle/{productId}")
-    public ResponseEntity<?> toggleFavorito(@PathVariable Long productId, HttpSession session) {
+    public ResponseEntity<?> toggleFavorito(@PathVariable Long productId, Principal principal) {
         Long userId;
         try {
-            userId = getUserIdFromSession(session);
+            userId = getUserIdFromPrincipal(principal);
         } catch (IllegalStateException e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -56,10 +60,10 @@ public class FavoritoController {
     }
 
     @GetMapping("/isFavorito/{productId}")
-    public ResponseEntity<?> isFavorito(@PathVariable Long productId, HttpSession session) {
+    public ResponseEntity<?> isFavorito(@PathVariable Long productId, Principal principal) {
         Long userId;
         try {
-            userId = getUserIdFromSession(session);
+            userId = getUserIdFromPrincipal(principal);
         } catch (IllegalStateException e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -86,11 +90,21 @@ public class FavoritoController {
         }
     }
 
-    private Long getUserIdFromSession(HttpSession session) {
-        Usuario loggedInUser = (Usuario) session.getAttribute("usuario");
-        if (loggedInUser == null) {
+    /**
+     * Obtiene el ID del usuario desde el Principal (compatible con JWT)
+     * El Principal contiene el email del usuario extraído del token JWT
+     */
+    private Long getUserIdFromPrincipal(Principal principal) {
+        if (principal == null) {
             throw new IllegalStateException("Usuario no autenticado.");
         }
-        return loggedInUser.getId();
+
+        // El email viene del token JWT (subject del token)
+        String email = principal.getName();
+
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado con email: " + email));
+
+        return usuario.getId();
     }
 }

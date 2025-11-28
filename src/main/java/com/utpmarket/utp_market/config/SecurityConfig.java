@@ -1,10 +1,10 @@
 package com.utpmarket.utp_market.config;
 
+import com.utpmarket.utp_market.filters.JwtAuthenticationFilter;
 import com.utpmarket.utp_market.services.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,74 +13,81 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private MyUserDetailsService myUserDetailsService;
+        @Autowired
+        private MyUserDetailsService myUserDetailsService;
 
-    @Autowired
-    private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+        @Autowired
+        private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Autowired
+        private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(myUserDetailsService).passwordEncoder(passwordEncoder());
-        return authenticationManagerBuilder.build();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas y recursos estáticos que no requieren autenticación
-                        .requestMatchers("/", "/auth/login", "/auth/register", "/about-us",
-                                "/sedes", "/help", "/ventas", "/categoria", "/producto/**", "/error/**",
-                                "/api/chatbot/**")
-                        .permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico")
-                        .permitAll()
+        @Bean
+        public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+                AuthenticationManagerBuilder authenticationManagerBuilder = http
+                                .getSharedObject(AuthenticationManagerBuilder.class);
+                authenticationManagerBuilder.userDetailsService(myUserDetailsService)
+                                .passwordEncoder(passwordEncoder());
+                return authenticationManagerBuilder.build();
+        }
 
-                        // Rutas de Administrador requieren el rol ADMIN
-                        .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                // Deshabilitar CSRF ya que usamos JWT (stateless)
+                                .csrf(csrf -> csrf.disable())
 
-                        // Rutas de Vendedor requieren el rol VENDEDOR
-                        .requestMatchers("/vendedor/**", "/api/vendedor/**").hasRole("VENDEDOR")
+                                // Configurar política de sesiones como STATELESS (sin sesiones)
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                        // Cualquier otra solicitud (incluyendo /api/**) requiere autenticación
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/auth/login")
-                        .loginProcessingUrl("/auth/login")
-                        .usernameParameter("email")
-                        .successHandler(customAuthenticationSuccessHandler)
-                        .failureUrl("/auth/login?error=true")
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
-                        .permitAll())
-                .exceptionHandling(exceptions -> exceptions
-                        // Para las rutas /api/**, devuelve 401 en lugar de redirigir
-                        .defaultAuthenticationEntryPointFor(
-                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-                                RegexRequestMatcher.regexMatcher("/api/.*")));
-        return http.build();
-    }
+                                // Configurar autorización de endpoints
+                                .authorizeHttpRequests(auth -> auth
+                                                // Rutas públicas que NO requieren autenticación
+                                                .requestMatchers("/", "/about-us", "/sedes", "/help",
+                                                                "/ventas", "/categoria", "/producto/**",
+                                                                "/error/**")
+                                                .permitAll()
+
+                                                // Recursos estáticos públicos
+                                                .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico")
+                                                .permitAll()
+
+                                                // Endpoints de autenticación públicos
+                                                .requestMatchers("/auth/login", "/auth/register", "/auth/refresh")
+                                                .permitAll()
+
+                                                // API pública
+                                                .requestMatchers("/api/chatbot/**").permitAll()
+
+                                                // Rutas de Administrador requieren JWT con rol ADMIN
+                                                .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
+
+                                                // Rutas de Vendedor requieren JWT con rol VENDEDOR
+                                                .requestMatchers("/vendedor/**", "/api/vendedor/**")
+                                                .hasRole("VENDEDOR")
+
+                                                // Cualquier otra solicitud requiere autenticación con JWT
+                                                .anyRequest().authenticated())
+
+                                // Agregar filtro JWT antes del filtro de autenticación estándar
+                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+                                // Manejo de excepciones: usar CustomAuthenticationEntryPoint
+                                .exceptionHandling(exceptions -> exceptions
+                                                .authenticationEntryPoint(customAuthenticationEntryPoint));
+
+                return http.build();
+        }
 }

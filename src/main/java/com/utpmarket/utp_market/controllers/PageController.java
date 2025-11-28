@@ -1,59 +1,22 @@
 package com.utpmarket.utp_market.controllers;
 
 import com.utpmarket.utp_market.models.dto.FAQItem;
-import com.utpmarket.utp_market.models.dto.ProductoDTO;
-import com.utpmarket.utp_market.models.entity.order.Pedido;
-import com.utpmarket.utp_market.models.entity.product.Reviews;
-import com.utpmarket.utp_market.models.entity.user.EstudianteDetalles;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
-import com.utpmarket.utp_market.repository.EstudianteDetallesRepository;
-import com.utpmarket.utp_market.repository.UsuarioRepository;
-import com.utpmarket.utp_market.services.FavoritoService;
-import com.utpmarket.utp_market.services.PedidoService;
-import com.utpmarket.utp_market.services.ReviewService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
+/**
+ * Controller para páginas generales del sitio.
+ * Las funcionalidades de perfil se movieron a PerfilController.
+ */
 @Controller
 public class PageController {
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private EstudianteDetallesRepository estudianteDetallesRepository;
-
-    @Autowired
-    private FavoritoService favoritoService;
-
-    @Autowired
-    private PedidoService pedidoService;
-
-    @Autowired
-    private ReviewService reviewService;
-
-    private static final List<String> CARRERAS_UTP = Arrays.asList(
-            "Ingeniería de Sistemas e Informática",
-            "Ingeniería de Software",
-            "Ingeniería Industrial",
-            "Ingeniería Civil",
-            "Administración de Empresas",
-            "Contabilidad",
-            "Derecho",
-            "Arquitectura"
-    );
 
     @GetMapping("/about-us")
     public String aboutUs() {
@@ -72,8 +35,7 @@ public class PageController {
                 new FAQItem("¿Hay algún costo por usar el centro de ayuda?",
                         "No. El servicio de soporte y el chat de WhatsApp son totalmente gratuitos para toda la comunidad UTP."),
                 new FAQItem("¿Qué hago si no responden mi consulta?",
-                        "En caso de que no recibas respuesta en el chat, puedes enviar un reporte desde tu perfil en la sección “Soporte” y un asesor se pondrá en contacto contigo.")
-        );
+                        "En caso de que no recibas respuesta en el chat, puedes enviar un reporte desde tu perfil en la sección \"Soporte\" y un asesor se pondrá en contacto contigo."));
         model.addAttribute("faqItems", faqItems);
         return "pages/help";
     }
@@ -84,40 +46,42 @@ public class PageController {
         List<Map<String, String>> sedes = List.of(
                 Map.of(
                         "nombre", "Sede Norte",
-                        "direccion", "Panamericana Norte, Av. Alfredo Mendiola 6377, Los Olivos 15306",
+                        "direccion",
+                        "Panamericana Norte, Av. Alfredo Mendiola 6377, Los Olivos 15306",
                         "telefono", "970804148",
-                        "mapa", "https://www.google.com/maps/place/Panamericana+Norte+6377,+Los+Olivos+15306",
-                        "imagen", "https://utp.edu.pe/sites/default/files/campus/campus-los-olivos-utp.webp"
-                ),
+                        "mapa",
+                        "https://www.google.com/maps/place/Panamericana+Norte+6377,+Los+Olivos+15306",
+                        "imagen",
+                        "https://utp.edu.pe/sites/default/files/campus/campus-los-olivos-utp.webp"),
                 Map.of(
                         "nombre", "Sede Lima Centro",
                         "direccion", "Avenida Petit Thouars 116, Lima 15046",
                         "telefono", "(01) 3159600",
-                        "mapa", "https://www.google.com/maps/place/Avenida+Petit+Thouars+116,+Lima+15046",
-                        "imagen", "https://utp.edu.pe/sites/default/files/campus/utp-lima-centro.webp"
-                ),
+                        "mapa",
+                        "https://www.google.com/maps/place/Avenida+Petit+Thouars+116,+Lima+15046",
+                        "imagen",
+                        "https://utp.edu.pe/sites/default/files/campus/utp-lima-centro.webp"),
                 Map.of(
                         "nombre", "Sede Lima Sur",
                         "direccion", "Ctra. Panamericana Sur km 16, Villa El Salvador 15842",
                         "telefono", "(01) 3159600",
-                        "mapa", "https://www.google.com/maps/place/Panamericana+Sur+Km+16,+Villa+El+Salvador+15842",
-                        "imagen", "https://utp.edu.pe/sites/default/files/campus/LimaSur-.webp"
-                ),
+                        "mapa",
+                        "https://www.google.com/maps/place/Panamericana+Sur+Km+16,+Villa+El+Salvador+15842",
+                        "imagen",
+                        "https://utp.edu.pe/sites/default/files/campus/LimaSur-.webp"),
                 Map.of(
                         "nombre", "Sede San Juan de Lurigancho",
                         "direccion", "Av. Wiesse 571, San Juan de Lurigancho 15434",
                         "telefono", "(01) 3159600",
                         "mapa", "https://maps.app.goo.gl/REhYfwjyYBLGhErc6",
-                        "imagen", "https://utp.edu.pe/sites/default/files/campus/SJL-.webp"
-                ),
+                        "imagen", "https://utp.edu.pe/sites/default/files/campus/SJL-.webp"),
                 Map.of(
                         "nombre", "Sede Ate",
                         "direccion", "Av. Carretera Central 123, Ate, Lima",
                         "telefono", "(01) 3159600",
                         "mapa", "https://maps.app.goo.gl/m6p3aiWzAuyf8mLu7",
-                        "imagen", "https://utp.edu.pe/sites/default/files/campus/utp-sede-ate.webp"
-                )
-        );
+                        "imagen",
+                        "https://utp.edu.pe/sites/default/files/campus/utp-sede-ate.webp"));
 
         model.addAttribute("sedes", sedes);
 
@@ -130,9 +94,14 @@ public class PageController {
     }
 
     @GetMapping("/auth/login")
-    public String loginPage(Principal principal) {
+    public String loginPage(@RequestParam(value = "error", required = false) String error,
+                            Principal principal,
+                            Model model) {
         if (principal != null) {
             return "redirect:/"; // Si el usuario ya está autenticado, redirigir a la página de inicio
+        }
+        if ("expired".equals(error)) {
+            model.addAttribute("error", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
         }
         return "auth/login";
     }
@@ -141,74 +110,5 @@ public class PageController {
     public String registerPage(Model model) {
         model.addAttribute("usuario", new Usuario()); // Add an empty User object to the model
         return "auth/register";
-    }
-
-    @GetMapping("/perfil")
-    @PreAuthorize("isAuthenticated()")
-    public String perfil(Principal principal, Model model) {
-        Usuario usuario = usuarioRepository.findByEmail(principal.getName())
-                .orElseThrow(() -> new IllegalStateException("Usuario autenticado no encontrado en la base de datos"));
-
-        List<Pedido> pedidos = pedidoService.obtenerHistorialPedidosPorUsuario(usuario.getId());
-        model.addAttribute("pedidos", pedidos);
-
-        model.addAttribute("user", usuario);
-
-        List<Reviews> reseñasUsuario = reviewService.obtenerReviewsPorUsuario(usuario.getId());
-        model.addAttribute("reviews", reseñasUsuario);
-
-        model.addAttribute("carrerasUtp", CARRERAS_UTP);
-        List<ProductoDTO> favoritos = favoritoService.getFavoritosByUsuarioDTO(usuario.getId());
-        model.addAttribute("favoritos", favoritos);
-        return "pages/perfil";
-    }
-
-    @PostMapping("/usuario/actualizar")
-    @PreAuthorize("isAuthenticated()")
-    public String actualizarInformacionPersonal(@ModelAttribute Usuario usuarioActualizado, Principal principal, RedirectAttributes redirectAttributes) {
-        Usuario usuarioExistente = usuarioRepository.findByEmail(principal.getName())
-                .orElseThrow(() -> new IllegalStateException("Usuario autenticado no encontrado"));
-
-        usuarioExistente.setNombre(usuarioActualizado.getNombre());
-        usuarioExistente.setApellido(usuarioActualizado.getApellido());
-
-        if (usuarioActualizado.getEstudianteDetalles() != null) {
-            EstudianteDetalles estudianteDetallesExistente = getOrCreateEstudianteDetalles(usuarioExistente);
-            estudianteDetallesExistente.setTelefono(usuarioActualizado.getEstudianteDetalles().getTelefono());
-            estudianteDetallesExistente.setFecha_nacimiento(usuarioActualizado.getEstudianteDetalles().getFecha_nacimiento());
-            estudianteDetallesRepository.save(estudianteDetallesExistente);
-            usuarioExistente.setEstudianteDetalles(estudianteDetallesExistente);
-        }
-
-        usuarioRepository.save(usuarioExistente);
-
-        redirectAttributes.addFlashAttribute("success", "Información personal actualizada correctamente.");
-        return "redirect:/perfil";
-    }
-
-    @PostMapping("/usuario/actualizar-utp")
-    @PreAuthorize("isAuthenticated()")
-    public String actualizarInformacionUtp(@ModelAttribute Usuario usuarioActualizado, Principal principal, RedirectAttributes redirectAttributes) {
-        Usuario usuarioExistente = usuarioRepository.findByEmail(principal.getName())
-                .orElseThrow(() -> new IllegalStateException("Usuario autenticado no encontrado"));
-
-        EstudianteDetalles estudianteDetallesExistente = getOrCreateEstudianteDetalles(usuarioExistente);
-
-        estudianteDetallesExistente.setCodigo_estudiante(usuarioActualizado.getEstudianteDetalles().getCodigo_estudiante());
-        estudianteDetallesExistente.setCiclo(usuarioActualizado.getEstudianteDetalles().getCiclo());
-        estudianteDetallesExistente.setCarrera(usuarioActualizado.getEstudianteDetalles().getCarrera());
-        estudianteDetallesRepository.save(estudianteDetallesExistente);
-
-        redirectAttributes.addFlashAttribute("success", "Información UTP actualizada correctamente.");
-        return "redirect:/perfil";
-    }
-
-    private EstudianteDetalles getOrCreateEstudianteDetalles(Usuario usuario) {
-        EstudianteDetalles estudianteDetalles = usuario.getEstudianteDetalles();
-        if (estudianteDetalles == null) {
-            estudianteDetalles = new EstudianteDetalles();
-            estudianteDetalles.setUsuario(usuario);
-        }
-        return estudianteDetalles;
     }
 }

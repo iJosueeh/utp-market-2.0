@@ -5,10 +5,10 @@ import com.utpmarket.utp_market.models.entity.product.ProductoDetalleView;
 import com.utpmarket.utp_market.models.entity.product.Reviews;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.repository.ProductoDetalleViewRepository;
+import com.utpmarket.utp_market.repository.UsuarioRepository;
 import com.utpmarket.utp_market.services.ProductoService;
 import com.utpmarket.utp_market.services.ReviewService;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -32,12 +33,15 @@ public class ProductoDetalleController {
     @Autowired
     private ProductoDetalleViewRepository productoDetalleViewRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @GetMapping("/producto/{id}")
     public String verDetalleProducto(@PathVariable Long id,
-                                     HttpSession session,
-                                     Model model,
-                                     @RequestParam(required = false) String success,
-                                     @RequestParam(required = false) String error) {
+            Principal principal,
+            Model model,
+            @RequestParam(required = false) String success,
+            @RequestParam(required = false) String error) {
 
         ProductoDetalleView detalle = productoDetalleViewRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
@@ -55,18 +59,20 @@ public class ProductoDetalleController {
         model.addAttribute("totalReviews", totalReviews);
         model.addAttribute("resenas", resenas);
 
-        // --- Usuario actual ---
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = null;
         boolean usuarioYaResenio = false;
 
-        if (usuario != null) {
-            usuarioYaResenio = reviewService.usuarioYaHizoReview(usuario.getId(), id);
+        if (principal != null) {
+            usuario = usuarioRepository.findByEmail(principal.getName()).orElse(null);
+
+            if (usuario != null) {
+                usuarioYaResenio = reviewService.usuarioYaHizoReview(usuario.getId(), id);
+            }
         }
 
         model.addAttribute("usuario", usuario);
         model.addAttribute("usuarioYaResenio", usuarioYaResenio);
 
-        // --- Productos relacionados ---
         List<Producto> relacionados = productoService.getProductosRelacionados(id);
         model.addAttribute("relacionados", relacionados);
 
