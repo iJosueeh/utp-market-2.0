@@ -45,25 +45,38 @@
                             </a>
                         </span>
 
-                        <!-- Auth Section - Desktop (Conditional) -->
+                        <!-- Auth Section - Desktop (Thymeleaf) -->
                         <div class="d-none d-lg-block ms-2">
+                            <!-- No autenticado -->
                             <div sec:authorize="!isAuthenticated()">
                                 <a th:href="@{/auth/login}" class="btn btn-icon btn-dark rounded-circle bg-dark">
                                     <i class="bi bi-person-circle align-middle"></i>
                                 </a>
                             </div>
+                            <!-- Autenticado -->
                             <div sec:authorize="isAuthenticated()">
                                 <div class="dropdown">
-                                    <a class="btn btn-icon btn-dark rounded-circle bg-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a class="btn btn-icon btn-dark rounded-circle bg-dark dropdown-toggle" href="#"
+                                        role="button" id="dropdownMenuLink" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
                                         <i class="bi bi-person-circle align-middle"></i>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
-                                        <li><a class="dropdown-item" th:href="@{/perfil}">Mi Perfil</a></li>
-                                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" th:href="@{/admin/dashboard}">Admin Dashboard</a></li>
-                                        <li sec:authorize="hasRole('PROFESSIONAL')"><a class="dropdown-item" th:href="@{/profesional/dashboard}">Professional Dashboard</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li><span class="dropdown-item-text"><strong
+                                                    sec:authentication="name">Usuario</strong></span></li>
                                         <li>
-                                            <form th:action="@{/logout}" method="post" class="d-inline">
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item" th:href="@{/perfil}">Mi Perfil</a></li>
+                                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
+                                                th:href="@{/admin/dashboard}">Admin Dashboard</a></li>
+                                        <li sec:authorize="hasRole('VENDEDOR')"><a class="dropdown-item"
+                                                th:href="@{/vendedor/dashboard}">Vendedor Dashboard</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <form th:action="@{/auth/logout}" method="post" class="m-0">
                                                 <button type="submit" class="dropdown-item dropdown-item-logout">
                                                     Cerrar Sesión
                                                 </button>
@@ -113,7 +126,8 @@
                                     <li th:each="categoria : ${categoriasGlobal}">
                                         <a th:href="@{/categoria(id=${categoria.id})}"
                                             class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2">
-                                            <i th:classappend="${categoria.icono}"></i> <span th:text="${categoria.nombre}"></span>
+                                            <i th:classappend="${categoria.icono}"></i> <span
+                                                th:text="${categoria.nombre}"></span>
                                         </a>
                                     </li>
                                 </ul>
@@ -130,17 +144,19 @@
                                     <i class="bi bi-bell align-middle"></i>
                                 </a>
 
-                                <!-- For mobile, simply add a login icon if not authenticated -->
-                                <div sec:authorize="!isAuthenticated()" class="ms-2">
-                                    <a th:href="@{/auth/login}" class="btn btn-icon btn-dark rounded-circle bg-dark">
-                                        <i class="bi bi-person-circle align-middle"></i>
-                                    </a>
-                                </div>
-                                <!-- For mobile, a simplified profile link if authenticated -->
-                                <div sec:authorize="isAuthenticated()" class="ms-2">
-                                    <a th:href="@{/perfil}" class="btn btn-icon btn-dark rounded-circle bg-dark">
-                                        <i class="bi bi-person-circle align-middle"></i>
-                                    </a>
+                                <!-- Auth para móvil (Thymeleaf) -->
+                                <div class="ms-2">
+                                    <div sec:authorize="!isAuthenticated()">
+                                        <a th:href="@{/auth/login}"
+                                            class="btn btn-icon btn-dark rounded-circle bg-dark">
+                                            <i class="bi bi-person-circle align-middle"></i>
+                                        </a>
+                                    </div>
+                                    <div sec:authorize="isAuthenticated()">
+                                        <a th:href="@{/perfil}" class="btn btn-icon btn-dark rounded-circle bg-dark">
+                                            <i class="bi bi-person-circle align-middle"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -148,10 +164,12 @@
                 </div>
             </div>
         </nav>
+
+        <!-- Middleware para páginas protegidas con JWT -->
+        <script th:src="@{/js/protected-pages.js}"></script>
     </header>
 
     <main>
-
     </main>
 
     <!-- Aside Logout Fragment -->

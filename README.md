@@ -13,7 +13,8 @@
 
 ## ✨ Características Principales
 
-*   **Autenticación Segura con Spring Security:** 🔐 Sistema completo de registro, inicio de sesión y gestión de roles (Estudiante, Vendedor, Admin).
+*   **Autenticación Híbrida Avanzada:** 🔐 Sistema robusto que combina JWT en Cookies HttpOnly para navegadores (mayor seguridad) y Headers para API.
+*   **Experiencia de Usuario Mejorada:** 🎨 Redirección inteligente al expirar la sesión y renderizado condicional con Thymeleaf + Spring Security.
 *   **Catálogo Dinámico de Productos:** 🛍️ Explora productos organizados por categorías, con potentes opciones de búsqueda y filtrado.
 *   **Carrito de Compras Intuitivo:** 🛒 Añade, actualiza y elimina productos de tu carrito de forma sencilla antes de finalizar tu compra.
 *   **Pasarela de Pagos Segura con Stripe:** 💳 Integración completa para procesar pagos con tarjetas de crédito y débito de forma segura.
@@ -29,12 +30,12 @@
 ### Backend
 *   **Java 17:** Lenguaje de programación principal.
 *   **Spring Boot 3.5.6:** Framework para el desarrollo rápido de aplicaciones robustas.
-*   **Spring Security:** Para la autenticación y autorización.
+*   **Spring Security + JWT:** Implementación de seguridad moderna y sin estado (Stateless).
 *   **Spring Data JPA (Hibernate):** Para el mapeo objeto-relacional y la interacción con la base de datos.
 *   **Maven:** Herramienta de automatización de construcción y gestión de dependencias.
 
 ### Frontend
-*   **Thymeleaf:** Motor de plantillas moderno para la generación de vistas HTML del lado del servidor.
+*   **Thymeleaf + Spring Security Extras:** Motor de plantillas con integración de seguridad para renderizado condicional.
 *   **HTML5, CSS3, JavaScript:** Estructura, estilo e interactividad en el cliente.
 *   **Bootstrap:** Framework CSS para un diseño responsivo y atractivo.
 
