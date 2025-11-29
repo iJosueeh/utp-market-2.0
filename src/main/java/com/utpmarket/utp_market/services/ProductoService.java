@@ -1,5 +1,6 @@
 package com.utpmarket.utp_market.services;
 
+import com.utpmarket.utp_market.models.dto.ProductoAdminDTO;
 import com.utpmarket.utp_market.models.dto.ProductoDTO;
 import com.utpmarket.utp_market.models.entity.product.ImageneProducto;
 import com.utpmarket.utp_market.models.entity.product.Producto;
@@ -7,7 +8,11 @@ import com.utpmarket.utp_market.models.entity.product.Reviews;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
 import com.utpmarket.utp_market.repository.ProductoRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
+import com.utpmarket.utp_market.repository.specifications.ProductoSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -28,6 +33,26 @@ public class ProductoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    public Page<ProductoAdminDTO> obtenerProductosPaginadosYFiltrados(Pageable pageable, String categoria, String estado) {
+        Specification<Producto> spec = Specification.where(ProductoSpecification.hasCategory(categoria))
+                .and(ProductoSpecification.hasStatus(estado));
+
+        return productoRepository.findAll(spec, pageable).map(this::convertToAdminDto);
+    }
+
+    private ProductoAdminDTO convertToAdminDto(Producto producto) {
+        ProductoAdminDTO dto = new ProductoAdminDTO();
+        dto.setId(producto.getId());
+        dto.setNombre(producto.getNombre());
+        dto.setPrecio(producto.getPrecio());
+        dto.setStock(producto.getStock());
+        dto.setCategoria(producto.getCategoria() != null ? producto.getCategoria().getNombre() : "N/A");
+        dto.setEstado(producto.getEstado() != null ? producto.getEstado().getNombre() : "N/A");
+        dto.setVendedor(producto.getVendedor() != null ? producto.getVendedor().getNombre() : "N/A");
+        dto.setImagenUrl(producto.getImagenPrincipalUrl());
+        return dto;
+    }
 
     public List<Producto> getProductosRelacionados(@NonNull Long productoId) {
         Producto producto = productoRepository.findById(productoId)
@@ -219,13 +244,44 @@ public class ProductoService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
     }
 
-    public void reducirStock(@NonNull Long productoId, int cantidad) {
-        Producto producto = findById(productoId);
-        int nuevoStock = producto.getStock() - cantidad;
-        if (nuevoStock < 0) {
-            throw new IllegalArgumentException("No hay suficiente stock para el producto: " + producto.getNombre());
+        public void reducirStock(@NonNull Long productoId, int cantidad) {
+
+            Producto producto = findById(productoId);
+
+            int nuevoStock = producto.getStock() - cantidad;
+
+            if (nuevoStock < 0) {
+
+                throw new IllegalArgumentException("No hay suficiente stock para el producto: " + producto.getNombre());
+
+            }
+
+            producto.setStock(nuevoStock);
+
+            productoRepository.save(producto);
+
         }
-        producto.setStock(nuevoStock);
-        productoRepository.save(producto);
+
+    
+
+                public void deleteProducto(Long id) {
+
+    
+
+                    productoRepository.deleteById(id);
+
+    
+
+                }
+
+    
+
+            
+
+    
+
+        
+
     }
-}
+
+    

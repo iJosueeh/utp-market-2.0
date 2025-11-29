@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/_admin_layout :: layout(
+        title='Editar Producto',
+        pageContent=~{::.admin-productos-edit-content},
+        includeChartJS_=false,
+        scripts=~{::#page-scripts}
+      )}">
+
+<head>
+    <!-- El head es gestionado por el layout -->
+</head>
+
+<body>
+
+    <div class="admin-productos-edit-content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800" th:text="'Editar Producto ID: ' + ${productId}">Editar Producto</h1>
+            <p>Formulario de edición para el producto.</p>
+        </div>
+    </div>
+
+    <div id="page-scripts" th:remove="all">
+        <!-- No hay scripts específicos para esta página -->
+    </div>
+
+</body>
+</html>
