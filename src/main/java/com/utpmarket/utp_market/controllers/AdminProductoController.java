@@ -1,6 +1,10 @@
 package com.utpmarket.utp_market.controllers;
 
 import com.utpmarket.utp_market.models.dto.ProductoAdminDTO;
+import com.utpmarket.utp_market.models.dto.ProductoUpdateDTO;
+import com.utpmarket.utp_market.models.entity.product.Producto;
+import com.utpmarket.utp_market.services.CategoriaService;
+import com.utpmarket.utp_market.services.EstadoProductoService;
 import com.utpmarket.utp_market.services.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,9 +23,17 @@ public class AdminProductoController {
     @Autowired
     private ProductoService productoService;
 
+    @Autowired
+    private CategoriaService categoriaService;
+
+    @Autowired
+    private EstadoProductoService estadoProductoService;
+
     @GetMapping
     public String viewProductos(Model model) {
         model.addAttribute("activePage", "productos");
+        model.addAttribute("allCategorias", categoriaService.findAllCategoriasWithProductCount());
+        model.addAttribute("allEstados", estadoProductoService.findAll());
         return "admin/productos";
     }
 
@@ -43,12 +55,28 @@ public class AdminProductoController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/edit/{id}")
-    public String viewEditProducto(@PathVariable Long id, Model model) {
-        // This is a placeholder, in a real application you would fetch the product
-        // and pass it to the view.
-        model.addAttribute("productId", id);
-        model.addAttribute("activePage", "productos");
-        return "admin/productos_edit";
+
+    @GetMapping("/api/{id}")
+    @ResponseBody
+    public ResponseEntity<ProductoAdminDTO> getProducto(@PathVariable Long id) {
+        ProductoAdminDTO producto = productoService.findByIdToUpdate(id);
+        return ResponseEntity.ok(producto);
+    }
+
+    @PutMapping("/api/{id}")
+    @ResponseBody
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody ProductoUpdateDTO productoUpdateDTO) {
+        Producto updatedProducto = productoService.updateProducto(id, productoUpdateDTO);
+        return ResponseEntity.ok(updatedProducto);
+    }
+
+    @GetMapping("/fragments/edit-modal")
+    public String getEditModalFragment() {
+        return "fragments/modal_content_edit :: content";
+    }
+
+    @GetMapping("/fragments/delete-modal")
+    public String getDeleteModalFragment() {
+        return "fragments/modal_content_delete :: content";
     }
 }
