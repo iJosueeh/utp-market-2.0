@@ -1,13 +1,89 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{admin/_admin_layout :: layout(title='Admin - Productos', pageContent=~{::pageContent}, includeChartJS_=false)}">
+      th:replace="~{admin/_admin_layout :: layout(
+        title='Gestionar Productos',
+        pageContent=~{::.admin-productos-content},
+        includeChartJS_=false,
+        scripts=~{::#page-scripts}
+      )}">
 
-<th:block th:fragment="pageContent">
-    <div class="container-fluid">
-        <h1 class="h3 mb-4 text-gray-800">Gestión de Productos</h1>
-        <!-- Contenido para el Desarrollador 3 -->
-        <p>Esta página contendrá la lista y gestión de todos los productos.</p>
+<head>
+    <!-- El head es gestionado por el layout -->
+</head>
+
+<body>
+
+    <div class="admin-productos-content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800">Gestión de Productos</h1>
+
+            <!-- Filtros -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="categoria-filter" class="form-label">Filtrar por Categoría</label>
+                    <select id="categoria-filter" class="form-select">
+                        <option value="">Todas</option>
+                        <!-- Las opciones de categoría se cargarán dinámicamente -->
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="estado-filter" class="form-label">Filtrar por Estado</label>
+                                    <select id="estado-filter" class="form-select">
+                                        <option value="">Todos</option>
+                                        <!-- Las opciones de estado se cargarán dinámicamente -->
+                                    </select>                </div>
+            </div>
+
+            <!-- Tabla de Productos -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Listado de Productos</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="productos-table" width="100%" cellspacing="0">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th>Vendedor</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody id="productos-table-body">
+                            <!-- Las filas de productos se cargarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+                    <!-- Paginación -->
+
+                    <nav aria-label="Page navigation">
+
+                        <ul class="pagination justify-content-center" id="pagination-controls">
+
+                            <!-- Los controles de paginación se cargarán dinámicamente -->
+
+                        </ul>
+
+                    </nav>
+
+                </div>
+
+                
+                </div>
+
+    <!-- Scripts específicos de la página -->
+    <div id="page-scripts" th:remove="tag">
+        <script th:src="@{/js/productos.js}"></script>
     </div>
-</th:block>
 
+</body>
 </html>

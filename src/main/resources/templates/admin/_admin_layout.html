@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:fragment="layout(title, pageContent, includeChartJS_)"
+      th:fragment="layout(title, pageContent, includeChartJS_, scripts)"
       th:with="includeChartJS=${includeChartJS_ ?: false}">
 
 <head>
@@ -100,6 +100,8 @@
 
 <!-- Custom Admin Dashboard JS -->
 <script th:src="@{/js/admin-dashboard.js}"></script>
+
+<th:block th:replace="${scripts} ?: ~{}"></th:block>
 
 </body>
 </html>
