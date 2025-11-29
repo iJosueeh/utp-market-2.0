@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/estados-producto")
+@RequestMapping("/api/admin/estados-producto")
 public class EstadoProductoApiController {
 
     @Autowired

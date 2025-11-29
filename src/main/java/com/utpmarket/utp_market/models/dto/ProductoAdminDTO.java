@@ -9,7 +9,9 @@ public class ProductoAdminDTO {
     private Double precio;
     private Integer stock;
     private String categoria;
+    private Long categoriaId;
     private String estado;
+    private Long estadoId;
     private String vendedor;
     private String imagenUrl;
 }
