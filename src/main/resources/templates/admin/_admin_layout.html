@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:fragment="layout(title, pageContent, includeChartJS_)"
+      th:fragment="layout(title, pageContent, includeChartJS_, scripts)"
       th:with="includeChartJS=${includeChartJS_ ?: false}">
 
 <head>
@@ -17,7 +17,6 @@
 <body>
 
 <div class="admin-wrapper">
-    <!-- Sidebar de Navegación del Admin -->
     <nav class="admin-sidebar">
         <div class="sidebar-header">
             <h5>Admin Panel</h5>
@@ -76,14 +75,11 @@
         </ul>
     </nav>
 
-    <!-- Contenido Principal -->
     <main class="admin-content">
-        <!-- Botón de Hamburguesa para móvil -->
         <button class="btn btn-icon d-lg-none sidebar-toggler-btn" id="sidebar-toggler">
             <i class="bi bi-list"></i>
         </button>
 
-        <!-- Aquí se insertará el contenido específico de cada página -->
         <div th:replace="${pageContent}"></div>
     </main>
 </div>
@@ -93,13 +89,13 @@
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
 
-<!-- Chart.js (si es necesario) -->
 <th:block th:if="${includeChartJS}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </th:block>
 
-<!-- Custom Admin Dashboard JS -->
 <script th:src="@{/js/admin-dashboard.js}"></script>
+
+<th:block th:replace="${scripts} ?: ~{}"></th:block>
 
 </body>
 </html>

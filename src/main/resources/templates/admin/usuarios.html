@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{admin/_admin_layout :: layout(title='Admin - Usuarios', pageContent=~{::pageContent}, includeChartJS_=false)}">
+      th:replace="~{admin/_admin_layout :: layout(
+        title='Admin - Usuarios',
+        pageContent=~{::pageContent},
+        includeChartJS_=false,
+        scripts=~{::#page-scripts}
+      )}">
 
 <th:block th:fragment="pageContent">
     <div class="container-fluid">
@@ -9,5 +14,9 @@
         <p>Esta página contendrá la lista y gestión de todos los usuarios.</p>
     </div>
 </th:block>
+
+<div id="page-scripts" th:remove="all">
+    <!-- No hay scripts específicos para esta página -->
+</div>
 
 </html>
