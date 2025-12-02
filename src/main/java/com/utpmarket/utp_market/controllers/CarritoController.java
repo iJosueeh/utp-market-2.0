@@ -81,61 +81,94 @@ public class CarritoController {
 
     @PostMapping("/actualizar-cantidad")
     @PreAuthorize("isAuthenticated()")
-    @ResponseBody // Importante para devolver JSON
-    public ResponseEntity<?> actualizarCantidadItem(@RequestParam Long itemId,
+    public String actualizarCantidadItem(@RequestParam Long itemId,
+            @RequestParam int cantidad,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+        Usuario usuario = getUsuarioFromPrincipal(principal);
+        try {
+            carritoService.actualizarCantidadItem(usuario.getId(), itemId, cantidad);
+            redirectAttributes.addFlashAttribute("success", "Cantidad actualizada correctamente");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar la cantidad");
+        }
+        return "redirect:/carrito";
+    }
+
+    // Endpoint AJAX optimizado para actualización rápida
+    @PostMapping("/actualizar-cantidad-ajax")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<?> actualizarCantidadItemAjax(@RequestParam Long itemId,
             @RequestParam int cantidad,
             Principal principal) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
         try {
             carritoService.actualizarCantidadItem(usuario.getId(), itemId, cantidad);
-            // Devolver el carrito actualizado para que el frontend pueda renderizarlo
+
+            // Obtener solo los datos necesarios
             List<CarritoItemDTO> carritoItems = carritoService.obtenerItems(usuario.getId());
             double subtotal = carritoService.calcularSubtotal(usuario.getId());
             double total = carritoService.calcularTotal(usuario.getId());
 
+            // Encontrar el subtotal del item actualizado
+            double itemSubtotal = carritoItems.stream()
+                    .filter(item -> item.getId().equals(itemId))
+                    .findFirst()
+                    .map(CarritoItemDTO::getSubtotal)
+                    .orElse(0.0);
+
             return ResponseEntity.ok(Map.of(
                     "success", true,
-                    "message", "Cantidad actualizada.",
-                    "carritoItems", carritoItems,
+                    "itemSubtotal", itemSubtotal,
                     "subtotal", subtotal,
                     "total", total));
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403)
-                    .body(Map.of("success", false, "message", "No tienes permiso para modificar este item."));
         } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body(Map.of("success", false, "message", "Error interno al actualizar la cantidad."));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 
-    @GetMapping("/eliminar/{itemId}")
+    @PostMapping("/eliminar/{itemId}")
     @PreAuthorize("isAuthenticated()")
-    @ResponseBody // Importante para devolver JSON
-    public ResponseEntity<?> eliminarDelCarrito(@PathVariable Long itemId, Principal principal) {
+    public String eliminarDelCarrito(@PathVariable Long itemId,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
         try {
             carritoService.eliminarProducto(usuario.getId(), itemId);
-            // Devolver el carrito actualizado para que el frontend pueda renderizarlo
+            redirectAttributes.addFlashAttribute("success", "Producto eliminado del carrito");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al eliminar el producto");
+        }
+        return "redirect:/carrito";
+    }
+
+    // Endpoint AJAX optimizado para eliminación rápida
+    @PostMapping("/eliminar-ajax/{itemId}")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<?> eliminarDelCarritoAjax(@PathVariable Long itemId, Principal principal) {
+        Usuario usuario = getUsuarioFromPrincipal(principal);
+        try {
+            carritoService.eliminarProducto(usuario.getId(), itemId);
+
             List<CarritoItemDTO> carritoItems = carritoService.obtenerItems(usuario.getId());
             double subtotal = carritoService.calcularSubtotal(usuario.getId());
             double total = carritoService.calcularTotal(usuario.getId());
 
             return ResponseEntity.ok(Map.of(
                     "success", true,
-                    "message", "Producto eliminado correctamente.",
                     "carritoItems", carritoItems,
                     "subtotal", subtotal,
                     "total", total));
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403)
-                    .body(Map.of("success", false, "message", "No tienes permiso para eliminar este item."));
         } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body(Map.of("success", false, "message", "Error interno al eliminar el producto."));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 
