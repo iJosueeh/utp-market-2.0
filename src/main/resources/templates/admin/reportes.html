@@ -1,23 +1,31 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{admin/_admin_layout :: layout(title='Admin - Reportes', pageContent=~{::pageContent}, includeChartJS_=true)}">
+      th:replace="~{admin/_admin_layout :: layout(
+        title='Admin - Reportes',
+        pageContent=~{::pageContent},
+        includeChartJS_=true,
+        scripts=~{::misScripts}
+      )}">
 
 <th:block th:fragment="pageContent">
     <div class="container-fluid">
+
         <h1 class="h3 mb-4 text-gray-800">Reportes de Ventas</h1>
 
-        <!-- Loading -->
-        <div id="loadingMsg" style="font-size: 15px; color: #777;">
+        <!-- Mensaje de carga -->
+        <div id="loadingMsg" class="text-muted" style="font-size: 15px;">
             Cargando gráfico...
         </div>
 
-        <!-- Canvas -->
-        <canvas id="ventasChart" style="max-height: 350px; display:none;"></canvas>
-
-        <!-- Archivo JS externo -->
-        <script type="module" src="/js/reportesChart.js"></script>
+        <!-- Gráfico -->
+        <canvas id="ventasChart" style="max-height: 350px; display: none;"></canvas>
 
     </div>
+</th:block>
+
+<!-- Fragmento de scripts -->
+<th:block th:fragment="misScripts">
+    <script type="module" th:src="@{/js/reportesChart.js}"></script>
 </th:block>
 
 </html>
