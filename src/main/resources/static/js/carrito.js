@@ -124,7 +124,30 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      if (!confirm("¿Eliminar este producto del carrito?")) return;
+      // Usar SweetAlert2 para confirmación moderna
+      const result = await Swal.fire({
+        title: "¿Eliminar producto?",
+        text: "¿Estás seguro de eliminar este producto del carrito?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc3545",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+      });
+
+      if (!result.isConfirmed) return;
+
+      // Mostrar loading mientras se elimina
+      Swal.fire({
+        title: "Eliminando producto...",
+        html: "Por favor espera",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
       const url = this.action;
 
@@ -146,22 +169,45 @@ document.addEventListener("DOMContentLoaded", function () {
           if (data.success) {
             // Si el carrito queda vacío, recargar para mostrar mensaje
             if (data.carritoItems.length === 0) {
+              Swal.close();
               window.location.reload();
             } else {
               // Eliminar el item del DOM
               this.closest(".card").remove();
               actualizarResumen(data.subtotal, data.total);
-              mostrarAlerta("Producto eliminado", "success");
+
+              // Alerta de éxito con SweetAlert2
+              Swal.fire({
+                icon: "success",
+                title: "¡Producto eliminado!",
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+              });
             }
           } else {
-            mostrarAlerta(data.message || "Error al eliminar", "danger");
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: data.message || "Error al eliminar producto",
+            });
           }
         } else {
-          mostrarAlerta("Error al eliminar producto", "danger");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al eliminar producto",
+          });
         }
       } catch (error) {
         console.error("Error:", error);
-        mostrarAlerta("Error de conexión", "danger");
+        Swal.fire({
+          icon: "error",
+          title: "Error de conexión",
+          text: "No se pudo conectar con el servidor",
+        });
       }
     });
   });

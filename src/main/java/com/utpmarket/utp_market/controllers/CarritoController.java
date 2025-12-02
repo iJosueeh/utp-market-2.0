@@ -97,7 +97,6 @@ public class CarritoController {
         return "redirect:/carrito";
     }
 
-    // Endpoint AJAX optimizado para actualización rápida
     @PostMapping("/actualizar-cantidad-ajax")
     @PreAuthorize("isAuthenticated()")
     @ResponseBody
@@ -108,12 +107,10 @@ public class CarritoController {
         try {
             carritoService.actualizarCantidadItem(usuario.getId(), itemId, cantidad);
 
-            // Obtener solo los datos necesarios
             List<CarritoItemDTO> carritoItems = carritoService.obtenerItems(usuario.getId());
             double subtotal = carritoService.calcularSubtotal(usuario.getId());
             double total = carritoService.calcularTotal(usuario.getId());
 
-            // Encontrar el subtotal del item actualizado
             double itemSubtotal = carritoItems.stream()
                     .filter(item -> item.getId().equals(itemId))
                     .findFirst()
@@ -148,7 +145,6 @@ public class CarritoController {
         return "redirect:/carrito";
     }
 
-    // Endpoint AJAX optimizado para eliminación rápida
     @PostMapping("/eliminar-ajax/{itemId}")
     @PreAuthorize("isAuthenticated()")
     @ResponseBody
