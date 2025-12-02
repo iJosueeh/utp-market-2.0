@@ -12,11 +12,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
         @Autowired
@@ -57,7 +59,7 @@ public class SecurityConfig {
                                                 // Rutas públicas que NO requieren autenticación
                                                 .requestMatchers("/", "/about-us", "/sedes", "/help",
                                                                 "/ventas", "/categoria", "/producto/**",
-                                                                "/error/**")
+                                                                "/carrito", "/error/**")
                                                 .permitAll()
 
                                                 // Recursos estáticos públicos
@@ -73,10 +75,6 @@ public class SecurityConfig {
 
                                                 // Rutas de Administrador requieren JWT con rol ADMIN
                                                 .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
-
-                                                // Rutas de Vendedor requieren JWT con rol VENDEDOR
-                                                .requestMatchers("/vendedor/**", "/api/vendedor/**")
-                                                .hasRole("VENDEDOR")
 
                                                 // Cualquier otra solicitud requiere autenticación con JWT
                                                 .anyRequest().authenticated())
