@@ -5,27 +5,27 @@
 /* Variables para tema oscuro */
 :root[data-theme="dark"] {
     /* Colores de fondo */
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2d2d2d;
-    --bg-tertiary: #3a3a3a;
-    --bg-card: #252525;
-    
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-tertiary: #2a2a2a;
+    --bg-card: #1a1a1a;
+
     /* Colores de texto */
-    --text-primary: #e0e0e0;
-    --text-secondary: #b0b0b0;
-    --text-muted: #808080;
-    
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #9e9e9e;
+
     /* Colores de borde */
-    --border-color: #404040;
-    --border-light: #505050;
-    
+    --border-color: #3a3a3a;
+    --border-light: #4a4a4a;
+
     /* Colores de acento */
     --accent-primary: #4a9eff;
     --accent-secondary: #6bb6ff;
     --accent-success: #4caf50;
     --accent-warning: #ff9800;
     --accent-danger: #f44336;
-    
+
     /* Sombras */
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.5);
     --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.6);
@@ -58,22 +58,33 @@
 
 /* Formularios */
 [data-theme="dark"] .form-control,
-[data-theme="dark"] .form-select {
+[data-theme="dark"] .form-select,
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="search"],
+[data-theme="dark"] textarea {
     background-color: var(--bg-tertiary);
     border-color: var(--border-color);
-    color: var(--text-primary);
+    color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] .form-control:focus,
-[data-theme="dark"] .form-select:focus {
+[data-theme="dark"] .form-select:focus,
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus {
     background-color: var(--bg-tertiary);
     border-color: var(--accent-primary);
-    color: var(--text-primary);
+    color: var(--text-primary) !important;
     box-shadow: 0 0 0 0.25rem rgba(74, 158, 255, 0.25);
 }
 
-[data-theme="dark"] .form-control::placeholder {
-    color: var(--text-muted);
+[data-theme="dark"] .form-control::placeholder,
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.7;
 }
 
 /* Botones */
@@ -115,11 +126,11 @@
     border-color: var(--border-color);
 }
 
-[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > * {
+[data-theme="dark"] .table-striped>tbody>tr:nth-of-type(odd)>* {
     background-color: var(--bg-secondary);
 }
 
-[data-theme="dark"] .table-hover > tbody > tr:hover > * {
+[data-theme="dark"] .table-hover>tbody>tr:hover>* {
     background-color: var(--bg-tertiary);
 }
 
@@ -182,6 +193,36 @@
     color: var(--text-muted) !important;
 }
 
+/* Text colors */
+[data-theme="dark"] .text-dark {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* Headings */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: var(--text-primary);
+}
+
+/* Paragraphs and spans */
+[data-theme="dark"] p,
+[data-theme="dark"] span:not(.badge):not(.text-danger):not(.text-success):not(.text-warning) {
+    color: var(--text-secondary);
+}
+
+/* Labels */
+[data-theme="dark"] label {
+    color: var(--text-primary);
+}
+
 /* Badges */
 [data-theme="dark"] .badge {
     background-color: var(--bg-tertiary);
@@ -193,7 +234,7 @@
     background-color: var(--bg-secondary);
 }
 
-[data-theme="dark"] .breadcrumb-item + .breadcrumb-item::before {
+[data-theme="dark"] .breadcrumb-item+.breadcrumb-item::before {
     color: var(--text-muted);
 }
 
