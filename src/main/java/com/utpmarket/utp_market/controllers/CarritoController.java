@@ -22,7 +22,6 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/carrito")
-@PreAuthorize("isAuthenticated()")
 public class CarritoController {
 
     @Autowired
@@ -44,6 +43,15 @@ public class CarritoController {
 
     @GetMapping
     public String verCarrito(Principal principal, Model model) {
+        // Permitir acceso sin autenticación, mostrar carrito vacío
+        if (principal == null) {
+            model.addAttribute("carritoItems", List.of());
+            model.addAttribute("subtotal", 0.0);
+            model.addAttribute("total", 0.0);
+            model.addAttribute("requiresLogin", true);
+            return "carito/carrito";
+        }
+
         Usuario usuario = getUsuarioFromPrincipal(principal);
         List<CarritoItemDTO> carritoItems = carritoService.obtenerItems(usuario.getId());
         double subtotal = carritoService.calcularSubtotal(usuario.getId());
@@ -52,11 +60,13 @@ public class CarritoController {
         model.addAttribute("carritoItems", carritoItems);
         model.addAttribute("subtotal", subtotal);
         model.addAttribute("total", total);
+        model.addAttribute("requiresLogin", false);
 
         return "carito/carrito";
     }
 
     @PostMapping("/agregar")
+    @PreAuthorize("isAuthenticated()")
     public String agregarAlCarrito(@RequestParam Long productoId, @RequestParam int cantidad, Principal principal,
             RedirectAttributes redirectAttributes) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
@@ -70,6 +80,7 @@ public class CarritoController {
     }
 
     @PostMapping("/actualizar-cantidad")
+    @PreAuthorize("isAuthenticated()")
     @ResponseBody // Importante para devolver JSON
     public ResponseEntity<?> actualizarCantidadItem(@RequestParam Long itemId,
             @RequestParam int cantidad,
@@ -100,6 +111,7 @@ public class CarritoController {
     }
 
     @GetMapping("/eliminar/{itemId}")
+    @PreAuthorize("isAuthenticated()")
     @ResponseBody // Importante para devolver JSON
     public ResponseEntity<?> eliminarDelCarrito(@PathVariable Long itemId, Principal principal) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
@@ -128,6 +140,7 @@ public class CarritoController {
     }
 
     @GetMapping("/checkout")
+    @PreAuthorize("isAuthenticated()")
     public String checkout(Principal principal, Model model) {
         Usuario usuario = getUsuarioFromPrincipal(principal);
         List<CarritoItemDTO> carritoItems = carritoService.obtenerItems(usuario.getId());
@@ -147,6 +160,7 @@ public class CarritoController {
     }
 
     @PostMapping("/realizar-pago")
+    @PreAuthorize("isAuthenticated()")
     public String realizarPago(@RequestParam Long metodoPagoId,
             @RequestParam String calle,
             @RequestParam String distrito,
