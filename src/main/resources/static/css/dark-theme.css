@@ -56,6 +56,30 @@
     border-color: var(--border-color);
 }
 
+[data-theme="dark"] .card-body {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .card-title,
+[data-theme="dark"] .card-text {
+    color: var(--text-primary) !important;
+}
+
+/* Elementos con fondo blanco */
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-light {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Secciones y contenedores */
+[data-theme="dark"] section,
+[data-theme="dark"] .container,
+[data-theme="dark"] .row {
+    color: var(--text-primary);
+}
+
 /* Formularios */
 [data-theme="dark"] .form-control,
 [data-theme="dark"] .form-select,
