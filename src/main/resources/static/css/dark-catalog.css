@@ -1,0 +1,53 @@
+/* ===================================
+   DARK THEME STYLES - CATALOG PAGE SPECIFIC
+   =================================== */
+
+/* Main background - override inline styles */
+[data-theme="dark"] main {
+    background-color: var(--bg-primary) !important;
+}
+
+/* Page title and subtitle */
+[data-theme="dark"] h2.fw-bold {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] p.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* All headings */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: var(--text-primary) !important;
+}
+
+/* Paragraphs */
+[data-theme="dark"] p {
+    color: var(--text-secondary) !important;
+}
+
+/* Card headers with bg-white class */
+[data-theme="dark"] .card-header.bg-white {
+    background-color: var(--bg-secondary) !important;
+}
+
+/* Input group text */
+[data-theme="dark"] .input-group-text {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .input-group-text.bg-white {
+    background-color: var(--bg-tertiary) !important;
+}
+
+/* Ensure all spans inherit color */
+[data-theme="dark"] span:not(.badge):not(.text-danger):not(.text-success):not(.text-warning):not(.text-primary) {
+    color: inherit !important;
+}

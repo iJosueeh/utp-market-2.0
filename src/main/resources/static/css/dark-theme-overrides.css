@@ -1,0 +1,193 @@
+/* ===================================
+   DARK THEME STYLES - ADDITIONAL OVERRIDES
+   =================================== */
+
+/* Override inline styles and specific Bootstrap classes */
+[data-theme="dark"] .team-section {
+    background-color: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .btn-outline-dark {
+    color: var(--text-primary) !important;
+    border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .btn-outline-dark:hover {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--accent-primary) !important;
+    color: var(--accent-primary) !important;
+}
+
+/* Icons */
+[data-theme="dark"] .bi {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] a .bi {
+    color: var(--accent-primary) !important;
+}
+
+/* Text colors - force override */
+[data-theme="dark"] .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .text-dark {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-black {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Backgrounds - force override */
+[data-theme="dark"] .bg-white {
+    background-color: var(--bg-card) !important;
+}
+
+[data-theme="dark"] .bg-light {
+    background-color: var(--bg-secondary) !important;
+}
+
+/* Cards with specific classes */
+[data-theme="dark"] .card.bg-white {
+    background-color: var(--bg-card) !important;
+}
+
+[data-theme="dark"] .hover-shadow:hover {
+    box-shadow: 0 8px 16px rgba(74, 158, 255, 0.2) !important;
+}
+
+/* Font weights */
+[data-theme="dark"] .fw-bold,
+[data-theme="dark"] .fw-semibold {
+    color: inherit;
+}
+
+/* Small text */
+[data-theme="dark"] .small,
+[data-theme="dark"] small {
+    color: var(--text-secondary) !important;
+}
+
+/* Opacity overrides */
+[data-theme="dark"] .opacity-50 {
+    opacity: 0.5 !important;
+}
+
+/* Dropdown items - ensure proper text size and color */
+[data-theme="dark"] .dropdown-item {
+    color: var(--text-primary) !important;
+    font-size: 1rem !important;
+}
+
+[data-theme="dark"] .dropdown-item span {
+    color: var(--text-primary) !important;
+    font-size: inherit !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+    background-color: var(--bg-tertiary) !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover span,
+[data-theme="dark"] .dropdown-item:focus span {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .dropdown-item i {
+    color: var(--text-secondary) !important;
+}
+
+/* Buttons */
+[data-theme="dark"] .btn-dark {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--border-light) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .btn-dark:hover {
+    background-color: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+/* Breadcrumb and navigation */
+[data-theme="dark"] .breadcrumb-item,
+[data-theme="dark"] .breadcrumb-item a {
+    color: var(--accent-primary) !important;
+}
+
+[data-theme="dark"] .breadcrumb-item.active {
+    color: var(--text-secondary) !important;
+}
+
+/* Product cards and catalog */
+[data-theme="dark"] .card-title {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-text {
+    color: var(--text-secondary) !important;
+}
+
+/* Sidebar filters */
+[data-theme="dark"] .list-group-item {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .list-group-item:hover {
+    background-color: var(--bg-tertiary) !important;
+}
+
+/* Form range slider */
+[data-theme="dark"] input[type="range"] {
+    background-color: var(--bg-tertiary) !important;
+}
+
+/* Checkboxes and radio buttons */
+[data-theme="dark"] .form-check-label {
+    color: var(--text-primary) !important;
+}
+
+/* Price and product info */
+[data-theme="dark"] .fs-4,
+[data-theme="dark"] .fs-5,
+[data-theme="dark"] .fs-6 {
+    color: inherit !important;
+}
+
+/* Vendor/seller info */
+[data-theme="dark"] a[href*="Store"] {
+    color: var(--accent-primary) !important;
+}
+
+/* Rating stars */
+[data-theme="dark"] .bi-star,
+[data-theme="dark"] .bi-star-fill,
+[data-theme="dark"] .bi-star-half {
+    color: #ffc107 !important;
+}
+
+/* Buttons in cards */
+[data-theme="dark"] .btn-outline-danger {
+    color: #ff6b6b !important;
+    border-color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .btn-outline-danger:hover {
+    background-color: #ff6b6b !important;
+    color: white !important;
+}
+
+/* Ver Detalle button */
+[data-theme="dark"] .btn-outline-dark {
+    color: var(--text-primary) !important;
+    border-color: var(--border-light) !important;
+}
