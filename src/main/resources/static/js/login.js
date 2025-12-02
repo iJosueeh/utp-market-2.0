@@ -47,11 +47,21 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           const error = await response.json();
 
-          // Mostrar error
-          if (alertDiv) {
-            alertDiv.classList.remove("d-none");
-            alertDiv.textContent = error.message || "Credenciales inválidas";
-          }
+          // Mostrar error con SweetAlert2
+          const isDarkMode =
+            document.documentElement.getAttribute("data-theme") === "dark";
+
+          Swal.fire({
+            icon: "error",
+            title: "Error de autenticación",
+            text:
+              error.message ||
+              "Credenciales inválidas. Verifica tu correo y contraseña.",
+            confirmButtonColor: "#dc3545",
+            confirmButtonText: "Intentar de nuevo",
+            background: isDarkMode ? "#1a1a1a" : "#fff",
+            color: isDarkMode ? "#e0e0e0" : "#545454",
+          });
 
           // Rehabilitar botón
           submitBtn.disabled = false;
@@ -60,11 +70,19 @@ document.addEventListener("DOMContentLoaded", function () {
       } catch (error) {
         console.error("Error durante el login:", error);
 
-        // Mostrar error
-        if (alertDiv) {
-          alertDiv.classList.remove("d-none");
-          alertDiv.textContent = "Error de conexión. Intenta de nuevo.";
-        }
+        // Mostrar error con SweetAlert2
+        const isDarkMode =
+          document.documentElement.getAttribute("data-theme") === "dark";
+
+        Swal.fire({
+          icon: "error",
+          title: "Error de conexión",
+          text: "No se pudo conectar con el servidor. Por favor, intenta de nuevo.",
+          confirmButtonColor: "#dc3545",
+          confirmButtonText: "Reintentar",
+          background: isDarkMode ? "#1a1a1a" : "#fff",
+          color: isDarkMode ? "#e0e0e0" : "#545454",
+        });
 
         // Rehabilitar botón
         submitBtn.disabled = false;
