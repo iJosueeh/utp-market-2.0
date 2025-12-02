@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{admin/_admin_layout :: layout(title='Admin Dashboard', pageContent=~{::pageContent}, includeChartJS_=true)}">
+      th:replace="~{admin/_admin_layout :: layout(
+        title='Admin Dashboard',
+        pageContent=~{::pageContent},
+        includeChartJS_=true,
+        scripts=~{::#page-scripts}
+      )}">
 
 <th:block th:fragment="pageContent">
     <!-- Contenido específico del Dashboard -->
@@ -117,4 +122,9 @@
         </div>
     </div>
 </th:block>
+
+<div id="page-scripts" th:remove="all">
+    <!-- No hay scripts específicos para esta página -->
+</div>
+
 </html>

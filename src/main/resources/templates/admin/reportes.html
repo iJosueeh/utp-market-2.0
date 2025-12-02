@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{admin/_admin_layout :: layout(title='Admin - Reportes', pageContent=~{::pageContent}, includeChartJS_=false)}">
+      th:replace="~{admin/_admin_layout :: layout(title='Admin - Reportes', pageContent=~{::pageContent}, includeChartJS_=true)}">
 
 <th:block th:fragment="pageContent">
     <div class="container-fluid">
         <h1 class="h3 mb-4 text-gray-800">Reportes de Ventas</h1>
-        <!-- Contenido para el Desarrollador 5 -->
-        <p>Esta página contendrá los filtros y la visualización de reportes.</p>
+
+        <!-- Loading -->
+        <div id="loadingMsg" style="font-size: 15px; color: #777;">
+            Cargando gráfico...
+        </div>
+
+        <!-- Canvas -->
+        <canvas id="ventasChart" style="max-height: 350px; display:none;"></canvas>
+
+        <!-- Archivo JS externo -->
+        <script type="module" src="/js/reportesChart.js"></script>
+
     </div>
 </th:block>
 

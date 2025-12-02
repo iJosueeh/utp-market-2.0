@@ -1,13 +1,24 @@
 package com.utpmarket.utp_market.services;
 
+import com.utpmarket.utp_market.models.dto.ProductoAdminDTO;
 import com.utpmarket.utp_market.models.dto.ProductoDTO;
+import com.utpmarket.utp_market.models.dto.ProductoUpdateDTO;
+import com.utpmarket.utp_market.models.entity.product.Categoria;
+import com.utpmarket.utp_market.models.entity.product.EstadoProducto;
 import com.utpmarket.utp_market.models.entity.product.ImageneProducto;
 import com.utpmarket.utp_market.models.entity.product.Producto;
 import com.utpmarket.utp_market.models.entity.product.Reviews;
 import com.utpmarket.utp_market.models.entity.user.Usuario;
+import com.utpmarket.utp_market.repository.CategoriaRepository;
+import com.utpmarket.utp_market.repository.EstadoProductoRepository;
+import com.utpmarket.utp_market.repository.ImageneProductoRepository;
 import com.utpmarket.utp_market.repository.ProductoRepository;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
+import com.utpmarket.utp_market.repository.specifications.ProductoSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -28,6 +39,88 @@ public class ProductoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
+    @Autowired
+    private EstadoProductoRepository estadoProductoRepository;
+
+    @Autowired
+    private ImageneProductoRepository imageneProductoRepository;
+
+    public Page<ProductoAdminDTO> obtenerProductosPaginadosYFiltrados(Pageable pageable, String categoria, String estado) {
+        Specification<Producto> spec = Specification.where(ProductoSpecification.hasCategory(categoria))
+                .and(ProductoSpecification.hasStatus(estado));
+        return productoRepository.findAll(spec, pageable).map(this::convertToAdminDto);
+    }
+
+    public ProductoAdminDTO findByIdToUpdate(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
+        return convertToAdminDto(producto);
+    }
+
+    public Producto updateProducto(Long id, ProductoUpdateDTO productoUpdateDTO) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
+
+        producto.setNombre(productoUpdateDTO.getNombre());
+        producto.setPrecio(productoUpdateDTO.getPrecio());
+        producto.setStock(productoUpdateDTO.getStock());
+
+        // Handle image URL update
+        if (productoUpdateDTO.getImagenUrl() != null && !productoUpdateDTO.getImagenUrl().isEmpty()) {
+            Optional<ImageneProducto> principalImageOpt = producto.getImagenes().stream()
+                    .filter(ImageneProducto::isPrincipal)
+                    .findFirst();
+
+            if (principalImageOpt.isPresent()) {
+                ImageneProducto principalImage = principalImageOpt.get();
+                if (!principalImage.getUrl().equals(productoUpdateDTO.getImagenUrl())) {
+                    principalImage.setUrl(productoUpdateDTO.getImagenUrl());
+                    imageneProductoRepository.save(principalImage);
+                }
+            } else {
+                // If no principal image exists, create a new one
+                ImageneProducto newPrincipalImage = new ImageneProducto();
+                newPrincipalImage.setProducto(producto);
+                newPrincipalImage.setPrincipal(true);
+                newPrincipalImage.setUrl(productoUpdateDTO.getImagenUrl());
+                imageneProductoRepository.save(newPrincipalImage);
+                producto.getImagenes().add(newPrincipalImage);
+            }
+        }
+
+        if (productoUpdateDTO.getCategoriaId() != null) {
+            Categoria categoria = categoriaRepository.findById(productoUpdateDTO.getCategoriaId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada"));
+            producto.setCategoria(categoria);
+        }
+
+        if (productoUpdateDTO.getEstadoId() != null) {
+            EstadoProducto estadoProducto = estadoProductoRepository.findById(productoUpdateDTO.getEstadoId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estado de producto no encontrado"));
+            producto.setEstado(estadoProducto);
+        }
+
+        return productoRepository.save(producto);
+    }
+
+    private ProductoAdminDTO convertToAdminDto(Producto producto) {
+        ProductoAdminDTO dto = new ProductoAdminDTO();
+        dto.setId(producto.getId());
+        dto.setNombre(producto.getNombre());
+        dto.setPrecio(producto.getPrecio());
+        dto.setStock(producto.getStock());
+        dto.setCategoria(producto.getCategoria() != null ? producto.getCategoria().getNombre() : "N/A");
+        dto.setEstado(producto.getEstado() != null ? producto.getEstado().getNombre() : "N/A");
+        dto.setVendedor(producto.getVendedor() != null ? producto.getVendedor().getNombre() : "N/A");
+        dto.setImagenUrl(producto.getImagenPrincipalUrl());
+        dto.setCategoriaId(producto.getCategoria() != null ? producto.getCategoria().getId() : null);
+        dto.setEstadoId(producto.getEstado() != null ? producto.getEstado().getId() : null);
+        return dto;
+    }
 
     public List<Producto> getProductosRelacionados(@NonNull Long productoId) {
         Producto producto = productoRepository.findById(productoId)
@@ -227,5 +320,9 @@ public class ProductoService {
         }
         producto.setStock(nuevoStock);
         productoRepository.save(producto);
+    }
+
+    public void deleteProducto(Long id) {
+        productoRepository.deleteById(id);
     }
 }

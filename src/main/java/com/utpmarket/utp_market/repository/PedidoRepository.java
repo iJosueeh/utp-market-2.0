@@ -27,10 +27,10 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Query("SELECT p FROM Pedido p WHERE p.usuario = :usuario ORDER BY p.fecha_pedido DESC")
     List<Pedido> findByUsuarioOrderByFechaPedidoDesc(@Param("usuario") Usuario usuario);
 
-    @Query("SELECT COALESCE(SUM(p.total), 0) FROM Pedido p WHERE p.estado.nombre = 'COMPLETADO'")
+    @Query("SELECT COALESCE(SUM(p.total), 0) FROM Pedido p WHERE UPPER(p.estado.nombre) = 'COMPLETADO'")
     Double sumTotalVentas();
 
-    @Query("SELECT COUNT(p) FROM Pedido p WHERE p.estado.nombre = :estadoNombre")
+    @Query("SELECT COUNT(p) FROM Pedido p WHERE UPPER(p.estado.nombre) = UPPER(:estadoNombre)")
     long countByEstadoNombre(@Param("estadoNombre") String estadoNombre);
 
     @Query("SELECT p FROM Pedido p JOIN FETCH p.usuario JOIN FETCH p.estado ORDER BY p.fecha_pedido DESC")
