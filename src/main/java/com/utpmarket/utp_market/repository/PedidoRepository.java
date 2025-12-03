@@ -12,8 +12,10 @@ import org.springframework.data.domain.Pageable;
 import com.utpmarket.utp_market.repository.VentasDiarias; // Import the moved interface
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
 @Repository
-public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+public interface PedidoRepository extends JpaRepository<Pedido, Long>, JpaSpecificationExecutor<Pedido> {
 
     // Buscar todos los pedidos de un usuario, ordenados por fecha (más reciente primero)
     @Query("SELECT p FROM Pedido p WHERE p.usuario.id = :usuarioId ORDER BY p.fecha_pedido DESC")

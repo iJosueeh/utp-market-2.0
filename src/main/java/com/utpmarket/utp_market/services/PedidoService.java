@@ -17,7 +17,18 @@ import com.utpmarket.utp_market.models.entity.product.Producto;
 import com.utpmarket.utp_market.repository.MetodoPagoRepository;
 import com.utpmarket.utp_market.repository.EstadoPedidoRepository;
 import com.utpmarket.utp_market.repository.ItemPedidoRepository;
+import com.utpmarket.utp_market.models.dto.PedidoDTO;
+import com.utpmarket.utp_market.models.dto.EstadoPedidoDTO;
+import com.utpmarket.utp_market.models.dto.UsuarioDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import com.utpmarket.utp_market.repository.UsuarioRepository;
+
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -154,6 +165,68 @@ public class PedidoService {
         carritoService.limpiarCarrito(usuarioId);
 
         return pedidoGuardado;
+    }
+
+    // Obtener todos los pedidos paginados y filtrados
+    @Transactional(readOnly = true)
+    public Page<PedidoDTO> obtenerPedidosPaginadosYFiltrados(Pageable pageable,
+            Long estadoId,
+            Timestamp fechaInicio,
+            Timestamp fechaFin) {
+
+        System.out.println("PedidoService - obtenerPedidosPaginadosYFiltrados called with:");
+        System.out.println("  Pageable: " + pageable);
+        System.out.println("  estadoId: " + estadoId);
+        System.out.println("  fechaInicio: " + fechaInicio);
+        System.out.println("  fechaFin: " + fechaFin);
+
+        Specification<Pedido> spec = (root, query, cb) -> {
+            Predicate finalPredicate = cb.conjunction(); // Start with a true predicate
+
+            if (estadoId != null) {
+                System.out.println("  Adding estadoId filter: " + estadoId);
+                // Join con la entidad EstadoPedido y luego filtrar por su ID
+                finalPredicate = cb.and(finalPredicate, cb.equal(root.get("estado").get("id"), estadoId));
+            }
+
+            if (fechaInicio != null) {
+                System.out.println("  Adding fechaInicio filter: " + fechaInicio);
+                finalPredicate = cb.and(finalPredicate, cb.greaterThanOrEqualTo(root.get("fecha_pedido"), fechaInicio));
+            }
+
+            if (fechaFin != null) {
+                System.out.println("  Adding fechaFin filter: " + fechaFin);
+                finalPredicate = cb.and(finalPredicate, cb.lessThanOrEqualTo(root.get("fecha_pedido"), fechaFin));
+            }
+
+            return finalPredicate;
+        };
+
+        Page<Pedido> pedidosPage = pedidoRepository.findAll(spec, pageable);
+
+        System.out.println("  Pedidos found (total elements): " + pedidosPage.getTotalElements());
+        System.out.println("  Pedidos found (current page elements): " + pedidosPage.getNumberOfElements());
+
+        return pedidosPage.map(pedido -> {
+            System.out.println("  Mapping Pedido ID: " + pedido.getId());
+            UsuarioDTO usuarioDTO;
+            if (pedido.getUsuario() != null) {
+                System.out.println("    Usuario object exists for Pedido ID " + pedido.getId() + ": ID=" + pedido.getUsuario().getId() + ", NombreCompleto=" + pedido.getUsuario().getNombreCompleto());
+                usuarioDTO = new UsuarioDTO(pedido.getUsuario().getId(), pedido.getUsuario().getNombreCompleto());
+            } else {
+                System.out.println("    Usuario object is NULL for Pedido ID: " + pedido.getId());
+                usuarioDTO = new UsuarioDTO(null, "N/A"); // Provide a default DTO for null user
+            }
+            EstadoPedidoDTO estadoDTO = new EstadoPedidoDTO(pedido.getEstado().getId(), pedido.getEstado().getNombre());
+            return new PedidoDTO(
+                pedido.getId(),
+                pedido.getNumero_pedido(),
+                pedido.getFecha_pedido(),
+                pedido.getTotal(),
+                estadoDTO,
+                usuarioDTO
+            );
+        });
     }
 
     private String generarNumeroPedido() {
