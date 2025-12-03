@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/_admin_layout :: layout(
+        title='Admin - Detalle de Pedido',
+        pageContent=~{::pageContent},
+        includeChartJS_=false,
+        scripts=~{::page-scripts}
+      )}">
+
+<th:block th:fragment="pageContent">
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Detalle del Pedido <span id="numeroPedido"></span></h1>
+
+        <div class="row">
+            <!-- Order Summary Card -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Información General del Pedido</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>ID del Pedido:</strong> <span id="pedidoIdDisplay"></span></p>
+                        <p><strong>Número de Pedido:</strong> <span id="numeroPedidoDisplay"></span></p>
+                        <p><strong>Fecha de Pedido:</strong> <span id="fechaPedidoDisplay"></span></p>
+                        <p><strong>Total:</strong> S/. <span id="totalDisplay"></span></p>
+                        <p><strong>Estado Actual:</strong> <span id="estadoDisplay" class="badge"></span></p>
+                        <p><strong>ID de Transacción:</strong> <span id="transactionIdDisplay"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User and Shipping Card -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Información del Cliente y Envío</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Cliente:</strong> <span id="clienteNombreDisplay"></span> (ID: <span id="clienteIdDisplay"></span>)</p>
+                        <p><strong>Método de Pago:</strong> <span id="metodoPagoDisplay"></span></p>
+                        <p><strong>Dirección de Envío:</strong> <span id="direccionCalleDisplay"></span>, <span id="direccionDistritoDisplay"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Update Status Card -->
+            <div class="col-lg-12 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Actualizar Estado del Pedido</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group d-flex align-items-center mb-2">
+                            <label for="selectEstado" class="me-2 mb-0">Nuevo Estado:</label>
+                            <select class="form-control form-control-sm w-auto me-2" id="selectEstado">
+                                <!-- Options will be loaded dynamically by JS -->
+                            </select>
+                            <button class="btn btn-primary btn-sm" id="btnActualizarEstado">Actualizar Estado</button>
+                        </div>
+                        <div id="updateStatusMessage" class="mt-2" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <!-- Items in Order Card -->
+            <div class="col-lg-12 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Artículos del Pedido</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemsPedidoBody">
+                                    <!-- Items will be loaded here by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Order History Card -->
+            <div class="col-lg-12 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Historial de Estado del Pedido</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha de Cambio</th>
+                                        <th>Estado Anterior</th>
+                                        <th>Estado Nuevo</th>
+                                        <th>Responsable</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historialEstadoBody">
+                                    <!-- History will be loaded here by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="page-scripts">
+    <script th:src="@{/js/admin-pedido-detalle.js}"></script>
+</th:block>
+
+</html>
