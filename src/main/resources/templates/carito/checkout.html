@@ -6,7 +6,7 @@
 <body>
   <header th:replace="~{layout/_layout :: header}"></header>
 
-  <div class="container mt-5 fade-in">
+  <div class="container mt-5 fade-in" style="padding-top: 80px; margin-bottom: 50px;">
     <h2 class="mb-4 text-center fw-bold text-primary">Finalizar Compra</h2>
 
     <!-- Alertas -->
@@ -63,87 +63,42 @@
               </div>
               <h5 class="card-title mb-0">Método de Pago</h5>
             </div>
-            <div class="accordion" id="paymentMethods">
+            <div class="d-grid gap-3">
               <!-- Efectivo -->
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingZero">
-                  <div class="form-check accordion-button">
-                    <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago0" value="1" checked>
-                    <label class="form-check-label" for="metodoPago0" data-bs-toggle="collapse"
-                      data-bs-target="#collapseZero" aria-expanded="true" aria-controls="collapseZero">
-                      Efectivo (Contraentrega)
-                    </label>
-                  </div>
-                </h2>
-                <div id="collapseZero" class="accordion-collapse collapse show" aria-labelledby="headingZero"
-                  data-bs-parent="#paymentMethods">
-                  <div class="accordion-body">
-                    Paga en efectivo al momento de recoger tu pedido.
-                  </div>
-                </div>
+              <div class="form-check p-3 border rounded">
+                <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago0" value="1" checked>
+                <label class="form-check-label w-100" for="metodoPago0">
+                  <strong>Efectivo (Contraentrega)</strong>
+                  <p class="text-muted small mb-0 mt-1">Paga en efectivo al momento de recoger tu pedido.</p>
+                </label>
               </div>
 
-              <!-- Tarjeta (Stripe) -->
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
-                  <div class="form-check accordion-button collapsed">
-                    <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago1" value="2">
-                    <label class="form-check-label" for="metodoPago1" data-bs-toggle="collapse"
-                      data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                      Tarjeta de Crédito / Débito
-                    </label>
-                  </div>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-                  data-bs-parent="#paymentMethods">
-                  <div class="accordion-body">
-                    <!-- Stripe Elements Placeholder -->
-                    <div id="card-element" class="stripe-card-element-container mb-3">
-                      <!-- A Stripe Element will be inserted here. -->
-                    </div>
-                    <div id="card-errors" role="alert" class="text-danger small"></div>
-                  </div>
-                </div>
+              <!-- Tarjeta -->
+              <div class="form-check p-3 border rounded">
+                <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago1" value="2">
+                <label class="form-check-label w-100" for="metodoPago1">
+                  <strong>Tarjeta de Crédito / Débito</strong>
+                  <p class="text-muted small mb-0 mt-1">Paga de forma segura con tu tarjeta.</p>
+                </label>
               </div>
 
-              <!-- Yape -->
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingThree">
-                  <div class="form-check accordion-button collapsed">
-                    <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago3" value="4">
-                    <label class="form-check-label" for="metodoPago3" data-bs-toggle="collapse"
-                      data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                      Yape
-                    </label>
+              <!-- Campos de tarjeta (se muestran solo si se selecciona tarjeta) -->
+              <div id="card-fields" style="display: none;" class="p-3 border rounded bg-light">
+                <div class="mb-3">
+                  <label class="form-label small text-muted">Número de Tarjeta</label>
+                  <div id="card-number" class="form-control" style="height: 40px; padding: 10px;"></div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <label class="form-label small text-muted">Fecha de Expiración</label>
+                    <div id="card-expiry" class="form-control" style="height: 40px; padding: 10px;"></div>
                   </div>
-                </h2>
-                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                  data-bs-parent="#paymentMethods">
-                  <div class="accordion-body text-center">
-                    <p>Escanea el código QR para pagar con Yape.</p>
-                    <img src="/images/qr-yape.png" alt="QR Yape" class="img-fluid" style="max-width: 200px;">
+                  <div class="col-6">
+                    <label class="form-label small text-muted">CVC</label>
+                    <div id="card-cvc" class="form-control" style="height: 40px; padding: 10px;"></div>
                   </div>
                 </div>
-              </div>
-
-              <!-- Plin -->
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingFour">
-                  <div class="form-check accordion-button collapsed">
-                    <input class="form-check-input" type="radio" name="metodoPago" id="metodoPago4" value="5">
-                    <label class="form-check-label" for="metodoPago4" data-bs-toggle="collapse"
-                      data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                      Plin
-                    </label>
-                  </div>
-                </h2>
-                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
-                  data-bs-parent="#paymentMethods">
-                  <div class="accordion-body text-center">
-                    <p>Escanea el código QR para pagar con Plin.</p>
-                    <img src="/images/qr-plin.png" alt="QR Plin" class="img-fluid" style="max-width: 200px;">
-                  </div>
-                </div>
+                <div id="card-errors" role="alert" class="text-danger small mt-2"></div>
               </div>
             </div>
           </div>
@@ -199,10 +154,10 @@
 
   <footer th:replace="~{layout/_layout :: footer}"></footer>
 
-  <script th:src="@{/js/api.js}"></script>
-  <script th:src="@{/js/checkout.js}"></script>
-  <script src="https://js.stripe.com/v3/"></script>
-  <script src="/js/stripe-checkout.js"></script>
+  <script th:src="@{/js/api.js?v=5}"></script>
+  <script th:src="@{/js/checkout.js?v=5}"></script>
+
+  <script th:src="@{/js/stripe-checkout.js?v=5}"></script>
 </body>
 
 </html>

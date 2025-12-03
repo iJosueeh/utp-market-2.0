@@ -1,0 +1,45 @@
+<div class="accordion" id="paymentMethods">
+    <!-- Efectivo -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingZero">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseZero"
+                aria-expanded="true" aria-controls="collapseZero">
+                <input class="form-check-input me-2" type="radio" name="metodoPago" id="metodoPago0" value="1" checked
+                    onclick="event.stopPropagation();">
+                <label class="form-check-label mb-0" for="metodoPago0" onclick="event.stopPropagation();">
+                    Efectivo (Contraentrega)
+                </label>
+            </button>
+        </h2>
+        <div id="collapseZero" class="accordion-collapse collapse show" aria-labelledby="headingZero"
+            data-bs-parent="#paymentMethods">
+            <div class="accordion-body">
+                Paga en efectivo al momento de recoger tu pedido.
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta (Stripe) -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                <input class="form-check-input me-2" type="radio" name="metodoPago" id="metodoPago1" value="2"
+                    onclick="event.stopPropagation();">
+                <label class="form-check-label mb-0" for="metodoPago1" onclick="event.stopPropagation();">
+                    Tarjeta de Crédito / Débito
+                </label>
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+            data-bs-parent="#paymentMethods">
+            <div class="accordion-body">
+                <!-- Stripe Elements Placeholder -->
+                <div id="card-element" class="stripe-card-element-container mb-3">
+                    <!-- A Stripe Element will be inserted here. -->
+                </div>
+                <div id="card-errors" role="alert" class="text-danger small"></div>
+            </div>
+        </div>
+    </div>
+</div>
