@@ -11,9 +11,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 import com.utpmarket.utp_market.repository.VentasDiarias; // Import the moved interface
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 @Repository
-public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+public interface PedidoRepository extends JpaRepository<Pedido, Long>, JpaSpecificationExecutor<Pedido> {
 
     // Buscar todos los pedidos de un usuario, ordenados por fecha (más reciente primero)
     @Query("SELECT p FROM Pedido p WHERE p.usuario.id = :usuarioId ORDER BY p.fecha_pedido DESC")
@@ -42,4 +45,16 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
             "GROUP BY CAST(p.fecha_pedido AS DATE) " +
             "ORDER BY fecha ASC", nativeQuery = true)
     List<VentasDiarias> findVentasDiariasUltimos30Dias();
+    @Query("SELECT p FROM Pedido p " +
+           "LEFT JOIN FETCH p.usuario u " +
+           "LEFT JOIN FETCH p.estado es " +
+           "LEFT JOIN FETCH p.metodoPago mp " +
+           "LEFT JOIN FETCH p.itemsPedido ip " +
+           "LEFT JOIN FETCH ip.producto prod " +
+           "LEFT JOIN FETCH p.historialEstadoPedidos hep " +
+           "LEFT JOIN FETCH hep.estadoAnterior ea " +
+           "LEFT JOIN FETCH hep.estadoNuevo en " +
+           "LEFT JOIN FETCH hep.usuarioResponsable ur " +
+           "WHERE p.id = :id")
+    Optional<Pedido> findByIdWithDetails(@Param("id") Long id);
 }
