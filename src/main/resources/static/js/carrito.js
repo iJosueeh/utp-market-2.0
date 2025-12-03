@@ -81,9 +81,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const formData = new FormData(this);
         const itemId = formData.get("itemId");
-        const cantidad = parseInt(formData.get("cantidad"));
 
-        if (cantidad < 1) return;
+        // Obtener la cantidad del botón que se clickeó (+ o -)
+        const submitButton = e.submitter;
+        const cantidad = submitButton
+          ? parseInt(submitButton.value)
+          : parseInt(formData.get("cantidad"));
+
+        if (!cantidad || cantidad < 1 || isNaN(cantidad)) {
+          console.error("Cantidad inválida:", cantidad);
+          return;
+        }
 
         try {
           const response = await fetch("/carrito/actualizar-cantidad-ajax", {

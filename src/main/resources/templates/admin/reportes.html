@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{admin/_admin_layout :: layout(title='Admin - Reportes', pageContent=~{::pageContent}, includeChartJS_=true)}">
+      th:replace="~{admin/_admin_layout :: layout(
+        title='Admin - Reportes',
+        pageContent=~{::pageContent},
+        includeChartJS_=true,
+        scripts=~{::page-scripts}
+      )}">
 
 <th:block th:fragment="pageContent">
     <div class="container-fluid">
@@ -18,6 +23,11 @@
         <script type="module" src="/js/reportesChart.js"></script>
 
     </div>
+</th:block>
+
+<!-- Define the scripts fragment separately (even if empty for now) -->
+<th:block th:fragment="page-scripts">
+    <!-- No specific scripts for this page, but the fragment must be defined -->
 </th:block>
 
 </html>
